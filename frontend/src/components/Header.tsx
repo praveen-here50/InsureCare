@@ -1,36 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { MdMenu, MdNotifications, MdAccountCircle } from 'react-icons/md';
+import Link from "next/link";
+import { MdMenu, MdNotificationsNone } from "react-icons/md";
+import { FiChevronDown } from "react-icons/fi";
 
-interface HeaderProps {
-  onToggleMobile?: () => void;
-}
-
-export default function Header({ onToggleMobile = () => {} }: HeaderProps) {
-  return (
-    <header className="bg-white shadow-sm border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
-        <div className="flex-shrink-0 flex items-center">
-          <Link href="/" className="flex items-center space-x-3">
-            <span className="text-xl font-bold text-indigo-600">InsureCare</span>
-          </Link>
-        </div>
-        <div className="flex items-center space-x-4">
-          <button className="text-gray-500 hover:text-gray-700" onClick={onToggleMobile}>
-            <MdMenu className="h-5 w-5" />
-          </button>
-          <button className="text-gray-500 hover:text-gray-700 relative">
-            <MdNotifications className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 flex h-2 w-2 items-center justify-center bg-red-500 rounded-full text-xs font-medium text-white">
-              3
-            </span>
-          </button>
-          <button className="text-gray-500 hover:text-gray-700">
-            <MdAccountCircle className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
-    </header>
-  );
+export default function Header({ onToggleMobile = () => {} }: { onToggleMobile?: () => void }) {
+  return <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur"><div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8"><div className="flex items-center gap-3 lg:hidden"><button type="button" aria-label="Open navigation" onClick={onToggleMobile} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900"><MdMenu className="size-5" /></button><Link href="/patient" className="text-lg font-bold tracking-tight text-teal-800">InsureCare</Link></div><div className="hidden text-sm text-slate-500 lg:block">Patient portal <span className="mx-2 text-slate-300">/</span> <span className="font-medium text-slate-800">Dashboard</span></div><div className="ml-auto flex items-center gap-2"><button type="button" aria-label="Notifications" className="relative rounded-lg p-2.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900"><MdNotificationsNone className="size-5" /><span className="absolute right-2 top-2 size-1.5 rounded-full bg-teal-600" /></button><button type="button" className="flex items-center gap-2 rounded-lg p-1.5 pr-2 text-left hover:bg-slate-50"><span className="flex size-8 items-center justify-center rounded-full bg-teal-700 text-xs font-semibold text-white">PS</span><span className="hidden text-sm font-medium text-slate-700 sm:block">Priya Sharma</span><FiChevronDown className="hidden text-slate-400 sm:block" /></button></div></div></header>;
 }
