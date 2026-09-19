@@ -2,506 +2,79 @@ import Link from "next/link";
 import Card from "@/components/Card";
 import Badge from "@/components/Badge";
 import {
-  FiShield,
-  FiCalendar,
-  FiHeart,
-  FiList,
   FiArrowRight,
+  FiCalendar,
+  FiChevronRight,
+  FiClock,
   FiFileText,
+  FiHeart,
   FiMapPin,
+  FiPlus,
+  FiShield,
   FiTrendingUp,
   FiUpload,
-  FiCopy,
-  FiRefreshCw,
 } from "react-icons/fi";
 import { MdOutlineSupportAgent } from "react-icons/md";
 
-// ---------------------------------------------------------------------------
-// Demo data
-// ---------------------------------------------------------------------------
-
-const patient = {
-  name: "Priya Sharma",
-  memberId: "IC-IND-7842",
-  location: "Jaipur, Rajasthan",
-  familyCovered: 4,
-};
-
+const patient = { name: "Priya Sharma", memberId: "IC-IND-7842", location: "Jaipur, Rajasthan", familyCovered: 4 };
 const activePolicies = [
-  {
-    id: "POL-001",
-    name: "Family Health Shield Plus",
-    provider: "CarePlus Insurance",
-    coverage: 1500000, // ₹15,00,000
-    validTill: "15 Mar 2027",
-    status: "active",
-  },
-  {
-    id: "POL-002",
-    name: "Critical Illness Rider",
-    provider: "SecureLife Assurance",
-    coverage: 500000, // ₹5,00,000
-    validTill: "30 Jun 2027",
-    status: "active",
-  },
-  {
-    id: "POL-003",
-    name: "Accidental Death Benefit",
-    provider: "SafeGuard General",
-    coverage: 1000000, // ₹10,00,000
-    validTill: "14 Jan 2027",
-    status: "active",
-  },
+  { name: "Family Health Shield Plus", provider: "CarePlus Insurance", coverage: 1500000, validTill: "15 Mar 2027" },
+  { name: "Critical Illness Rider", provider: "SecureLife Assurance", coverage: 500000, validTill: "30 Jun 2027" },
+  { name: "Accidental Death Benefit", provider: "SafeGuard General", coverage: 1000000, validTill: "14 Jan 2027" },
 ];
-
 const govtSchemes = [
-  {
-    name: "Ayushman Bharat PM-JAY",
-    status: "enrolled",
-    benefit: "₹5,00,000 family coverage",
-  },
-  {
-    name: "Chiranjeevi Yojana (Rajasthan)",
-    status: "applied",
-    benefit: "Cashless treatment up to ₹10 lakhs",
-  },
+  { name: "Ayushman Bharat PM-JAY", detail: "₹5,00,000 family coverage", status: "Enrolled" },
+  { name: "Chiranjeevi Yojana", detail: "Cashless treatment up to ₹10 lakhs", status: "Applied" },
 ];
-
-const upcomingRenewal = {
-  policy: "Family Health Shield Plus",
-  date: "15 Mar 2027",
-  amount: "₹18,500",
-  daysLeft: 12,
-};
-
-const activeClaim = {
-  id: "CLM-IND-2026-0876",
-  type: "Hospitalization",
-  amount: "₹45,000",
-  status: "approved",
-  hospital: "Apollo Hospitals, Jaipur",
-  date: "10 Sep 2026",
-};
-
-const nearbyHospitals = [
-  {
-    name: "Fortis Hospital",
-    distance: "2.3 km",
-    specialties: ["Cardiology", "Orthopedics", "Emergency"],
-    rating: 4.8,
-    emergency: true,
-  },
-  {
-    name: "Narayana Multispecialty Hospital",
-    distance: "3.7 km",
-    specialties: ["Neurology", "Oncology", "Pediatrics"],
-    rating: 4.6,
-    emergency: true,
-  },
-  {
-    name: "Santokba Durlabhji Memorial Hospital",
-    distance: "1.8 km",
-    specialties: ["General Medicine", "Surgery", "Maternity"],
-    rating: 4.7,
-    emergency: false,
-  },
+const hospitals = [
+  { name: "Fortis Hospital", distance: "2.3 km", rating: "4.8", emergency: true },
+  { name: "Narayana Multispecialty Hospital", distance: "3.7 km", rating: "4.6", emergency: true },
+  { name: "Santokba Durlabhji Memorial", distance: "1.8 km", rating: "4.7", emergency: false },
 ];
-
-const quickActions = [
-  {
-    label: "Ask AI",
-    hint: "Get instant answers about coverage",
-    icon: MdOutlineSupportAgent,
-    href: "/patient/assistant",
-    tint: "bg-blue-50 text-blue-600",
-  },
-  {
-    label: "Find Hospital",
-    hint: "Locate network hospitals",
-    icon: FiMapPin,
-    href: "/patient/hospitals",
-    tint: "bg-teal-50 text-teal-600",
-  },
-  {
-    label: "Upload Document",
-    hint: "Add policy or medical files",
-    icon: FiUpload,
-    href: "/patient/documents",
-    tint: "bg-green-50 text-green-600",
-  },
-  {
-    label: "Compare Policies",
-    hint: "Review and compare plans",
-    icon: FiCopy,
-    href: "/patient/policies",
-    tint: "bg-indigo-50 text-indigo-600",
-  },
-  {
-    label: "Track Claim",
-    hint: "Check claim status",
-    icon: FiList,
-    href: "/patient/claims",
-    tint: "bg-orange-50 text-orange-600",
-  },
+const documents = [
+  { name: "Policy Certificate — Family Health Shield Plus", date: "12 Sep 2026", type: "Policy" },
+  { name: "Discharge Summary — Apollo Hospitals", date: "10 Sep 2026", type: "Medical" },
+  { name: "Aadhaar Card (Verified)", date: "28 Aug 2026", type: "KYC" },
 ];
+const formatINR = (value: number) => `₹${value.toLocaleString("en-IN")}`;
 
-const recentDocuments = [
-  {
-    name: "Policy Certificate - Family Health Shield Plus.pdf",
-    category: "Policy",
-    added: "12 Sep 2026",
-  },
-  {
-    name: "Discharge Summary - Apollo Hospitals.pdf",
-    category: "Medical",
-    added: "10 Sep 2026",
-  },
-  {
-    name: "Aadhaar Card (Verified).pdf",
-    category: "KYC",
-    added: "28 Aug 2026",
-  },
-];
-
-const recentActivity: {
-  type: ActivityType;
-  description: string;
-  timestamp: string;
-  tone: "green" | "blue" | "teal";
-}[] = [
-  {
-    type: "policy_renewal",
-    description: "Renewed Family Health Shield Plus policy",
-    timestamp: "2 days ago",
-    tone: "green" as const,
-  },
-  {
-    type: "claim_submitted",
-    description: "Submitted dental claim for ₹2,500",
-    timestamp: "5 days ago",
-    tone: "blue" as const,
-  },
-  {
-    type: "hospital_visit",
-    description: "Visited Apollo Hospital for checkup",
-    timestamp: "1 week ago",
-    tone: "teal" as const,
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-const formatINR = (n: number) => `₹${n.toLocaleString("en-IN")}`;
-
-const ACTIVITY_ICONS = {
-  policy_renewal: FiRefreshCw,
-  claim_submitted: FiFileText,
-  hospital_visit: FiMapPin,
-} as const;
-
-type ActivityType = keyof typeof ACTIVITY_ICONS;
-
-const ACTIVITY_TINT: Record<string, string> = {
-  green: "bg-green-50 text-green-600",
-  blue: "bg-blue-50 text-blue-600",
-  teal: "bg-teal-50 text-teal-600",
-};
-
-// ---------------------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------------------
+function SectionHeading({ title, detail, href }: { title: string; detail?: string; href?: string }) {
+  return (
+    <div className="mb-4 flex items-end justify-between gap-4">
+      <div><h2 className="text-base font-semibold text-slate-950">{title}</h2>{detail && <p className="mt-1 text-sm text-slate-500">{detail}</p>}</div>
+      {href && <Link href={href} className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-teal-700 hover:text-teal-800">View all <FiArrowRight /></Link>}
+    </div>
+  );
+}
 
 export default function PatientDashboard() {
-  const totalCoverage = activePolicies.reduce((sum, p) => sum + p.coverage, 0);
-
+  const totalCoverage = activePolicies.reduce((sum, policy) => sum + policy.coverage, 0);
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      {/* Welcome section */}
-      <Card className="flex flex-col justify-between gap-4 p-6 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-700">
-            {patient.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)}
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">
-              Welcome back, {patient.name}!
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Member ID: {patient.memberId} • {patient.location} •{" "}
-              {patient.familyCovered} members covered
-            </p>
-          </div>
-        </div>
-        <Badge tone="green">All policies active</Badge>
-      </Card>
-
-      {/* Stat cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Active policies */}
-        <Link href="/patient/policies" className="group" aria-label="View my policies">
-          <Card className="p-5 transition-shadow group-hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <h2 className="font-medium text-gray-900">Active Policies</h2>
-              <div className="rounded-full bg-blue-50 p-2 text-blue-600">
-                <FiShield className="h-5 w-5" />
-              </div>
-            </div>
-            <p className="mt-3 text-2xl font-bold text-gray-900">
-              {activePolicies.length}
-            </p>
-            <p className="mt-1 text-sm text-gray-500">policies active</p>
-          </Card>
-        </Link>
-
-        {/* Total coverage */}
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-medium text-gray-900">Total Coverage</h2>
-            <div className="rounded-full bg-teal-50 p-2 text-teal-600">
-              <FiHeart className="h-5 w-5" />
-            </div>
-          </div>
-          <p className="mt-3 text-2xl font-bold text-blue-700">
-            {formatINR(totalCoverage)}
-          </p>
-          <p className="mt-1 text-sm text-gray-500">across all policies</p>
-        </Card>
-
-        {/* Government schemes */}
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-medium text-gray-900">Govt. Schemes</h2>
-            <div className="rounded-full bg-green-50 p-2 text-green-600">
-              <FiShield className="h-5 w-5" />
-            </div>
-          </div>
-          <p className="mt-3 text-2xl font-bold text-gray-900">{govtSchemes.length}</p>
-          <p className="mt-1 text-sm text-gray-500">
-            {govtSchemes.filter((s) => s.status === "enrolled").length} enrolled
-          </p>
-        </Card>
-
-        {/* Upcoming renewal */}
-        <Link
-          href="/patient/policies"
-          className="group"
-          aria-label="View upcoming renewal"
-        >
-          <Card className="p-5 transition-shadow group-hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <h2 className="font-medium text-gray-900">Upcoming Renewal</h2>
-              <div className="rounded-full bg-yellow-50 p-2 text-yellow-600">
-                <FiCalendar className="h-5 w-5" />
-              </div>
-            </div>
-            <p className="mt-3 text-2xl font-bold text-gray-900">
-              {upcomingRenewal.daysLeft} days
-            </p>
-            <p className="mt-1 text-sm text-gray-500">{upcomingRenewal.policy}</p>
-          </Card>
-        </Link>
+    <div className="mx-auto flex max-w-7xl flex-col gap-7">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div><p className="text-sm font-medium text-teal-700">Tuesday, 19 September 2026</p><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Good morning, Priya</h1><p className="mt-2 text-sm text-slate-500">Here&apos;s an overview of your healthcare cover.</p></div>
+        <div className="flex items-center gap-3"><span className="hidden text-right text-xs text-slate-500 sm:block">Member ID<br /><strong className="text-slate-700">{patient.memberId}</strong></span><div className="flex size-11 items-center justify-center rounded-full bg-teal-700 text-sm font-semibold text-white">PS</div></div>
       </div>
 
-      {/* Active claim + nearby hospitals */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        {/* Active claim */}
-        <Card className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-orange-50 p-2.5 text-orange-600">
-                <FiList className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="font-medium text-gray-900">Active Claim</h2>
-                <p className="text-sm text-gray-500">#{activeClaim.id.slice(-4)}</p>
-              </div>
-            </div>
-            <Badge tone="green">{activeClaim.status}</Badge>
-          </div>
-          <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-gray-500">Type</dt>
-              <dd className="font-medium text-gray-900">{activeClaim.type}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">Amount</dt>
-              <dd className="font-medium text-gray-900">{activeClaim.amount}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">Hospital</dt>
-              <dd className="font-medium text-gray-900">{activeClaim.hospital}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">Date</dt>
-              <dd className="font-medium text-gray-900">{activeClaim.date}</dd>
-            </div>
-          </dl>
-          <Link
-            href="/patient/claims"
-            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700"
-          >
-            View claim details
-            <FiArrowRight className="h-4 w-4" />
-          </Link>
-        </Card>
+      <Card className="overflow-hidden border-teal-100 bg-teal-50/70 p-5 sm:p-6"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-start gap-3"><div className="mt-0.5 rounded-lg bg-white p-2.5 text-teal-700 shadow-sm"><FiShield /></div><div><h2 className="font-semibold text-slate-950">Your cover is up to date</h2><p className="mt-1 text-sm text-slate-600">All 3 policies are active and protecting your family of {patient.familyCovered}.</p></div></div><Link href="/patient/policies" className="inline-flex items-center gap-2 self-start rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800">Review policies <FiArrowRight /></Link></div></Card>
 
-        {/* Nearby hospitals */}
-        <Card className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-teal-50 p-2.5 text-teal-600">
-                <FiMapPin className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="font-medium text-gray-900">Nearby Hospitals</h2>
-                <p className="text-sm text-gray-500">
-                  {nearbyHospitals.length} in-network facilities nearby
-                </p>
-              </div>
-            </div>
-          </div>
-          <ul className="space-y-3">
-            {nearbyHospitals.map((hospital) => (
-              <li key={hospital.name} className="rounded-lg border border-gray-100 p-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="truncate font-medium text-gray-900">
-                      {hospital.name}
-                    </h3>
-                    <p className="mt-0.5 text-sm text-gray-500">
-                      {hospital.distance} away
-                    </p>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {hospital.specialties.map((spec) => (
-                        <span
-                          key={spec}
-                          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-                        >
-                          {spec}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <div className="flex items-baseline justify-end">
-                      <span className="text-lg font-semibold text-gray-900">
-                        {hospital.rating}
-                      </span>
-                      <span className="ml-1 text-xs text-gray-500">/5</span>
-                    </div>
-                    {hospital.emergency && (
-                      <span className="mt-1 inline-block rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">
-                        Emergency
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/patient/hospitals"
-            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700"
-          >
-            See all hospitals
-            <FiArrowRight className="h-4 w-4" />
-          </Link>
-        </Card>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {[{ label: "Active policies", value: "03", note: "All active", icon: FiShield, href: "/patient/policies" }, { label: "Total coverage", value: formatINR(totalCoverage), note: "Across all policies", icon: FiHeart }, { label: "Government schemes", value: "02", note: "1 enrolled · 1 applied", icon: FiPlus }, { label: "Next renewal", value: "12 days", note: "Family Health Shield Plus", icon: FiCalendar, href: "/patient/policies" }].map((stat) => { const Icon = stat.icon; const content = <Card className="h-full p-5 transition hover:-translate-y-0.5 hover:shadow-md"><div className="flex items-start justify-between"><div><p className="text-sm font-medium text-slate-500">{stat.label}</p><p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">{stat.value}</p><p className="mt-1 text-xs text-slate-500">{stat.note}</p></div><span className="rounded-lg bg-slate-100 p-2.5 text-teal-700"><Icon /></span></div></Card>; return stat.href ? <Link key={stat.label} href={stat.href}>{content}</Link> : <div key={stat.label}>{content}</div>; })}
       </div>
 
-      {/* Quick actions */}
-      <Card className="p-6">
-        <h2 className="font-medium text-gray-900">Quick Actions</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {quickActions.map((action) => (
-            <Link
-              key={action.label}
-              href={action.href}
-              className="flex items-center gap-3 rounded-lg border border-gray-100 p-4 transition-colors hover:border-blue-200 hover:bg-blue-50/50"
-            >
-              <div className={`rounded-full p-2.5 ${action.tint}`}>
-                <action.icon className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-medium text-gray-900">{action.label}</p>
-                <p className="truncate text-xs text-gray-500">{action.hint}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </Card>
-
-      {/* Recent documents + activity */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        {/* Recent documents */}
-        <Card className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-blue-50 p-2.5 text-blue-600">
-                <FiFileText className="h-5 w-5" />
-              </div>
-              <h2 className="font-medium text-gray-900">Recent Documents</h2>
-            </div>
-            <Link
-              href="/patient/documents"
-              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              View all
-              <FiArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <ul className="divide-y divide-gray-100">
-            {recentDocuments.map((doc) => (
-              <li key={doc.name} className="flex items-center justify-between py-3">
-                <div className="min-w-0 pr-3">
-                  <p className="truncate text-sm font-medium text-gray-900">
-                    {doc.name}
-                  </p>
-                  <p className="text-xs text-gray-500">Added {doc.added}</p>
-                </div>
-                <Badge tone="gray">{doc.category}</Badge>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        {/* Recent activity */}
-        <Card className="p-6">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="rounded-xl bg-indigo-50 p-2.5 text-indigo-600">
-              <FiTrendingUp className="h-5 w-5" />
-            </div>
-            <h2 className="font-medium text-gray-900">Recent Activity</h2>
-          </div>
-          <ul className="space-y-3">
-            {recentActivity.map((activity, i) => {
-              const Icon = ACTIVITY_ICONS[activity.type];
-              return (
-                <li
-                  key={i}
-                  className="flex items-start gap-3 rounded-lg border border-gray-100 p-3"
-                >
-                  <div className={`mt-0.5 rounded-full p-2 ${ACTIVITY_TINT[activity.tone]}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900">
-                      {activity.description}
-                    </p>
-                    <p className="mt-0.5 text-xs text-gray-500">{activity.timestamp}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <Card className="p-5 sm:p-6"><SectionHeading title="My policies" detail="Your active insurance plans" href="/patient/policies" /><div className="flex flex-col divide-y divide-slate-100">{activePolicies.map((policy) => <Link href="/patient/policies" key={policy.name} className="group flex items-center justify-between gap-4 py-4 first:pt-1 last:pb-1"><div className="flex min-w-0 items-center gap-3"><span className="rounded-lg bg-teal-50 p-2 text-teal-700"><FiShield /></span><div className="min-w-0"><p className="truncate text-sm font-semibold text-slate-800 group-hover:text-teal-700">{policy.name}</p><p className="mt-1 text-xs text-slate-500">{policy.provider} · Valid till {policy.validTill}</p></div></div><div className="hidden text-right sm:block"><p className="text-sm font-semibold text-slate-900">{formatINR(policy.coverage)}</p><p className="mt-1 text-xs text-slate-500">Sum insured</p></div><FiChevronRight className="shrink-0 text-slate-400 sm:hidden" /></Link>)}</div></Card>
+        <Card className="p-5 sm:p-6"><SectionHeading title="Government schemes" detail="Public healthcare benefits" /><div className="flex flex-col gap-3">{govtSchemes.map((scheme) => <div key={scheme.name} className="rounded-xl border border-slate-100 bg-slate-50/70 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-slate-800">{scheme.name}</p><p className="mt-1 text-xs text-slate-500">{scheme.detail}</p></div><Badge tone={scheme.status === "Enrolled" ? "green" : "blue"}>{scheme.status}</Badge></div></div>)}</div></Card>
       </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="p-5 sm:p-6"><SectionHeading title="Active claim" detail="Claim CLM-0876 · Updated today" href="/patient/claims" /><div className="rounded-xl border border-amber-100 bg-amber-50/60 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-slate-900">Hospitalisation claim</p><p className="mt-1 text-xs text-slate-600">Apollo Hospitals, Jaipur · 10 Sep 2026</p></div><Badge tone="green">Approved</Badge></div><div className="mt-4 flex items-end justify-between"><div><p className="text-xs text-slate-500">Approved amount</p><p className="mt-1 text-xl font-semibold text-slate-950">₹45,000</p></div><Link href="/patient/claims" className="text-sm font-semibold text-teal-700">View details</Link></div></div></Card>
+        <Card className="p-5 sm:p-6"><SectionHeading title="Nearby hospitals" detail={`In-network care around ${patient.location}`} href="/patient/hospitals" /><div className="flex flex-col gap-2">{hospitals.map((hospital) => <Link href="/patient/hospitals" key={hospital.name} className="flex items-center justify-between rounded-xl border border-slate-100 p-3.5 transition hover:border-teal-200 hover:bg-teal-50/40"><div className="flex min-w-0 items-center gap-3"><span className="rounded-lg bg-slate-100 p-2 text-teal-700"><FiMapPin /></span><div className="min-w-0"><p className="truncate text-sm font-semibold text-slate-800">{hospital.name}</p><p className="mt-1 text-xs text-slate-500">{hospital.distance} · {hospital.rating}/5 {hospital.emergency && "· Emergency"}</p></div></div><FiChevronRight className="shrink-0 text-slate-400" /></Link>)}</div></Card>
+      </div>
+
+      <Card className="p-5 sm:p-6"><SectionHeading title="Quick actions" detail="Common tasks, one click away" /><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[{ label: "Ask InsureCare", hint: "Get coverage answers", icon: MdOutlineSupportAgent, href: "/patient/assistant" }, { label: "Find a hospital", hint: "Search network care", icon: FiMapPin, href: "/patient/hospitals" }, { label: "Upload document", hint: "Keep records ready", icon: FiUpload, href: "/patient/documents" }, { label: "Track a claim", hint: "Check latest status", icon: FiClock, href: "/patient/claims" }].map((action) => { const Icon = action.icon; return <Link href={action.href} key={action.label} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3.5 transition hover:border-teal-200 hover:bg-teal-50/40"><span className="rounded-lg bg-teal-50 p-2.5 text-teal-700"><Icon /></span><span><p className="text-sm font-semibold text-slate-800">{action.label}</p><p className="mt-0.5 text-xs text-slate-500">{action.hint}</p></span></Link>; })}</div></Card>
+
+      <div className="grid gap-6 pb-4 lg:grid-cols-2"><Card className="p-5 sm:p-6"><SectionHeading title="Recent documents" href="/patient/documents" /><div className="flex flex-col divide-y divide-slate-100">{documents.map((doc) => <div key={doc.name} className="flex items-center gap-3 py-3 first:pt-0"><span className="rounded-lg bg-slate-100 p-2 text-slate-500"><FiFileText /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-slate-800">{doc.name}</p><p className="mt-1 text-xs text-slate-500">Added {doc.date}</p></div><Badge tone="gray">{doc.type}</Badge></div>)}</div></Card><Card className="p-5 sm:p-6"><SectionHeading title="Recent activity" /><div className="flex flex-col gap-4"><div className="flex gap-3"><span className="mt-0.5 rounded-full bg-teal-50 p-2 text-teal-700"><FiTrendingUp /></span><div><p className="text-sm font-medium text-slate-800">Policy renewed successfully</p><p className="mt-1 text-xs text-slate-500">Family Health Shield Plus · 2 days ago</p></div></div><div className="flex gap-3"><span className="mt-0.5 rounded-full bg-blue-50 p-2 text-blue-700"><FiFileText /></span><div><p className="text-sm font-medium text-slate-800">Dental claim submitted</p><p className="mt-1 text-xs text-slate-500">₹2,500 · 5 days ago</p></div></div><div className="flex gap-3"><span className="mt-0.5 rounded-full bg-slate-100 p-2 text-slate-600"><FiMapPin /></span><div><p className="text-sm font-medium text-slate-800">Hospital visit recorded</p><p className="mt-1 text-xs text-slate-500">Apollo Hospital · 1 week ago</p></div></div></div></Card></div>
     </div>
   );
 }
