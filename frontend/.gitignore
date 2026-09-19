@@ -1,0 +1,6 @@
+# Local Next.js artifacts — complements the root .gitignore
+# (the root covers node_modules/, .next/, out/, coverage/, *.tsbuildinfo,
+#  next-env.d.ts, .eslintcache, .env.*, *.log, OS junk, etc.)
+
+.next/
+out/
