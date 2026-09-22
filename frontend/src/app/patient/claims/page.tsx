@@ -1,18 +1,24 @@
-export default function ClaimsPage() {
-  return (
-    <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-semibold text-gray-900">Claims</h1>
-      <p className="mt-2 text-gray-500">
-        Track the status of your insurance claims.
-      </p>
+import Link from "next/link";
+import Card from "@/components/Card";
+import { FiArrowRight, FiCalendar, FiCheckCircle, FiChevronRight, FiClock, FiFileText, FiShield } from "react-icons/fi";
+import { claims, statusClasses, statusDotClasses } from "./data";
 
-      <hr className="my-8 border-gray-200" />
-
-      <div className="rounded-lg border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
-        <p className="text-gray-500">
-          Claims tracking is coming next.
-        </p>
-      </div>
-    </div>
-  );
+function StatusBadge({ status }: { status: (typeof claims)[number]["status"] }) {
+  return <span className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClasses[status]}`}><span className={`size-1.5 rounded-full ${statusDotClasses[status]}`} />{status}</span>;
 }
+
+export default function ClaimsPage() {
+  const awaitingAction = claims.filter((claim) => claim.status === "Additional Documents Required").length;
+  const approved = claims.filter((claim) => ["Approved", "Settled"].includes(claim.status)).length;
+  return <div className="mx-auto flex max-w-7xl flex-col gap-6">
+    <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p className="text-sm font-medium text-teal-700">Synthetic demo account</p><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">My Claims</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Track submitted and completed healthcare insurance claims from review through settlement.</p></div><Link href="/patient" className="inline-flex items-center gap-2 text-sm font-semibold text-teal-700 hover:text-teal-800"><FiArrowRight className="rotate-180" /> Back to dashboard</Link></div>
+    <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900"><strong>Demo information:</strong> These claims, IDs, providers, statuses, and amounts are synthetic examples. They do not represent real submissions, approvals, or payments.</div>
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[{ label: "Active claims", value: String(claims.filter((claim) => !["Settled", "Rejected"].includes(claim.status)).length).padStart(2, "0"), note: "Submitted or in review", icon: FiFileText }, { label: "Awaiting action", value: String(awaitingAction).padStart(2, "0"), note: "Documents may be needed", icon: FiClock }, { label: "Approved claims", value: String(approved).padStart(2, "0"), note: "Approved or settled", icon: FiCheckCircle }, { label: "Total approved", value: "₹46,800", note: "Synthetic amount shown", icon: FiShield }].map((stat) => { const Icon = stat.icon; return <Card key={stat.label} className="p-5"><div className="flex items-start justify-between"><div><p className="text-sm font-medium text-slate-500">{stat.label}</p><p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">{stat.value}</p><p className="mt-1 text-xs text-slate-500">{stat.note}</p></div><span className="rounded-lg bg-slate-100 p-2.5 text-teal-700"><Icon /></span></div></Card>; })}</div>
+    <section><div className="mb-4"><h2 className="text-base font-semibold text-slate-950">Claims activity</h2><p className="mt-1 text-sm text-slate-500">Your synthetic claim history and current status</p></div><div className="flex flex-col gap-4">{claims.map((claim) => <Card key={claim.id} className="p-5 sm:p-6"><div className="flex flex-col gap-5"><div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start"><div className="flex items-start gap-3"><span className="rounded-lg bg-teal-50 p-2.5 text-teal-700"><FiFileText /></span><div><p className="text-xs font-semibold tracking-wide text-slate-500">{claim.id}</p><h3 className="mt-1 text-base font-semibold text-slate-950">{claim.type}</h3><p className="mt-1 text-sm text-slate-500">{claim.provider}</p></div></div><StatusBadge status={claim.status} /></div><div className="grid gap-4 border-y border-slate-100 py-4 sm:grid-cols-2 lg:grid-cols-5"><div><p className="text-xs text-slate-500">Date submitted</p><p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-slate-900"><FiCalendar className="text-teal-700" />{claim.submittedDate}</p></div><div><p className="text-xs text-slate-500">Amount claimed</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.amountClaimed}</p></div><div><p className="text-xs text-slate-500">Amount approved</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.amountApproved ?? "—"}</p></div><div><p className="text-xs text-slate-500">Last updated</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.updated}</p></div><div><p className="text-xs text-slate-500">Policy used</p><p className="mt-1 truncate text-sm font-semibold text-slate-900">{claim.policy.split(" · ")[0]}</p></div></div><div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><p className="max-w-2xl text-sm leading-6 text-slate-500">{claim.explanation}</p><Link href={`/patient/claims/${claim.id}`} className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-teal-700 hover:text-teal-800">View details <FiChevronRight /></Link></div></div></Card>)}</div></section>
+  </div>;
+}
+
+void StatusBadge;
+void claims;
+void statusClasses;
+void statusDotClasses;
