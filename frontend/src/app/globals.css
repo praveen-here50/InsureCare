@@ -1,3 +1,13 @@
+@config "../../tailwind.config.ts";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root { color-scheme: light; }
+  body { @apply bg-slate-50 text-slate-900 antialiased; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}
