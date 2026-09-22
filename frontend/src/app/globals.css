@@ -5,7 +5,9 @@
 
 @layer base {
   :root { color-scheme: light; }
-  body { @apply bg-slate-50 text-slate-900 antialiased; }
+  * { @apply border-slate-200; }
+  body { @apply bg-[#f4f8f8] text-slate-900 antialiased; }
+  ::selection { @apply bg-teal-100 text-teal-950; }
 }
 
 @layer utilities {
