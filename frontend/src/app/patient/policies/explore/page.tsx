@@ -19,7 +19,6 @@ export default function ExplorePoliciesPage() {
           <Link href="/patient" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-teal-700 transition hover:text-teal-900"><FiArrowLeft /> Back to dashboard</Link>
           <p className="text-sm font-medium text-teal-700">InsureCare directory</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Search policies and schemes</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Explore insurance plans and government healthcare programmes available across providers. These are separate from the policies you already hold.</p>
         </div>
         <div className="hidden rounded-2xl border border-teal-100 bg-teal-50 p-4 text-teal-900 sm:block"><FiSearch className="mb-2 text-xl text-teal-700" /><p className="text-xs font-semibold">Browse by need</p><p className="mt-1 text-xs text-teal-700">Compare cover, eligibility, and benefits</p></div>
       </div>
