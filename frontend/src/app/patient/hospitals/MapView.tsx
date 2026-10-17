@@ -53,7 +53,7 @@ export default function MapView() {
             <Popup>
               <strong>{hospital.name}</strong>
               <br />
-              {hospital.distance} · {hospital.network}
+              {hospital.distance} · {hospital.network} · {hospital.availableBeds} beds available
             </Popup>
           </Marker>
         ))}
