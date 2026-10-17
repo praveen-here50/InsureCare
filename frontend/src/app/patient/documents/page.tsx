@@ -114,7 +114,7 @@ export default function DocumentsPage() {
       <DocumentSummary documents={documents} />
 
       {/* Document Categories */}
-      <DocumentCategories selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+      <DocumentCategories documents={documents} selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
 
       {/* Upload Section */}
       <UploadSection open={uploadOpen} onOpenChange={setUploadOpen} />
