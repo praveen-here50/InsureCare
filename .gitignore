@@ -1,0 +1,159 @@
+# ============================================================================
+# InsureCare - root .gitignore (polyglot monorepo)
+#
+# Conventions used below:
+#   * Patterns without a leading slash (e.g. "node_modules/") match at ANY
+#     directory depth, so each rule covers every module without repeating
+#     per-directory prefixes.
+#   * Rules are evaluated top to bottom; a later "!pattern" re-includes what
+#     an earlier rule ignored, so keep exceptions below their ignore rules.
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# 1. Environment & secrets
+#    Local env files must never reach git: Next.js loads .env.local /
+#    .env.development.local, Docker Compose loads .env. .env.example stays
+#    committed as the checked-in template of required variables.
+# ----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# Private keys / certificates belong in a secret manager, not in git
+*.pem
+
+# ----------------------------------------------------------------------------
+# 2. Node.js / Next.js frontend
+# ----------------------------------------------------------------------------
+# Dependencies - huge and fully restorable via `npm ci` from the committed
+# lockfile, so they are never committed.
+node_modules/
+.pnp
+.pnp.*
+
+# Yarn Berry local state (cache, install-state); shared releases, plugins
+# and patches remain committed.
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js build output and build cache
+.next/
+out/
+
+# Test coverage reports
+coverage/
+
+# Incremental TypeScript build info; Next.js regenerates next-env.d.ts
+*.tsbuildinfo
+next-env.d.ts
+
+# Linter cache
+.eslintcache
+
+# ----------------------------------------------------------------------------
+# 3. Java / Spring Boot backend
+# ----------------------------------------------------------------------------
+# Maven "target/" and Gradle "build/" hold all compiled output - rebuilt via
+# `mvn verify` / `gradlew build` from committed sources. "build/" is
+# unanchored, so it also covers any frontend lib that emits to build/.
+target/
+build/
+.gradle/
+
+# Safety net for compiled classes and deployable archives that end up
+# outside the build directories. Note: *.jar is deliberately NOT ignored so
+# Gradle/Maven wrapper jars (gradle/wrapper/gradle-wrapper.jar,
+# .mvn/wrapper/maven-wrapper.jar) stay committed and fresh clones can build.
+*.class
+*.war
+
+# JVM crash dumps (hs_err_pid*.log, replay_pid*.log)
+hs_err_pid*
+replay_pid*
+
+# ----------------------------------------------------------------------------
+# 4. Python / AI components (future)
+# ----------------------------------------------------------------------------
+# Bytecode and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+# uv cache when pointed inside the project (e.g. UV_CACHE_DIR in CI/docker)
+.uv-cache/
+
+# Virtual environments - `uv sync` / `pip install` recreate them from the
+# committed lockfile / requirements.
+.venv/
+venv/
+
+# Packaging build output
+dist/
+*.egg-info/
+
+# Jupyter notebook checkpoints (fine-tuning / analysis notebooks)
+.ipynb_checkpoints/
+
+# ----------------------------------------------------------------------------
+# 5. IDEs - IntelliJ IDEA / VS Code
+# ----------------------------------------------------------------------------
+# IntelliJ project state: machine-local paths, run configs, indexes
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code local state. ".vscode/*" (module pattern) is used instead of
+# ".vscode/" so shared team files CAN be re-included later if wanted:
+#   !.vscode/settings.json
+#   !.vscode/extensions.json
+.vscode/*
+
+# ----------------------------------------------------------------------------
+# 6. Docker
+# ----------------------------------------------------------------------------
+# docker compose auto-merges docker-compose.override.yml with the committed
+# docker-compose.yml; it is the documented place for local-only settings and
+# must stay out of git.
+docker-compose.override.yml
+
+# ----------------------------------------------------------------------------
+# 7. Logs
+# ----------------------------------------------------------------------------
+logs/
+*.log
+
+# Package-manager debug logs and their rotated copies
+# (npm-debug.log, yarn-error.log, pnpm-debug.log)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ----------------------------------------------------------------------------
+# 8. Temporary files & caches
+# ----------------------------------------------------------------------------
+*.tmp
+*.bak
+*~
+*.swp
+*.swo
+# Generic cache dir some tools create inside the repo (e.g. mapped model caches)
+.cache/
+
+# ----------------------------------------------------------------------------
+# 9. OS junk
+# ----------------------------------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+# macOS / Linux - included because contributors on other OSes are the usual
+# source of these files in a shared repo; remove these lines if Windows-only.
+.DS_Store
