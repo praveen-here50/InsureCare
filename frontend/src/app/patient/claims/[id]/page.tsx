@@ -1,22 +1,107 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Card from "@/components/Card";
-import { claims, getClaim, statusClasses, statusDotClasses } from "../data";
+import { FiAlertCircle, FiArrowLeft, FiCheck, FiCheckCircle, FiFileText, FiMessageCircle, FiShield, FiUploadCloud } from "react-icons/fi";
+import { cn } from "@/lib/cn";
+import { buttonClass, Field, Pill, StageTracker, Surface } from "@/components/portal/ui";
+import { getPortal } from "../../portal";
+import { claimStages, getClaim, needsAction, statusLabel, statusTone } from "../data";
 
-function StatusBadge({ status }: { status: (typeof claims)[number]["status"] }) { return <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${statusClasses[status]}`}><span className={`size-1.5 rounded-full ${statusDotClasses[status]}`} />{status}</span>; }
 
 export default async function ClaimDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const claim = claims.find((item) => item.id.toLowerCase() === id.toLowerCase());
+  const { claims } = await getPortal();
+  const claim = getClaim(claims, id);
   if (!claim) notFound();
-  return <div className="mx-auto flex max-w-6xl flex-col gap-6">
-    <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start"><div><Link href="/patient/claims" className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-950"><span aria-hidden="true">←</span> Back to claims</Link><div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center"><h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Claim {claim.id}</h1><StatusBadge status={claim.status} /></div><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">{claim.explanation}</p></div></div>
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]"><div className="flex flex-col gap-6"><Card className="p-5 sm:p-6"><div className="mb-5"><h2 className="text-base font-semibold text-slate-950">Claim overview</h2><p className="mt-1 text-sm text-slate-500">Key details for this claim</p></div><div className="grid gap-x-6 gap-y-5 sm:grid-cols-2"><div><p className="text-xs text-slate-500">Claim type</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.type}</p></div><div><p className="text-xs text-slate-500">Hospital / provider</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.provider}</p></div><div><p className="text-xs text-slate-500">Policy used</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.policy}</p></div><div><p className="text-xs text-slate-500">Date of treatment</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.treatmentDate}</p></div><div><p className="text-xs text-slate-500">Date submitted</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.submittedDate}</p></div><div><p className="text-xs text-slate-500">Last updated</p><p className="mt-1 text-sm font-semibold text-slate-900">{claim.updated}</p></div><div><p className="text-xs text-slate-500">Amount claimed</p><p className="mt-1 text-lg font-semibold text-slate-950">{claim.amountClaimed}</p></div><div><p className="text-xs text-slate-500">Approved / settled amount</p><p className="mt-1 text-lg font-semibold text-teal-700">{claim.amountApproved ?? "Pending"}</p></div></div></Card>
-    <Card className="p-5 sm:p-6"><div className="mb-6"><h2 className="text-base font-semibold text-slate-950">Claim timeline</h2><p className="mt-1 text-sm text-slate-500">The current stage is highlighted below.</p></div><ol className="flex flex-col">{claim.timeline.map((item, index) => <li key={item.label} className="relative flex gap-4 pb-7 last:pb-0"><div className="flex flex-col items-center"><span className={`relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full border-2 ${item.current ? "border-teal-600 bg-teal-600 text-white" : item.completed ? "border-teal-200 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-300"}`}>{item.completed ? <span aria-hidden="true">✓</span> : <span aria-hidden="true">•</span>}</span>{index < claim.timeline.length - 1 && <span className={`mt-1 w-px flex-1 ${item.completed ? "bg-teal-200" : "bg-slate-200"}`} />}</div><div className="min-w-0 pt-1"><div className="flex flex-wrap items-center gap-2"><h3 className={`text-sm font-semibold ${item.current ? "text-teal-800" : "text-slate-900"}`}>{item.label}</h3>{item.current && <span className="text-[11px] font-medium text-brand-700">Current stage</span>}</div><p className="mt-1 text-xs font-medium text-slate-500">{item.date}</p><p className="mt-1 text-sm leading-6 text-slate-500">{item.note}</p></div></li>)}</ol></Card></div>
-    <aside className="flex flex-col gap-6"><Card className="p-5"><div className="mb-4"><h2 className="text-base font-semibold text-slate-950">Required documents</h2><p className="mt-1 text-sm leading-5 text-slate-500">Upload the documents your insurer has requested.</p></div><div className="flex flex-col divide-y divide-slate-100">{claim.documents.map((document) => <div key={document.name} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"><div className="flex min-w-0 items-center gap-2"><span aria-hidden="true" className="shrink-0 text-teal-700">▣</span><span className="truncate text-sm font-medium text-slate-800">{document.name}</span></div><span className={`shrink-0 text-xs font-semibold ${document.status === "Required" ? "text-orange-700" : "text-emerald-700"}`}>{document.status}</span></div>)}</div>{claim.documents.some((document) => document.status === "Required") && <button type="button" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800"><span aria-hidden="true">↑</span> Upload required document</button>}</Card><Card className="p-5"><h2 className="text-base font-semibold text-slate-950">Claim actions</h2><div className="mt-4 flex flex-col gap-2"><Link href="/patient/documents" className="inline-flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 hover:border-teal-200 hover:text-teal-700">View documents <span aria-hidden="true">↗</span></Link><Link href="/patient/policies" className="inline-flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 hover:border-teal-200 hover:text-teal-700">View policy <span aria-hidden="true">↗</span></Link><button type="button" className="inline-flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 hover:border-teal-200 hover:text-teal-700">Download claim summary <span aria-hidden="true">↓</span></button><Link href="/patient/assistant" className="inline-flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 hover:border-teal-200 hover:text-teal-700">Contact insurer <span aria-hidden="true">›</span></Link></div></Card></aside></div>
-  </div>;
-}
+  const tone = statusTone[claim.status];
+  const needsDocs = claim.documents.some((d) => d.status === "Required");
 
-void Card;
-void StatusBadge;
-void getClaim;
+  return (
+    <div className="flex flex-col gap-6">
+      <Link href="/patient/claims" className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-care-700"><FiArrowLeft />All claims</Link>
+
+      <Surface className="overflow-hidden">
+        <div className="flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2"><span className="font-mono text-sm font-semibold text-slate-400">{claim.id}</span><Pill tone={tone}>{statusLabel[claim.status]}</Pill></div>
+            <h1 className="mt-3 text-[1.75rem] font-extrabold leading-tight tracking-[-0.03em] text-ink sm:text-4xl">{claim.type}</h1>
+            <p className="mt-2 max-w-2xl text-[15px] leading-7 text-slate-500">{claim.explanation}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 lg:w-[360px]">
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-medium text-slate-400">Claimed</p><p className="mt-1 text-2xl font-extrabold tracking-tight text-ink">{claim.amountClaimed}</p></div>
+            <div className={cn("rounded-2xl p-4", claim.amountApproved ? "bg-care-50 text-care-700" : "bg-slate-50 text-slate-500")}><p className="text-xs font-medium opacity-70">Approved</p><p className="mt-1 text-2xl font-extrabold tracking-tight">{claim.amountApproved ?? "Pending"}</p></div>
+          </div>
+        </div>
+        <div className="border-t border-slate-100 px-6 py-6 sm:px-8"><StageTracker stages={claimStages(claim)} attention={needsAction(claim)} showLabels /></div>
+      </Surface>
+
+      {needsDocs && (
+        <div className="flex flex-col gap-4 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 sm:flex-row sm:items-center">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700"><FiAlertCircle className="size-5" /></span>
+          <div className="flex-1"><p className="font-bold text-ink">Your insurer needs a document to continue</p><p className="text-sm text-slate-600">Upload the {claim.documents.filter((d) => d.status === "Required").map((d) => d.name.toLowerCase()).join(", ")} to keep this claim moving.</p></div>
+          <Link href="/patient/documents" className={buttonClass("primary")}><FiUploadCloud />Upload now</Link>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="flex flex-col gap-6">
+          <Surface className="p-6 sm:p-7">
+            <h2 className="text-lg font-bold text-ink">Claim timeline</h2>
+            <ol className="mt-6">
+              {claim.timeline.map((item, index) => (
+                <li key={item.label} className="relative flex gap-4 pb-7 last:pb-0">
+                  <div className="flex flex-col items-center">
+                    <span className={cn("relative z-10 mt-1 flex size-4 shrink-0 items-center justify-center rounded-full", item.current && !(item.completed && index === claim.timeline.length - 1) ? cn("border-2 bg-white", needsAction(claim) ? "border-amber-500" : "border-care-600") : item.completed ? "bg-care-600 text-white" : "border-2 border-slate-300 bg-white")}>
+                      {item.current ? <span className={cn("size-1.5 rounded-full", needsAction(claim) ? "bg-amber-500" : "bg-care-600")} /> : item.completed ? <FiCheck className="size-2.5" strokeWidth={4} /> : null}
+                    </span>
+                    {index < claim.timeline.length - 1 && <span className={cn("mt-1 w-0.5 flex-1 rounded-full", claim.timeline[index + 1]?.completed || claim.timeline[index + 1]?.current ? "bg-care-600" : "bg-slate-200")} />}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className={cn("text-sm font-bold", item.completed || item.current ? "text-ink" : "text-slate-400")}>{item.label}</h3>
+                      {item.current && <span className="text-xs font-medium text-slate-400">· Current</span>}
+                    </div>
+                    <p className="mt-0.5 text-xs font-semibold text-slate-400">{item.date}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-500">{item.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </Surface>
+
+          <Surface className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 sm:p-7">
+            <Field label="Hospital / provider">{claim.provider}</Field>
+            <Field label="Policy used">{claim.policy}</Field>
+            <Field label="Date of treatment">{claim.treatmentDate}</Field>
+            <Field label="Date submitted">{claim.submittedDate}</Field>
+            <Field label="Last updated">{claim.updated}</Field>
+            <Field label="Claim type">{claim.type}</Field>
+          </Surface>
+        </div>
+
+        <aside className="flex flex-col gap-6">
+          <Surface className="p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-ink">Documents</h2>
+            <ul className="mt-4 flex flex-col gap-2">
+              {claim.documents.map((d) => (
+                <li key={d.name} className={cn("flex items-center gap-3 rounded-xl p-3", d.status === "Required" ? "bg-amber-50" : "bg-slate-50/80")}>
+                  {d.status === "Required" ? <FiAlertCircle className="shrink-0 text-amber-600" /> : <FiCheckCircle className="shrink-0 text-emerald-600" />}
+                  <span className="flex-1 truncate text-sm font-semibold text-slate-800">{d.name}</span>
+                  <Pill tone={d.status === "Required" ? "amber" : "green"}>{d.status}</Pill>
+                </li>
+              ))}
+            </ul>
+          </Surface>
+
+          <Surface className="p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-ink">Need help?</h2>
+            <div className="mt-4 flex flex-col gap-2">
+              <Link href="/patient/assistant" className={buttonClass("secondary", "justify-start")}><FiMessageCircle className="text-care-600" />Ask about this claim</Link>
+              <Link href="/patient/policies" className={buttonClass("secondary", "justify-start")}><FiShield className="text-care-600" />View my policy</Link>
+              <Link href="/patient/documents" className={buttonClass("secondary", "justify-start")}><FiFileText className="text-care-600" />My documents</Link>
+            </div>
+          </Surface>
+        </aside>
+      </div>
+    </div>
+  );
+}

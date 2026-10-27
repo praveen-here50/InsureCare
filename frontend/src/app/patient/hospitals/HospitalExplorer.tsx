@@ -1,47 +1,126 @@
 "use client";
 
-import Link from 'next/link';
-import { useMemo, useState } from 'react';
-import { FiAlertCircle, FiArrowRight, FiCheckCircle, FiFilter, FiMapPin, FiSearch, FiShield, FiX } from 'react-icons/fi';
-import Card from '@/components/Card';
-import { DEMO_LOCATION, HOSPITALS, type Hospital } from './data';
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { FiAlertCircle, FiArrowRight, FiCheckCircle, FiMap, FiMapPin, FiNavigation, FiSearch, FiX } from "react-icons/fi";
+import Photo from "@/components/Photo";
+import { cn } from "@/lib/cn";
+import { buttonClass, PageIntro, Pill, Surface } from "@/components/portal/ui";
+import { DEMO_LOCATION, mapsUrl, type Hospital } from "./data";
 
-export default function HospitalExplorer() {
-  const [query, setQuery] = useState('');
+const SPECIALTIES = ["All specialties", "General medicine", "Cardiology", "Emergency care", "Maternity", "Primary care"];
+const DISTANCES = ["Any distance", "Within 5 km", "Within 10 km"];
+
+const selectClass = "h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 outline-none transition focus:border-care-400 focus:ring-4 focus:ring-care-100";
+
+export default function HospitalExplorer({ hospitals }: { hospitals: Hospital[] }) {
+  const [query, setQuery] = useState("");
   const [networkOnly, setNetworkOnly] = useState(false);
   const [emergencyOnly, setEmergencyOnly] = useState(false);
   const [schemeOnly, setSchemeOnly] = useState(false);
-  const [specialty, setSpecialty] = useState('All specialties');
-  const [distance, setDistance] = useState('Any distance');
-  const [coverage, setCoverage] = useState<string | null>(null);
+  const [specialty, setSpecialty] = useState(SPECIALTIES[0]!);
+  const [distance, setDistance] = useState(DISTANCES[0]!);
+  const [coverage, setCoverage] = useState<Hospital | null>(null);
 
-  const results = useMemo(() => HOSPITALS.filter((hospital) => {
-    const text = `${hospital.name} ${hospital.locality} ${hospital.specialties.join(' ')}`.toLowerCase();
-    const matchesQuery = !query || text.includes(query.toLowerCase());
-    const matchesSpecialty = specialty === 'All specialties' || hospital.specialties.includes(specialty);
-    const matchesNetwork = !networkOnly || hospital.network === 'Network';
+  const results = useMemo(() => hospitals.filter((hospital) => {
+    const text = `${hospital.name} ${hospital.locality} ${hospital.specialties.join(" ")}`.toLowerCase();
+    const matchesQuery = !query || text.includes(query.trim().toLowerCase());
+    const matchesSpecialty = specialty === SPECIALTIES[0] || hospital.specialties.includes(specialty);
+    const matchesNetwork = !networkOnly || hospital.network === "Network";
     const matchesEmergency = !emergencyOnly || hospital.emergency;
     const matchesScheme = !schemeOnly || hospital.schemes.length > 0;
     const km = Number.parseFloat(hospital.distance);
-    const matchesDistance = distance === 'Any distance' || (distance === 'Within 5 km' ? km <= 5 : km <= 10);
+    const matchesDistance = distance === DISTANCES[0] || (distance === "Within 5 km" ? km <= 5 : km <= 10);
     return matchesQuery && matchesSpecialty && matchesNetwork && matchesEmergency && matchesScheme && matchesDistance;
-  }), [query, specialty, networkOnly, emergencyOnly, schemeOnly, distance]);
+  }), [hospitals, query, specialty, networkOnly, emergencyOnly, schemeOnly, distance]);
 
-  return <div className="mx-auto max-w-7xl">
-    <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-      <div><h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Find a Hospital</h1></div>
-      
+  const activeFilters = [networkOnly, emergencyOnly, schemeOnly, specialty !== SPECIALTIES[0], distance !== DISTANCES[0]].filter(Boolean).length;
+  const reset = () => { setQuery(""); setNetworkOnly(false); setEmergencyOnly(false); setSchemeOnly(false); setSpecialty(SPECIALTIES[0]!); setDistance(DISTANCES[0]!); };
+
+  return (
+    <div className="flex flex-col gap-8">
+      <PageIntro eyebrow="Hospital network" title="Find care close to home" description="Search hospitals by speciality and distance. Network hospitals offer cashless treatment, so you pay less at the counter." />
+
+      <Surface className="p-4 sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row">
+          <label className="relative min-w-0 flex-1">
+            <span className="sr-only">Search hospital or speciality</span>
+            <FiSearch aria-hidden="true" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search hospital, speciality or area" className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50/80 pl-11 pr-3 text-[15px] outline-none transition placeholder:text-slate-400 focus:border-care-400 focus:bg-white focus:ring-4 focus:ring-care-100" />
+          </label>
+          <div className="flex h-12 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-700 lg:min-w-64"><FiNavigation aria-hidden="true" className="text-care-600" /><span className="truncate">{DEMO_LOCATION}</span></div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+          <select aria-label="Speciality" value={specialty} onChange={(e) => setSpecialty(e.target.value)} className={selectClass}>{SPECIALTIES.map((s) => <option key={s}>{s}</option>)}</select>
+          <select aria-label="Distance" value={distance} onChange={(e) => setDistance(e.target.value)} className={selectClass}>{DISTANCES.map((d) => <option key={d}>{d}</option>)}</select>
+          <Chip label="Cashless only" active={networkOnly} onClick={() => setNetworkOnly(!networkOnly)} />
+          <Chip label="24/7 emergency" active={emergencyOnly} onClick={() => setEmergencyOnly(!emergencyOnly)} />
+          <Chip label="Scheme accepted" active={schemeOnly} onClick={() => setSchemeOnly(!schemeOnly)} />
+          {activeFilters > 0 && <button type="button" onClick={reset} className="ml-auto text-sm font-semibold text-care-600 hover:text-care-800">Clear all</button>}
+        </div>
+      </Surface>
+
+      <section>
+          <div className="mb-4 flex items-center justify-between"><p className="text-sm font-bold text-ink">{results.length} {results.length === 1 ? "hospital" : "hospitals"} found</p><p className="text-xs font-medium text-slate-400">Sorted by distance</p></div>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {results.map((h) => <HospitalCard key={h.id} hospital={h} onCoverage={() => setCoverage(h)} />)}
+          </div>
+          {results.length === 0 && (
+            <Surface className="p-10 text-center">
+              <p className="font-bold text-ink">No hospitals match these filters</p>
+              <p className="mt-1 text-sm text-slate-500">Try clearing a filter or searching for another speciality.</p>
+              <button type="button" onClick={reset} className={buttonClass("secondary", "mt-5")}>Clear filters</button>
+            </Surface>
+          )}
+        </section>
+
+      {coverage && (
+        <div role="status" className="fixed inset-x-4 bottom-24 z-40 mx-auto max-w-md animate-fade-up rounded-2xl border border-slate-200 bg-white p-5 shadow-lift sm:left-auto sm:right-8 lg:bottom-8">
+          <div className="flex items-start gap-3">
+            <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", coverage.network === "Network" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>{coverage.network === "Network" ? <FiCheckCircle /> : <FiAlertCircle />}</span>
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-ink">{coverage.name}</p>
+              <p className="mt-1 text-sm leading-6 text-slate-600">{coverage.network === "Network" ? "In your Family Health Shield Plus network. Cashless treatment may be available." : "Not in your network. You may be able to claim a reimbursement after treatment."}</p>
+              <p className="mt-2 text-xs text-slate-400">Demo check only. Always confirm with the hospital and your insurer before admission.</p>
+            </div>
+            <button type="button" aria-label="Close coverage result" onClick={() => setCoverage(null)} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-ink"><FiX /></button>
+          </div>
+        </div>
+      )}
     </div>
-
-    <Card className="mb-6 p-4 sm:p-5"><div className="flex flex-col gap-3 lg:flex-row lg:items-center"><label className="relative min-w-0 flex-1"><span className="sr-only">Search hospital or specialty</span><FiSearch aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search hospital or specialty" className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100" /></label><div className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 px-3 text-sm text-slate-700 lg:min-w-64"><FiMapPin aria-hidden="true" className="text-slate-500" /><span className="truncate">{DEMO_LOCATION}</span></div><button type="button" onClick={() => setQuery(query.trim())} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-teal-700 px-5 text-sm font-semibold text-white transition hover:bg-teal-800"><FiSearch aria-hidden="true" />Search</button></div><div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4"><FiFilter aria-hidden="true" className="text-slate-400" /><span className="mr-1 text-xs font-semibold text-slate-700">Filters</span><select aria-label="Specialty" value={specialty} onChange={(event) => setSpecialty(event.target.value)} className="rounded-md border border-slate-200 bg-white px-2.5 py-2 text-xs text-slate-700"><option>All specialties</option><option>General medicine</option><option>Cardiology</option><option>Emergency care</option><option>Maternity</option><option>Primary care</option></select><select aria-label="Distance" value={distance} onChange={(event) => setDistance(event.target.value)} className="rounded-md border border-slate-200 bg-white px-2.5 py-2 text-xs text-slate-700"><option>Any distance</option><option>Within 5 km</option><option>Within 10 km</option></select><FilterButton label="Network only" active={networkOnly} onClick={() => setNetworkOnly(!networkOnly)} /><FilterButton label="Emergency" active={emergencyOnly} onClick={() => setEmergencyOnly(!emergencyOnly)} /><FilterButton label="Scheme available" active={schemeOnly} onClick={() => setSchemeOnly(!schemeOnly)} /></div></Card>
-
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"><section><div className="mb-3 flex items-center justify-between"><p className="text-sm font-semibold text-slate-800">{results.length} hospitals found</p><p className="text-xs text-slate-400">Sorted by distance</p></div><div className="flex flex-col gap-3">{results.map((hospital) => <HospitalResult key={hospital.id} hospital={hospital} onCoverage={() => setCoverage(hospital.id)} />)}{results.length === 0 && <Card className="p-8 text-center"><p className="font-semibold text-slate-800">No hospitals match these filters</p><p className="mt-1 text-sm text-slate-500">Try clearing a filter or searching for another specialty.</p></Card>}</div></section><DemoMap /></div>
-    {coverage && <div role="status" className="fixed inset-x-4 bottom-4 z-20 mx-auto max-w-md rounded-xl border border-teal-200 bg-white p-4 shadow-xl sm:right-6 sm:left-auto"><div className="flex items-start gap-3"><div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600"><FiCheckCircle aria-hidden="true" /></div><div className="min-w-0 flex-1"><p className="text-sm font-semibold text-slate-900">Check coverage</p><p className="mt-1 text-xs leading-5 text-slate-500">Network available · Scheme eligible · Coverage requires verification. No live insurance verification was performed.</p></div><button type="button" aria-label="Close coverage result" onClick={() => setCoverage(null)} className="text-slate-400 hover:text-slate-700"><FiX aria-hidden="true" /></button></div></div>}
-  </div>;
+  );
 }
 
-function FilterButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) { return <button type="button" aria-pressed={active} onClick={onClick} className={`rounded-md border px-2.5 py-2 text-xs font-medium transition ${active ? 'border-teal-200 bg-teal-50 text-teal-800' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>{label}</button>; }
+function Chip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button type="button" aria-pressed={active} onClick={onClick} className={cn("inline-flex h-10 items-center gap-1.5 rounded-xl border px-3.5 text-sm font-semibold transition", active ? "border-care-600 bg-care-600 text-white" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-ink")}>
+      {active && <FiCheckCircle className="size-3.5" />}{label}
+    </button>
+  );
+}
 
-function HospitalResult({ hospital, onCoverage }: { hospital: Hospital; onCoverage: () => void }) { return <Card className="p-4 sm:p-5"><div className="flex flex-col gap-4"><div className="flex flex-col justify-between gap-3 sm:flex-row"><div><div className="flex flex-wrap items-center gap-2"><h2 className="text-base font-bold text-slate-900">{hospital.name}</h2></div><p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><FiMapPin aria-hidden="true" />{hospital.distance} · {hospital.locality}</p></div><span className={`inline-flex h-fit items-center gap-1 text-xs font-medium ${hospital.network === 'Network' ? 'text-emerald-700' : 'text-slate-500'}`}>{hospital.network === 'Network' ? <FiCheckCircle aria-hidden="true" /> : <FiAlertCircle aria-hidden="true" />}{hospital.network}</span></div><div className="grid gap-3 border-y border-slate-100 py-3 text-xs sm:grid-cols-3"><Info label="Cashless" value={hospital.cashless ? 'Available' : 'Not listed'} positive={hospital.cashless} /><Info label="Emergency" value={hospital.emergency ? 'Available 24/7' : 'Not available'} positive={hospital.emergency} /><Info label="Rating" value={hospital.rating} /></div><div className="flex flex-wrap gap-2">{hospital.specialties.map((item) => <span key={item} className="rounded-md bg-slate-50 px-2.5 py-1.5 text-xs text-slate-600">{item}</span>)}</div><div className="flex flex-col gap-2 pt-1 sm:flex-row sm:justify-end"><Link href={`/patient/hospitals/${hospital.id}`} className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">View details <FiArrowRight aria-hidden="true" /></Link><button type="button" onClick={onCoverage} className="rounded-lg bg-teal-700 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-800">Check coverage</button></div></div></Card>; }
-function Info({ label, value, positive }: { label: string; value: string; positive?: boolean }) { return <div><p className="text-slate-400">{label}</p><p className={`mt-1 font-semibold ${positive ? 'text-teal-700' : 'text-slate-700'}`}>{value}</p></div>; }
-function DemoMap() { return <Card className="h-fit overflow-hidden"><div className="border-b border-slate-100 p-4"><div className="flex items-center justify-between"><div><h2 className="text-sm font-bold text-slate-900">Nearby care map</h2><p className="mt-1 text-xs text-slate-500">Map view</p></div><FiMapPin className="text-slate-500" aria-hidden="true" /></div></div><div className="relative h-64 overflow-hidden bg-[#e8f0ed]"><div className="absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(32deg, transparent 47%, #c8d9d2 48%, #c8d9d2 50%, transparent 51%), linear-gradient(112deg, transparent 47%, #c8d9d2 48%, #c8d9d2 50%, transparent 51%)', backgroundSize: '92px 78px' }} /><div className="absolute left-[46%] top-[43%] flex size-12 items-center justify-center rounded-full border-4 border-white bg-teal-700 text-white shadow-lg"><FiMapPin aria-hidden="true" /></div><div className="absolute left-[24%] top-[25%] size-3 rounded-full bg-amber-500 ring-4 ring-white/80" /><div className="absolute right-[24%] top-[62%] size-3 rounded-full bg-teal-700 ring-4 ring-white/80" /><div className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2 py-1 text-[10px] font-medium text-slate-600">Approximate locations</div></div></Card>; }
+function HospitalCard({ hospital: h, onCoverage }: { hospital: Hospital; onCoverage: () => void }) {
+  const network = h.network === "Network";
+  return (
+    <Surface className="group flex flex-col overflow-hidden transition hover:shadow-lift">
+      <Link href={`/patient/hospitals/${h.id}`} className="relative block h-52 overflow-hidden">
+        <Photo src={h.image} alt={h.name} className="absolute inset-0 transition duration-700 group-hover:scale-105" />
+        <span className={cn("absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-bold shadow-sm", network ? "bg-white/95 text-care-800" : "bg-white/95 text-slate-600")}>{network ? "Cashless network" : "Non-network"}</span>
+        <span className="absolute right-3 top-3 rounded-full bg-ink/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">★ {h.rating.split(" ")[0]}</span>
+      </Link>
+      <div className="flex flex-1 flex-col p-5">
+        <Link href={`/patient/hospitals/${h.id}`} className="text-base font-bold text-ink hover:text-care-700">{h.name}</Link>
+        <p className="mt-1 flex items-center gap-1 text-xs text-slate-400"><FiMapPin aria-hidden="true" className="size-3" />{h.distance} · {h.locality}</p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {h.emergency && <Pill tone="rose" dot>24/7 emergency</Pill>}
+          {h.specialties.slice(0, 2).map((s) => <Pill key={s}>{s}</Pill>)}
+        </div>
+        <div className="mt-auto flex gap-2 pt-5">
+          <Link href={`/patient/hospitals/${h.id}`} className={buttonClass("secondary", "h-10 flex-1 px-3")}>Details <FiArrowRight /></Link>
+          <a href={mapsUrl(h)} target="_blank" rel="noopener noreferrer" aria-label={`Open ${h.name} in Google Maps`} title="Open in Google Maps" className={buttonClass("secondary", "h-10 w-10 shrink-0 px-0")}><FiMap /></a>
+          <button type="button" onClick={onCoverage} className={buttonClass("primary", "h-10 flex-1 px-3")}>Check coverage</button>
+        </div>
+      </div>
+    </Surface>
+  );
+}

@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import CommandPalette from "@/components/CommandPalette";
+import LiveUpdates from "@/components/LiveUpdates";
 import { ToastProvider } from "@/components/Toast";
 import { getPortal } from "@/lib/portals";
 import { cn } from "@/lib/cn";
@@ -30,6 +31,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <ToastProvider>
+      <LiveUpdates />
       <div className="flex min-h-screen bg-slate-50 text-slate-900">
         <div className="sticky top-0 hidden h-screen lg:block"><Sidebar collapsed={collapsed} /></div>
         <div aria-hidden="true" onClick={() => setDrawer(false)} className={cn("fixed inset-0 z-40 bg-slate-950/40 transition-opacity duration-300 lg:hidden", drawer ? "opacity-100" : "pointer-events-none opacity-0")} />

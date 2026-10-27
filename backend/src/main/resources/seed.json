@@ -1,0 +1,2762 @@
+{
+  "hospital": {
+    "id": "riverbend",
+    "name": "Riverbend Community Hospital",
+    "agent": "Kavya N., Claims verification agent"
+  },
+  "hospitals": [
+    {
+      "id": "riverbend",
+      "name": "Riverbend Community Hospital",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Multi-speciality",
+      "phone": "+91 90000 10001",
+      "avgTat": 3,
+      "insurerNetwork": true,
+      "listed": true,
+      "distance": "3.2 km",
+      "locality": "Nandyal Road, Kurnool",
+      "network": true,
+      "cashless": true,
+      "emergency": true,
+      "specialties": [
+        "General medicine",
+        "Cardiology",
+        "Orthopedics"
+      ],
+      "rating": "4.6 / 5",
+      "address": "12 Riverbend Avenue, Nandyal Road, Kurnool",
+      "hours": "Open 24 hours",
+      "description": "A 24-hour community hospital offering emergency care, diagnostics and general medicine.",
+      "services": [
+        "24-hour emergency desk",
+        "Diagnostics and imaging",
+        "Pharmacy counter",
+        "Ambulance coordination"
+      ],
+      "schemes": [
+        "Family Health Shield Plus",
+        "State Care Scheme"
+      ],
+      "image": "building"
+    },
+    {
+      "id": "sunrise-heart",
+      "name": "Sunrise Heart Institute",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Cardiac care",
+      "phone": "+91 90000 20002",
+      "avgTat": 5,
+      "insurerNetwork": true,
+      "listed": false
+    },
+    {
+      "id": "care-children",
+      "name": "Care Children’s Hospital",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Paediatrics & neonatal",
+      "phone": "+91 90000 30003",
+      "avgTat": 4,
+      "insurerNetwork": true,
+      "listed": false
+    },
+    {
+      "id": "apex-neuro",
+      "name": "Apex Neuro Centre",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Neurology & neurosurgery",
+      "phone": "+91 90000 40004",
+      "avgTat": 6,
+      "insurerNetwork": true,
+      "listed": false
+    },
+    {
+      "id": "kurnool-cancer",
+      "name": "Kurnool Cancer Centre",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Oncology",
+      "phone": "+91 90000 50005",
+      "avgTat": 5,
+      "insurerNetwork": true,
+      "listed": false
+    },
+    {
+      "id": "mandala-womens",
+      "name": "Mandala Women’s & Children’s Centre",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Maternity",
+      "phone": "+91 90000 10002",
+      "avgTat": null,
+      "insurerNetwork": false,
+      "listed": true,
+      "distance": "5.8 km",
+      "locality": "Gandhi Nagar, Kurnool",
+      "network": true,
+      "cashless": true,
+      "emergency": false,
+      "specialties": [
+        "Maternity",
+        "Pediatrics",
+        "Women’s health"
+      ],
+      "rating": "4.4 / 5",
+      "address": "44 Mandala Street, Gandhi Nagar, Kurnool",
+      "hours": "6:00 AM – 10:00 PM",
+      "description": "A specialist centre focused on maternity, women’s health and children’s care.",
+      "services": [
+        "Maternity consultation",
+        "Child wellness clinic",
+        "Ultrasound imaging",
+        "Vaccination clinic"
+      ],
+      "schemes": [
+        "Family Health Shield Plus",
+        "Rural Care Assist"
+      ],
+      "image": "lobby"
+    },
+    {
+      "id": "hillside-general",
+      "name": "Hillside General Hospital",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Emergency care",
+      "phone": "+91 90000 10003",
+      "avgTat": null,
+      "insurerNetwork": false,
+      "listed": true,
+      "distance": "9.4 km",
+      "locality": "B. Camp, Kurnool",
+      "network": false,
+      "cashless": false,
+      "emergency": true,
+      "specialties": [
+        "Emergency care",
+        "General surgery",
+        "Neurology"
+      ],
+      "rating": "4.2 / 5",
+      "address": "8 Hillside Service Road, B. Camp, Kurnool",
+      "hours": "Open 24 hours",
+      "description": "A non-network emergency and surgical hospital. Reimbursement depends on your policy terms.",
+      "services": [
+        "24-hour emergency desk",
+        "Surgical theatre",
+        "Neurology clinic",
+        "Pathology lab"
+      ],
+      "schemes": [
+        "State Care Scheme"
+      ],
+      "image": "ward"
+    },
+    {
+      "id": "sunfield-primary",
+      "name": "Sunfield Primary Care Centre",
+      "city": "Kurnool",
+      "state": "Andhra Pradesh",
+      "speciality": "Primary care",
+      "phone": "+91 90000 10004",
+      "avgTat": null,
+      "insurerNetwork": false,
+      "listed": true,
+      "distance": "12.6 km",
+      "locality": "Orvakal, Kurnool district",
+      "network": true,
+      "cashless": true,
+      "emergency": false,
+      "specialties": [
+        "Primary care",
+        "Diabetes care",
+        "Preventive health"
+      ],
+      "rating": "4.1 / 5",
+      "address": "3 Sunfield Main Road, Orvakal",
+      "hours": "8:00 AM – 8:00 PM",
+      "description": "A primary-care centre for routine consultations, diabetes screening and preventive health.",
+      "services": [
+        "Family medicine",
+        "Diabetes screening",
+        "Basic diagnostics",
+        "Teleconsult support"
+      ],
+      "schemes": [
+        "Rural Care Assist"
+      ],
+      "image": "checkup"
+    }
+  ],
+  "wards": [
+    {
+      "id": "icu",
+      "hospitalId": "riverbend",
+      "name": "Intensive care (ICU)",
+      "prefix": "ICU",
+      "note": "Ventilator and cardiac monitoring",
+      "beds": [
+        {
+          "label": "ICU-01",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-02",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-03",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-04",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-05",
+          "status": "available"
+        },
+        {
+          "label": "ICU-06",
+          "status": "available"
+        },
+        {
+          "label": "ICU-07",
+          "status": "reserved"
+        },
+        {
+          "label": "ICU-08",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-09",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-10",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-11",
+          "status": "occupied"
+        },
+        {
+          "label": "ICU-12",
+          "status": "occupied"
+        }
+      ]
+    },
+    {
+      "id": "emergency",
+      "hospitalId": "riverbend",
+      "name": "Emergency",
+      "prefix": "ER",
+      "note": "24×7 casualty",
+      "beds": [
+        {
+          "label": "ER-01",
+          "status": "occupied"
+        },
+        {
+          "label": "ER-02",
+          "status": "occupied"
+        },
+        {
+          "label": "ER-03",
+          "status": "occupied"
+        },
+        {
+          "label": "ER-04",
+          "status": "reserved"
+        },
+        {
+          "label": "ER-05",
+          "status": "available"
+        },
+        {
+          "label": "ER-06",
+          "status": "available"
+        },
+        {
+          "label": "ER-07",
+          "status": "available"
+        },
+        {
+          "label": "ER-08",
+          "status": "occupied"
+        },
+        {
+          "label": "ER-09",
+          "status": "occupied"
+        },
+        {
+          "label": "ER-10",
+          "status": "occupied"
+        }
+      ]
+    },
+    {
+      "id": "general",
+      "hospitalId": "riverbend",
+      "name": "General ward",
+      "prefix": "GW",
+      "note": "Medical and surgical",
+      "beds": [
+        {
+          "label": "GW-01",
+          "status": "available"
+        },
+        {
+          "label": "GW-02",
+          "status": "available"
+        },
+        {
+          "label": "GW-03",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-04",
+          "status": "available"
+        },
+        {
+          "label": "GW-05",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-06",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-07",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-08",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-09",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-10",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-11",
+          "status": "available"
+        },
+        {
+          "label": "GW-12",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-13",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-14",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-15",
+          "status": "available"
+        },
+        {
+          "label": "GW-16",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-17",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-18",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-19",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-20",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-21",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-22",
+          "status": "available"
+        },
+        {
+          "label": "GW-23",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-24",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-25",
+          "status": "reserved"
+        },
+        {
+          "label": "GW-26",
+          "status": "available"
+        },
+        {
+          "label": "GW-27",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-28",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-29",
+          "status": "available"
+        },
+        {
+          "label": "GW-30",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-31",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-32",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-33",
+          "status": "available"
+        },
+        {
+          "label": "GW-34",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-35",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-36",
+          "status": "reserved"
+        },
+        {
+          "label": "GW-37",
+          "status": "available"
+        },
+        {
+          "label": "GW-38",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-39",
+          "status": "occupied"
+        },
+        {
+          "label": "GW-40",
+          "status": "available"
+        }
+      ]
+    },
+    {
+      "id": "private",
+      "hospitalId": "riverbend",
+      "name": "Private rooms",
+      "prefix": "PR",
+      "note": "Single occupancy",
+      "beds": [
+        {
+          "label": "PR-01",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-02",
+          "status": "available"
+        },
+        {
+          "label": "PR-03",
+          "status": "reserved"
+        },
+        {
+          "label": "PR-04",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-05",
+          "status": "available"
+        },
+        {
+          "label": "PR-06",
+          "status": "reserved"
+        },
+        {
+          "label": "PR-07",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-08",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-09",
+          "status": "available"
+        },
+        {
+          "label": "PR-10",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-11",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-12",
+          "status": "available"
+        },
+        {
+          "label": "PR-13",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-14",
+          "status": "occupied"
+        },
+        {
+          "label": "PR-15",
+          "status": "available"
+        },
+        {
+          "label": "PR-16",
+          "status": "occupied"
+        }
+      ]
+    },
+    {
+      "id": "maternity",
+      "hospitalId": "riverbend",
+      "name": "Maternity",
+      "prefix": "MT",
+      "note": "Labour and postnatal",
+      "beds": [
+        {
+          "label": "MT-01",
+          "status": "occupied"
+        },
+        {
+          "label": "MT-02",
+          "status": "occupied"
+        },
+        {
+          "label": "MT-03",
+          "status": "available"
+        },
+        {
+          "label": "MT-04",
+          "status": "reserved"
+        },
+        {
+          "label": "MT-05",
+          "status": "occupied"
+        },
+        {
+          "label": "MT-06",
+          "status": "occupied"
+        },
+        {
+          "label": "MT-07",
+          "status": "available"
+        },
+        {
+          "label": "MT-08",
+          "status": "available"
+        },
+        {
+          "label": "MT-09",
+          "status": "occupied"
+        },
+        {
+          "label": "MT-10",
+          "status": "occupied"
+        },
+        {
+          "label": "MT-11",
+          "status": "occupied"
+        },
+        {
+          "label": "MT-12",
+          "status": "available"
+        },
+        {
+          "label": "MT-13",
+          "status": "available"
+        },
+        {
+          "label": "MT-14",
+          "status": "occupied"
+        }
+      ]
+    },
+    {
+      "id": "paediatrics",
+      "hospitalId": "riverbend",
+      "name": "Paediatrics",
+      "prefix": "PD",
+      "note": "Children up to 14 years",
+      "beds": [
+        {
+          "label": "PD-01",
+          "status": "occupied"
+        },
+        {
+          "label": "PD-02",
+          "status": "occupied"
+        },
+        {
+          "label": "PD-03",
+          "status": "occupied"
+        },
+        {
+          "label": "PD-04",
+          "status": "occupied"
+        },
+        {
+          "label": "PD-05",
+          "status": "available"
+        },
+        {
+          "label": "PD-06",
+          "status": "available"
+        },
+        {
+          "label": "PD-07",
+          "status": "available"
+        },
+        {
+          "label": "PD-08",
+          "status": "available"
+        },
+        {
+          "label": "PD-09",
+          "status": "available"
+        },
+        {
+          "label": "PD-10",
+          "status": "available"
+        },
+        {
+          "label": "PD-11",
+          "status": "available"
+        },
+        {
+          "label": "PD-12",
+          "status": "occupied"
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "hospitalId": "riverbend",
+      "name": "Emergency & trauma care",
+      "available": true,
+      "note": "24×7 casualty, stabilisation and trauma surgery",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "General medicine",
+      "available": true,
+      "note": "Fever, infections, diabetes and chronic disease care",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "General surgery",
+      "available": true,
+      "note": "Laparoscopic and open surgeries",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Orthopaedics",
+      "available": true,
+      "note": "Fracture fixation, knee and hip replacement",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Cardiology (non-surgical)",
+      "available": true,
+      "note": "Angiography, angioplasty and cardiac ICU",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Maternity & gynaecology",
+      "available": true,
+      "note": "Normal and caesarean delivery",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Paediatrics",
+      "available": true,
+      "note": "Inpatient care for children up to 14 years",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Dialysis",
+      "available": true,
+      "note": "8 haemodialysis stations",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Ophthalmology",
+      "available": true,
+      "note": "Cataract surgery and retina laser",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Chemotherapy day care",
+      "available": true,
+      "note": "Outpatient chemotherapy infusion",
+      "referTo": null
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Cardiac surgery",
+      "available": false,
+      "note": "Bypass and valve surgery",
+      "referTo": "Sunrise Heart Institute, 18 km"
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Neurosurgery",
+      "available": false,
+      "note": "Brain and spine surgery",
+      "referTo": "Apex Neuro Centre, 22 km"
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Neonatal ICU (NICU)",
+      "available": false,
+      "note": "Critical care for newborns",
+      "referTo": "Care Children’s Hospital, 12 km"
+    },
+    {
+      "hospitalId": "riverbend",
+      "name": "Radiation therapy & organ transplant",
+      "available": false,
+      "note": "Radiotherapy and transplant programmes",
+      "referTo": "Kurnool Cancer Centre, 9 km"
+    }
+  ],
+  "members": [
+    {
+      "id": "ic-5310",
+      "memberId": "IC-5310",
+      "name": "Ramesh Kumar",
+      "age": 62,
+      "gender": "Male",
+      "phone": "+91 98480 11023",
+      "bloodGroup": "B+",
+      "allergies": [
+        "Sulfa drugs"
+      ],
+      "medications": [
+        "Aspirin 75 mg",
+        "Atorvastatin 40 mg",
+        "Metformin 500 mg"
+      ],
+      "history": [
+        {
+          "year": "2024",
+          "event": "Hospitalised for unstable angina"
+        },
+        {
+          "year": "2022",
+          "event": "Diagnosed with hypertension"
+        },
+        {
+          "year": "2019",
+          "event": "Diagnosed with type 2 diabetes"
+        }
+      ],
+      "declared": [],
+      "policy": {
+        "name": "Senior Care Gold",
+        "provider": "SecureLife Assurance",
+        "number": "IC-SC-••••-3391",
+        "coverage": 1000000,
+        "balance": 1000000,
+        "cashless": true,
+        "startedOn": null,
+        "validTill": "2027-06-30",
+        "waitingMonths": null
+      }
+    },
+    {
+      "id": "ic-2208",
+      "memberId": "IC-2208",
+      "name": "Lakshmi Devi",
+      "age": 29,
+      "gender": "Female",
+      "phone": "+91 99890 45512",
+      "bloodGroup": "O+",
+      "allergies": [],
+      "medications": [
+        "Folic acid",
+        "Iron supplement"
+      ],
+      "history": [
+        {
+          "year": "2026",
+          "event": "Uncomplicated pregnancy, regular antenatal visits"
+        },
+        {
+          "year": "2023",
+          "event": "First delivery, normal"
+        }
+      ],
+      "declared": [],
+      "policy": {
+        "name": "Maternity Plus",
+        "provider": "CarePlus Insurance",
+        "number": "IC-MP-••••-7720",
+        "coverage": 100000,
+        "balance": 100000,
+        "cashless": true,
+        "startedOn": "2025-04-01",
+        "validTill": "2027-03-31",
+        "waitingMonths": 9
+      }
+    },
+    {
+      "id": "ic-6104",
+      "memberId": "IC-6104",
+      "name": "Arjun Reddy",
+      "age": 8,
+      "gender": "Male",
+      "phone": "+91 98660 20871",
+      "bloodGroup": "A+",
+      "allergies": [
+        "Peanuts"
+      ],
+      "medications": [
+        "Paracetamol syrup",
+        "Nebulisation"
+      ],
+      "history": [
+        {
+          "year": "2025",
+          "event": "Seasonal asthma, managed with inhaler"
+        }
+      ],
+      "declared": [
+        "Seasonal asthma"
+      ],
+      "policy": {
+        "name": "Family Floater Basic",
+        "provider": "CarePlus Insurance",
+        "number": "IC-FF-••••-1845",
+        "coverage": 500000,
+        "balance": 480000,
+        "cashless": true,
+        "startedOn": "2024-02-11",
+        "validTill": "2027-02-10",
+        "waitingMonths": 12
+      }
+    },
+    {
+      "id": "ic-8873",
+      "memberId": "IC-8873",
+      "name": "Fatima Begum",
+      "age": 71,
+      "gender": "Female",
+      "phone": "+91 97010 33418",
+      "bloodGroup": "AB+",
+      "allergies": [
+        "Penicillin"
+      ],
+      "medications": [
+        "Calcium + vitamin D",
+        "Pantoprazole"
+      ],
+      "history": [
+        {
+          "year": "2025",
+          "event": "Chronic kidney disease, stage 3"
+        },
+        {
+          "year": "2021",
+          "event": "Osteoporosis diagnosed"
+        }
+      ],
+      "declared": [],
+      "policy": {
+        "name": "Senior Care Gold",
+        "provider": "SecureLife Assurance",
+        "number": "IC-SC-••••-5532",
+        "coverage": 1000000,
+        "balance": 920000,
+        "cashless": false,
+        "startedOn": null,
+        "validTill": "2027-06-30",
+        "waitingMonths": null
+      }
+    },
+    {
+      "id": "ic-3946",
+      "memberId": "IC-3946",
+      "name": "Suresh Naidu",
+      "age": 45,
+      "gender": "Male",
+      "phone": "+91 98850 76620",
+      "bloodGroup": "O−",
+      "allergies": [],
+      "medications": [
+        "Oral antibiotics (3 days)"
+      ],
+      "history": [
+        {
+          "year": "2026",
+          "event": "Laparoscopic appendectomy"
+        }
+      ],
+      "declared": [],
+      "policy": {
+        "name": "Corporate Group Cover",
+        "provider": "SafeGuard General",
+        "number": "IC-CG-••••-9016",
+        "coverage": 300000,
+        "balance": 300000,
+        "cashless": true,
+        "startedOn": null,
+        "validTill": "2026-12-31",
+        "waitingMonths": null
+      }
+    },
+    {
+      "id": "ic-4471",
+      "memberId": "IC-4471",
+      "name": "Meera Joshi",
+      "age": 52,
+      "gender": "Female",
+      "phone": "+91 98490 52277",
+      "bloodGroup": "B−",
+      "allergies": [
+        "Latex"
+      ],
+      "medications": [
+        "Clopidogrel 75 mg"
+      ],
+      "history": [
+        {
+          "year": "2023",
+          "event": "Hypertension, on regular medication"
+        }
+      ],
+      "declared": [
+        "Hypertension"
+      ],
+      "policy": {
+        "name": "Family Health Shield Plus",
+        "provider": "CarePlus Insurance",
+        "number": "IC-FH-••••-6203",
+        "coverage": 1500000,
+        "balance": 1500000,
+        "cashless": true,
+        "startedOn": "2023-03-16",
+        "validTill": "2027-03-15",
+        "waitingMonths": 24
+      }
+    },
+    {
+      "id": "ic-7842",
+      "memberId": "IC-7842",
+      "name": "Priya Sharma",
+      "age": 34,
+      "gender": "Female",
+      "phone": "+91 98765 43210",
+      "bloodGroup": "A+",
+      "allergies": [
+        "Penicillin"
+      ],
+      "medications": [],
+      "history": [
+        {
+          "year": "2026",
+          "event": "Laparoscopic appendectomy at this hospital (claim CLM-1042, approved)"
+        },
+        {
+          "year": "2021",
+          "event": "Routine health check, no findings"
+        }
+      ],
+      "declared": [],
+      "policy": {
+        "name": "Family Health Shield Plus",
+        "provider": "CarePlus Insurance",
+        "number": "IC-FH-••••-4821",
+        "coverage": 1500000,
+        "balance": 1456800,
+        "cashless": true,
+        "startedOn": "2022-03-16",
+        "validTill": "2027-03-15",
+        "waitingMonths": 24
+      }
+    },
+    {
+      "id": "ic-1156",
+      "memberId": "IC-1156",
+      "name": "Sanjay Gupta",
+      "age": 57,
+      "gender": "Male",
+      "phone": "+91 98480 66120",
+      "bloodGroup": null,
+      "allergies": [],
+      "medications": [],
+      "history": [],
+      "policy": {
+        "provider": "CarePlus Insurance",
+        "cashless": true,
+        "name": "Family Health Shield Plus",
+        "number": "IC-FH-••••-3057",
+        "coverage": 1500000,
+        "balance": 1250000,
+        "startedOn": "2021-07-05",
+        "validTill": "2027-07-04",
+        "waitingMonths": 24
+      },
+      "declared": [
+        "Hypertension",
+        "Type 2 diabetes"
+      ]
+    },
+    {
+      "id": "ic-9034",
+      "memberId": "IC-9034",
+      "name": "Anitha Rao",
+      "age": 41,
+      "gender": "Female",
+      "phone": "+91 97010 28844",
+      "bloodGroup": null,
+      "allergies": [],
+      "medications": [],
+      "history": [],
+      "policy": {
+        "provider": "CarePlus Insurance",
+        "cashless": true,
+        "name": "Critical Illness Rider",
+        "number": "IC-CI-••••-9034",
+        "coverage": 500000,
+        "balance": 355000,
+        "startedOn": "2025-01-01",
+        "validTill": "2026-12-31",
+        "waitingMonths": 12
+      },
+      "declared": []
+    },
+    {
+      "id": "ic-3321",
+      "memberId": "IC-3321",
+      "name": "Vikram Singh",
+      "age": 36,
+      "gender": "Male",
+      "phone": "+91 98850 14409",
+      "bloodGroup": null,
+      "allergies": [],
+      "medications": [],
+      "history": [],
+      "policy": {
+        "provider": "CarePlus Insurance",
+        "cashless": true,
+        "name": "Family Health Shield Plus",
+        "number": "IC-FH-••••-8812",
+        "coverage": 1500000,
+        "balance": 1440600,
+        "startedOn": "2023-09-01",
+        "validTill": "2027-08-31",
+        "waitingMonths": 24
+      },
+      "declared": []
+    },
+    {
+      "id": "ic-6678",
+      "memberId": "IC-6678",
+      "name": "Divya Nair",
+      "age": 5,
+      "gender": "Female",
+      "phone": "+91 99120 70331",
+      "bloodGroup": null,
+      "allergies": [],
+      "medications": [],
+      "history": [],
+      "policy": {
+        "provider": "CarePlus Insurance",
+        "cashless": true,
+        "name": "Family Floater Basic",
+        "number": "IC-FF-••••-2290",
+        "coverage": 500000,
+        "balance": 500000,
+        "startedOn": "2026-02-10",
+        "validTill": "2027-02-09",
+        "waitingMonths": 24
+      },
+      "declared": []
+    }
+  ],
+  "admissions": [
+    {
+      "member": "ic-5310",
+      "hospitalId": "riverbend",
+      "status": "Admitted",
+      "ward": "ICU",
+      "bed": "ICU-04",
+      "doctor": "Dr. S. Menon",
+      "admittedOn": "2026-10-20",
+      "diagnosis": "Acute myocardial infarction",
+      "treatments": [
+        {
+          "service": "Cardiology (non-surgical)",
+          "coverage": "Covered"
+        },
+        {
+          "service": "Cardiac surgery",
+          "coverage": "Covered"
+        }
+      ],
+      "sharedAt": null,
+      "estimatedCost": 350000,
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Pending review",
+          "note": "Awaiting cardiologist signature"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Needs correction",
+          "note": "ECG report is missing the doctor’s signature"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Missing",
+          "note": null
+        }
+      ]
+    },
+    {
+      "member": "ic-2208",
+      "hospitalId": "riverbend",
+      "status": "Admitted",
+      "ward": "Maternity",
+      "bed": "MT-06",
+      "doctor": "Dr. Kavitha Reddy",
+      "admittedOn": "2026-10-22",
+      "diagnosis": "Planned delivery, 39 weeks",
+      "treatments": [
+        {
+          "service": "Maternity & gynaecology",
+          "coverage": "Covered"
+        },
+        {
+          "service": "Neonatal ICU (NICU)",
+          "coverage": "Partially covered"
+        }
+      ],
+      "sharedAt": null,
+      "estimatedCost": 62000,
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified",
+          "note": null
+        }
+      ]
+    },
+    {
+      "member": "ic-6104",
+      "hospitalId": "riverbend",
+      "status": "Under observation",
+      "ward": "Paediatrics",
+      "bed": "PD-03",
+      "doctor": "Dr. Imran Shaikh",
+      "admittedOn": "2026-10-23",
+      "diagnosis": "Viral pneumonia",
+      "treatments": [
+        {
+          "service": "Paediatrics",
+          "coverage": "Covered"
+        }
+      ],
+      "sharedAt": null,
+      "estimatedCost": 38500,
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Pending review",
+          "note": "Doctor review pending"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Pending review",
+          "note": "Chest X-ray uploaded, awaiting check"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Missing",
+          "note": null
+        }
+      ]
+    },
+    {
+      "member": "ic-8873",
+      "hospitalId": "riverbend",
+      "status": "Admitted",
+      "ward": "General ward",
+      "bed": "GW-18",
+      "doctor": "Dr. S. Menon",
+      "admittedOn": "2026-10-19",
+      "diagnosis": "Hip fracture, surgery planned",
+      "treatments": [
+        {
+          "service": "Orthopaedics",
+          "coverage": "Covered"
+        },
+        {
+          "service": "Dialysis",
+          "coverage": "Partially covered"
+        }
+      ],
+      "sharedAt": null,
+      "estimatedCost": 240000,
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Needs correction",
+          "note": "Policy number does not match the insurer’s record"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Pending review",
+          "note": "Pre-operative blood tests pending"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Missing",
+          "note": "Not generated yet"
+        }
+      ]
+    },
+    {
+      "member": "ic-3946",
+      "hospitalId": "riverbend",
+      "status": "Ready for discharge",
+      "ward": "General ward",
+      "bed": "GW-07",
+      "doctor": "Dr. Anand P.",
+      "admittedOn": "2026-10-17",
+      "diagnosis": "Acute appendicitis, post laparoscopic surgery",
+      "treatments": [
+        {
+          "service": "General surgery",
+          "coverage": "Covered"
+        }
+      ],
+      "sharedAt": "2026-10-24T09:40:00+05:30",
+      "estimatedCost": 85000,
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified",
+          "note": null
+        }
+      ]
+    },
+    {
+      "member": "ic-4471",
+      "hospitalId": "riverbend",
+      "status": "Admitted",
+      "ward": "Emergency",
+      "bed": "ER-02",
+      "doctor": "Dr. Rohit Verma",
+      "admittedOn": "2026-10-24",
+      "diagnosis": "Suspected stroke, stabilised",
+      "treatments": [
+        {
+          "service": "Emergency & trauma care",
+          "coverage": "Covered"
+        },
+        {
+          "service": "Neurosurgery",
+          "coverage": "Covered"
+        }
+      ],
+      "sharedAt": null,
+      "estimatedCost": 125000,
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified",
+          "note": null
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Pending review",
+          "note": "Form submitted, awaiting check"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Missing",
+          "note": null
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Missing",
+          "note": null
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Missing",
+          "note": null
+        },
+        {
+          "name": "Interim bill",
+          "status": "Missing",
+          "note": null
+        }
+      ]
+    },
+    {
+      "member": "ic-7842",
+      "hospitalId": "riverbend",
+      "status": "Not admitted",
+      "ward": null,
+      "bed": null,
+      "doctor": null,
+      "admittedOn": null,
+      "diagnosis": "No active admission",
+      "treatments": [],
+      "sharedAt": null,
+      "estimatedCost": null,
+      "documents": []
+    },
+    {
+      "member": "ic-1156",
+      "hospitalId": "sunrise-heart",
+      "status": "Admitted",
+      "ward": "Cardiac ICU",
+      "bed": "CICU-03",
+      "doctor": "Dr. A. Krishnan",
+      "admittedOn": "2026-10-18",
+      "diagnosis": "Triple-vessel coronary artery disease",
+      "treatments": [],
+      "sharedAt": null,
+      "estimatedCost": null,
+      "documents": []
+    },
+    {
+      "member": "ic-9034",
+      "hospitalId": "kurnool-cancer",
+      "status": "Admitted",
+      "ward": "Day care",
+      "bed": "DC-05",
+      "doctor": "Dr. Meghna Iyer",
+      "admittedOn": "2026-10-15",
+      "diagnosis": "Breast carcinoma, radiation course",
+      "treatments": [],
+      "sharedAt": null,
+      "estimatedCost": null,
+      "documents": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "CLM-2051",
+      "member": "ic-2208",
+      "hospitalId": "riverbend",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Maternity",
+      "diagnosis": "Planned delivery",
+      "claimed": 62000,
+      "approved": null,
+      "status": "Received",
+      "submittedOn": "2026-10-24",
+      "updatedOn": "2026-10-24",
+      "treatmentDate": null,
+      "policyName": "Maternity Plus",
+      "policyNumber": "IC-MP-••••-7720",
+      "preauth": true,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": null,
+      "flags": [],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-24",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2049",
+      "member": "ic-6104",
+      "hospitalId": "riverbend",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Hospitalisation",
+      "diagnosis": "Viral pneumonia",
+      "claimed": 38500,
+      "approved": null,
+      "status": "Under review",
+      "submittedOn": "2026-10-23",
+      "updatedOn": "2026-10-24",
+      "treatmentDate": null,
+      "policyName": "Family Floater Basic",
+      "policyNumber": "IC-FF-••••-1845",
+      "preauth": true,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": null,
+      "flags": [],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-23",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-10-24",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Pending"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Pending"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Missing"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2047",
+      "member": "ic-4471",
+      "hospitalId": "riverbend",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Emergency care",
+      "diagnosis": "Suspected stroke, stabilised",
+      "claimed": 125000,
+      "approved": null,
+      "status": "Under review",
+      "submittedOn": "2026-10-24",
+      "updatedOn": "2026-10-24",
+      "treatmentDate": null,
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-6203",
+      "preauth": false,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": null,
+      "flags": [
+        "Emergency admission",
+        "Transfer to Apex Neuro Centre requested"
+      ],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-24",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Pending"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Missing"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Missing"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Missing"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Missing"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2046",
+      "member": "ic-4471",
+      "hospitalId": "apex-neuro",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Pre-authorisation",
+      "diagnosis": "Neurosurgery after stroke",
+      "claimed": 580000,
+      "approved": null,
+      "status": "Received",
+      "submittedOn": "2026-10-24",
+      "updatedOn": "2026-10-24",
+      "treatmentDate": null,
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-6203",
+      "preauth": true,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": null,
+      "flags": [
+        "High-value claim",
+        "Linked to CLM-2047"
+      ],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-24",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Pending"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Missing"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Missing"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2038",
+      "member": "ic-1156",
+      "hospitalId": "sunrise-heart",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Surgery",
+      "diagnosis": "Coronary artery bypass (CABG)",
+      "claimed": 380000,
+      "approved": null,
+      "status": "Under review",
+      "submittedOn": "2026-10-18",
+      "updatedOn": "2026-10-22",
+      "treatmentDate": null,
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-3057",
+      "preauth": true,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": null,
+      "flags": [
+        "High-value claim",
+        "Pre-existing: hypertension, diabetes"
+      ],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-18",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-10-20",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2031",
+      "member": "ic-9034",
+      "hospitalId": "kurnool-cancer",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Day care",
+      "diagnosis": "Breast carcinoma, radiation therapy",
+      "claimed": 145000,
+      "approved": null,
+      "status": "Query raised",
+      "submittedOn": "2026-10-15",
+      "updatedOn": "2026-10-21",
+      "treatmentDate": null,
+      "policyName": "Critical Illness Rider",
+      "policyNumber": "IC-CI-••••-9034",
+      "preauth": true,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": "Histopathology report is required before medical review can continue.",
+      "flags": [
+        "Query awaiting hospital reply"
+      ],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-15",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-10-17",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Missing"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2043",
+      "member": "ic-1156",
+      "hospitalId": "sunrise-heart",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Diagnostics",
+      "diagnosis": "Coronary angiography",
+      "claimed": 42000,
+      "approved": 38000,
+      "status": "Approved",
+      "submittedOn": "2026-10-08",
+      "updatedOn": "2026-10-10",
+      "treatmentDate": null,
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-3057",
+      "preauth": false,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": "Approved. Payment to hospital is scheduled.",
+      "flags": [],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-08",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-10-09",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": "2026-10-09",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": "2026-10-10",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": true
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2022",
+      "member": "ic-3321",
+      "hospitalId": "riverbend",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Surgery",
+      "diagnosis": "Fracture fixation (tibia)",
+      "claimed": 62000,
+      "approved": 59400,
+      "status": "Settled",
+      "submittedOn": "2026-10-02",
+      "updatedOn": "2026-10-12",
+      "treatmentDate": null,
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-8812",
+      "preauth": true,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": "₹2,600 deducted as room-rent proportionate charges.",
+      "flags": [],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-02",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-10-03",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": "2026-10-05",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": "2026-10-08",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": "2026-10-12",
+          "done": true,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-2019",
+      "member": "ic-6678",
+      "hospitalId": "care-children",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Surgery",
+      "diagnosis": "Tonsillectomy",
+      "claimed": 28000,
+      "approved": null,
+      "status": "Rejected",
+      "submittedOn": "2026-10-07",
+      "updatedOn": "2026-10-09",
+      "treatmentDate": null,
+      "policyName": "Family Floater Basic",
+      "policyNumber": "IC-FF-••••-2290",
+      "preauth": true,
+      "officer": "Rahul Menon",
+      "waitingOk": false,
+      "note": "Procedure falls within the 24-month waiting period. Policy started 10 Feb 2026.",
+      "flags": [
+        "Waiting period not met"
+      ],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-10-07",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-10-08",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": "2026-10-08",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": "2026-10-09",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": true
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-1042",
+      "member": "ic-7842",
+      "hospitalId": "riverbend",
+      "providerName": null,
+      "insurer": "CarePlus Insurance",
+      "type": "Hospitalisation",
+      "diagnosis": "Laparoscopic appendectomy",
+      "claimed": 48500,
+      "approved": 43200,
+      "status": "Settled",
+      "submittedOn": "2026-08-21",
+      "updatedOn": "2026-08-28",
+      "treatmentDate": "2026-08-18",
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-4821",
+      "preauth": false,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": null,
+      "flags": [],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-08-21",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-08-22",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": "2026-08-24",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": "2026-08-26",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": "2026-08-28",
+          "done": true,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Admission note",
+          "status": "Verified"
+        },
+        {
+          "name": "Pre-authorisation form",
+          "status": "Verified"
+        },
+        {
+          "name": "Patient ID proof",
+          "status": "Verified"
+        },
+        {
+          "name": "Treatment plan",
+          "status": "Verified"
+        },
+        {
+          "name": "Investigation reports",
+          "status": "Verified"
+        },
+        {
+          "name": "Interim bill",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-1038",
+      "member": "ic-7842",
+      "hospitalId": null,
+      "providerName": "Meadowline Diagnostic Centre",
+      "insurer": "CarePlus Insurance",
+      "type": "Day-care procedure",
+      "diagnosis": "Diagnostic day-care procedure",
+      "claimed": 12800,
+      "approved": null,
+      "status": "Query raised",
+      "submittedOn": "2026-09-06",
+      "updatedOn": "2026-09-09",
+      "treatmentDate": "2026-09-04",
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-4821",
+      "preauth": false,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": "A diagnostic report is needed to continue review.",
+      "flags": [
+        "Query awaiting member reply"
+      ],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-09-06",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-09-08",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Hospital bill",
+          "status": "Verified"
+        },
+        {
+          "name": "Diagnostic report",
+          "status": "Missing"
+        },
+        {
+          "name": "Prescription",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-1027",
+      "member": "ic-7842",
+      "hospitalId": null,
+      "providerName": "Sunfield Primary Care Clinic",
+      "insurer": "SecureLife Assurance",
+      "type": "Outpatient consultation",
+      "diagnosis": "Outpatient consultation",
+      "claimed": 3600,
+      "approved": 3600,
+      "status": "Settled",
+      "submittedOn": "2026-07-13",
+      "updatedOn": "2026-08-02",
+      "treatmentDate": "2026-07-11",
+      "policyName": "Critical Illness Rider",
+      "policyNumber": "IC-CI-••••-9037",
+      "preauth": false,
+      "officer": "SecureLife claims desk",
+      "waitingOk": true,
+      "note": null,
+      "flags": [],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-07-13",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-07-16",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": "2026-07-18",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Decision",
+          "date": "2026-07-21",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": "2026-08-02",
+          "done": true,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Hospital bill",
+          "status": "Verified"
+        },
+        {
+          "name": "Prescription",
+          "status": "Verified"
+        }
+      ]
+    },
+    {
+      "id": "CLM-1019",
+      "member": "ic-7842",
+      "hospitalId": null,
+      "providerName": "Greenway Pharmacy Network",
+      "insurer": "CarePlus Insurance",
+      "type": "Pharmacy reimbursement",
+      "diagnosis": "Pharmacy reimbursement",
+      "claimed": 2150,
+      "approved": null,
+      "status": "Under review",
+      "submittedOn": "2026-06-24",
+      "updatedOn": "2026-06-27",
+      "treatmentDate": "2026-06-22",
+      "policyName": "Family Health Shield Plus",
+      "policyNumber": "IC-FH-••••-4821",
+      "preauth": false,
+      "officer": "Rahul Menon",
+      "waitingOk": true,
+      "note": null,
+      "flags": [],
+      "timeline": [
+        {
+          "label": "Claim received",
+          "date": "2026-06-24",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Documents verified",
+          "date": "2026-06-26",
+          "done": true,
+          "current": false
+        },
+        {
+          "label": "Medical review",
+          "date": null,
+          "done": false,
+          "current": true
+        },
+        {
+          "label": "Decision",
+          "date": null,
+          "done": false,
+          "current": false
+        },
+        {
+          "label": "Settlement",
+          "date": null,
+          "done": false,
+          "current": false
+        }
+      ],
+      "documents": [
+        {
+          "name": "Pharmacy bill",
+          "status": "Verified"
+        },
+        {
+          "name": "Prescription",
+          "status": "Verified"
+        }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "family-health-shield",
+      "provider": "CarePlus Insurance",
+      "name": "Family Health Shield Plus",
+      "kind": "Family floater",
+      "number": "IC-FH-••••-4821",
+      "coverage": 1500000,
+      "used": 43200,
+      "members": [
+        "Priya Sharma",
+        "Rohan Sharma",
+        "Aarav Sharma",
+        "Kamala Sharma"
+      ],
+      "validFrom": "2026-03-16",
+      "validTill": "2027-03-15",
+      "status": "Active",
+      "overviewTitle": "Family protection cover",
+      "network": "Cashless at participating hospitals",
+      "face": "bg-care-800",
+      "details": [
+        {
+          "title": "Coverage and benefits",
+          "items": [
+            "Hospitalisation cover up to ₹15,00,000",
+            "Pre and post-hospitalisation support",
+            "Annual preventive health check-up",
+            "Cashless care at participating network hospitals"
+          ]
+        },
+        {
+          "title": "Exclusions",
+          "items": [
+            "Cosmetic procedures without medical necessity",
+            "Treatment related to self-inflicted injury",
+            "Experimental or unproven treatments"
+          ]
+        },
+        {
+          "title": "Waiting periods",
+          "items": [
+            "Initial waiting period: 30 days",
+            "Pre-existing conditions: 24 months",
+            "Specified procedures: 24 months"
+          ]
+        }
+      ],
+      "documents": [
+        "Policy certificate",
+        "Government photo ID",
+        "Discharge summary",
+        "Bills and prescriptions"
+      ],
+      "member": "ic-7842"
+    },
+    {
+      "id": "critical-illness-rider",
+      "provider": "SecureLife Assurance",
+      "name": "Critical Illness Rider",
+      "kind": "Lump-sum benefit",
+      "number": "IC-CI-••••-9037",
+      "coverage": 500000,
+      "used": 3600,
+      "members": [
+        "Priya Sharma"
+      ],
+      "validFrom": "2026-07-01",
+      "validTill": "2027-06-30",
+      "status": "Active",
+      "overviewTitle": "Critical illness cover",
+      "network": "Network access available",
+      "face": "bg-slate-800",
+      "details": [
+        {
+          "title": "Coverage and benefits",
+          "items": [
+            "Lump-sum payout of up to ₹5,00,000 on diagnosis of a covered critical illness",
+            "Covered conditions are listed in the policy schedule",
+            "Second medical opinion support",
+            "Payout is independent of hospital bills"
+          ]
+        },
+        {
+          "title": "Exclusions",
+          "items": [
+            "Illnesses not listed in the policy schedule",
+            "Conditions diagnosed during the waiting period",
+            "Treatment related to self-inflicted injury"
+          ]
+        },
+        {
+          "title": "Waiting periods",
+          "items": [
+            "Initial waiting period: 90 days",
+            "Survival period after diagnosis: 30 days",
+            "Pre-existing conditions: 36 months"
+          ]
+        }
+      ],
+      "documents": [
+        "Policy certificate",
+        "Government photo ID",
+        "Specialist diagnosis report",
+        "Hospital and treatment records"
+      ],
+      "member": "ic-7842"
+    },
+    {
+      "id": "accidental-death-benefit",
+      "provider": "SafeGuard General",
+      "name": "Accidental Death Benefit",
+      "kind": "Personal accident",
+      "number": "IC-AD-••••-1764",
+      "coverage": 1000000,
+      "used": 0,
+      "members": [
+        "Priya Sharma"
+      ],
+      "validFrom": "2026-01-15",
+      "validTill": "2027-01-14",
+      "status": "Expiring soon",
+      "overviewTitle": "Accidental death cover",
+      "network": "Benefit-only cover (no hospital network)",
+      "face": "bg-[#1D4A43]",
+      "details": [
+        {
+          "title": "Coverage and benefits",
+          "items": [
+            "Lump-sum benefit of ₹10,00,000 to the nominee on accidental death",
+            "Covers accidents at home, on the road and while travelling",
+            "Funeral expense support",
+            "No hospital network required"
+          ]
+        },
+        {
+          "title": "Exclusions",
+          "items": [
+            "Death caused by illness or natural causes",
+            "Accidents while under the influence of alcohol or drugs",
+            "Hazardous adventure sports",
+            "Self-inflicted injury"
+          ]
+        },
+        {
+          "title": "Waiting periods",
+          "items": [
+            "No waiting period for accidental death",
+            "Claim must be intimated within 30 days of the incident"
+          ]
+        }
+      ],
+      "documents": [
+        "Policy certificate",
+        "Nominee photo ID",
+        "Police report (FIR)",
+        "Death certificate"
+      ],
+      "member": "ic-7842"
+    }
+  ],
+  "schemes": [
+    {
+      "name": "Ayushman Bharat PM-JAY",
+      "detail": "₹5,00,000 family cover per year at empanelled hospitals",
+      "status": "Enrolled",
+      "member": "ic-7842"
+    },
+    {
+      "name": "Chiranjeevi Yojana",
+      "detail": "Cashless treatment support at listed hospitals",
+      "status": "Applied",
+      "member": "ic-7842"
+    }
+  ],
+  "documents": [
+    {
+      "id": "policy-cert-001",
+      "name": "Policy certificate, Family Health Shield Plus",
+      "category": "Insurance",
+      "dateAdded": "2026-09-12",
+      "type": "PDF",
+      "status": "verified",
+      "size": 2.4,
+      "member": "ic-7842"
+    },
+    {
+      "id": "discharge-001",
+      "name": "Discharge summary, Riverbend Community Hospital",
+      "category": "Medical",
+      "dateAdded": "2026-09-10",
+      "type": "PDF",
+      "status": "verified",
+      "size": 1.8,
+      "member": "ic-7842"
+    },
+    {
+      "id": "lab-001",
+      "name": "Lab report, annual health check-up",
+      "category": "Reports",
+      "dateAdded": "2026-09-02",
+      "type": "PDF",
+      "status": "verified",
+      "size": 3.2,
+      "member": "ic-7842"
+    },
+    {
+      "id": "aadhaar-001",
+      "name": "Aadhaar card, KYC verification",
+      "category": "Government / KYC",
+      "dateAdded": "2026-08-28",
+      "type": "PDF",
+      "status": "verified",
+      "size": 1.2,
+      "member": "ic-7842"
+    },
+    {
+      "id": "prescription-001",
+      "name": "Prescription, diabetes management",
+      "category": "Prescriptions",
+      "dateAdded": "2026-08-20",
+      "type": "PDF",
+      "status": "verified",
+      "size": 0.8,
+      "member": "ic-7842"
+    },
+    {
+      "id": "card-001",
+      "name": "Health insurance e-card, front and back",
+      "category": "Insurance",
+      "dateAdded": "2026-08-18",
+      "type": "PDF",
+      "status": "verified",
+      "size": 0.5,
+      "member": "ic-7842"
+    },
+    {
+      "id": "rx-001",
+      "name": "Prescription, blood pressure management",
+      "category": "Prescriptions",
+      "dateAdded": "2026-07-25",
+      "type": "PDF",
+      "status": "verified",
+      "size": 0.6,
+      "member": "ic-7842"
+    },
+    {
+      "id": "scan-001",
+      "name": "CT scan report, thoracic",
+      "category": "Reports",
+      "dateAdded": "2026-07-01",
+      "type": "PDF",
+      "status": "verified",
+      "size": 4.1,
+      "member": "ic-7842"
+    },
+    {
+      "id": "other-001",
+      "name": "Consultant opinion letter",
+      "category": "Other",
+      "dateAdded": "2026-06-03",
+      "type": "PDF",
+      "status": "verified",
+      "size": 2.3,
+      "member": "ic-7842"
+    }
+  ]
+}

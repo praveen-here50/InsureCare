@@ -1,69 +1,108 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiSend, FiUserCheck } from "react-icons/fi";
-import Badge from "@/components/Badge";
-import Card from "@/components/Card";
-import Tabs from "@/components/Tabs";
+import { FiCheck, FiSend, FiUserCheck, FiX } from "react-icons/fi";
 import { useToast } from "@/components/Toast";
-import { cn } from "@/lib/cn";
-import { AGENT, type Patient, verifiedCount } from "./data";
+import { buttonClass, Pill, PillTabs, Surface, type Tone } from "@/components/portal/ui";
+import { send } from "@/lib/api";
+import { HOSPITAL_ID, type ClaimLink, type Patient, inr, verifiedCount } from "./data";
 import { Avatar, DocIcon, docTone } from "./ui";
 
 const FILTERS = ["All", "Ready to share", "In verification", "Shared"] as const;
+type Filter = (typeof FILTERS)[number];
+const CLAIM_TONE: Record<ClaimLink["status"], Tone> = { Received: "slate", "Under review": "sky", "Query raised": "amber", Approved: "green", Settled: "green", Rejected: "rose" };
 
-export default function ClaimsBoard({ patients }: { patients: Patient[] }) {
-  const [shared, setShared] = useState<Record<string, string>>(() => Object.fromEntries(patients.filter((p) => p.sharedAt).map((p) => [p.id, p.sharedAt as string])));
+export default function ClaimsBoard({ patients, agent }: { patients: Patient[]; agent: string }) {
+  const router = useRouter();
   const toast = useToast();
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
-  const stateOf = (p: Patient) => (shared[p.id] ? "Shared" : verifiedCount(p) === p.documents.length ? "Ready to share" : "In verification");
+  const [filter, setFilter] = useState<Filter>("All");
+  const [busy, setBusy] = useState<string | null>(null);
+  const stateOf = (p: Patient): Exclude<Filter, "All"> => (p.sharedAt ? "Shared" : verifiedCount(p) === p.documents.length ? "Ready to share" : "In verification");
   const rows = patients.filter((p) => filter === "All" || stateOf(p) === filter);
+  const counts = Object.fromEntries(FILTERS.map((f) => [f, f === "All" ? patients.length : patients.filter((p) => stateOf(p) === f).length])) as Record<Filter, number>;
+
+  /** Runs a change against the backend; every open portal refreshes from the live update it triggers. */
+  const run = async (key: string, action: () => Promise<unknown>) => {
+    setBusy(key);
+    try { await action(); router.refresh(); } catch (e) { toast(e instanceof Error ? e.message : "Something went wrong"); } finally { setBusy(null); }
+  };
+  const verify = (p: Patient, position: number) => run(`${p.id}-${position}`, () => send("PATCH", `/api/hospitals/${HOSPITAL_ID}/patients/${p.id}/documents/${position}`, { status: "Verified" }));
+  const share = (p: Patient) => run(p.id, () => send("POST", `/api/hospitals/${HOSPITAL_ID}/patients/${p.id}/share`));
 
   return (
     <div className="flex flex-col gap-6">
-      <Card className="grid gap-6 p-6 md:grid-cols-2">
-        <div><h2 className="text-sm font-semibold text-slate-900">Shared with the insurer</h2><ul className="mt-3 space-y-1.5 text-sm text-slate-600"><li>Member ID and policy number</li><li>Diagnosis and treatment plan</li><li>Verified documents and itemised bill</li></ul></div>
-        <div><h2 className="text-sm font-semibold text-slate-900">Never shared</h2><ul className="mt-3 space-y-1.5 text-sm text-slate-600"><li>Full medical history and unrelated reports</li><li>Records from other admissions</li><li>Anything not verified by the agent</li></ul></div>
-      </Card>
+      <Surface className="grid grid-cols-1 gap-6 p-5 sm:p-6 md:grid-cols-2">
+        <div>
+          <h2 className="text-sm font-bold text-ink">Shared with the insurer</h2>
+          <ul className="mt-3 space-y-2 text-sm text-slate-600">
+            {["Member ID and policy number", "Diagnosis and treatment plan", "Verified documents and itemised bill"].map((t) => <li key={t} className="flex items-center gap-2"><FiCheck className="shrink-0 text-care-600" />{t}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h2 className="text-sm font-bold text-ink">Never shared</h2>
+          <ul className="mt-3 space-y-2 text-sm text-slate-600">
+            {["Full medical history and unrelated reports", "Records from other admissions", "Anything not verified by the agent"].map((t) => <li key={t} className="flex items-center gap-2"><FiX className="shrink-0 text-slate-400" />{t}</li>)}
+          </ul>
+        </div>
+      </Surface>
 
-      <Tabs value={filter} options={FILTERS} onChange={setFilter} />
+      <PillTabs value={filter} options={FILTERS} onChange={setFilter} counts={counts} />
 
-      <div className="grid gap-5 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         {rows.map((p) => {
           const verified = verifiedCount(p);
-          const total = p.documents.length;
-          const open = total - verified;
-          const done = shared[p.id];
+          const open = p.documents.length - verified;
+          const done = p.sharedAt;
           return (
-            <Card key={p.id} className="flex flex-col p-6">
+            <Surface key={p.id} className="flex flex-col p-5 sm:p-6">
               <div className="flex items-start gap-3">
                 <Avatar name={p.name} />
-                <div className="min-w-0 flex-1"><Link href={`/hospital/patients/${p.id}`} className="font-semibold text-slate-900 hover:text-brand-700">{p.name}</Link><p className="text-xs text-slate-500">{p.memberId} · {p.policy.provider}</p><p className="text-xs text-slate-400">{p.policy.name} · {p.policy.number}</p></div>
-                <Badge tone={done ? "green" : open === 0 ? "blue" : "yellow"}>{done ? "Shared" : open === 0 ? "Ready to share" : "In verification"}</Badge>
+                <div className="min-w-0 flex-1">
+                  <Link href={`/hospital/patients/${p.id}`} className="font-bold text-ink hover:text-care-700">{p.name}</Link>
+                  <p className="truncate text-xs text-slate-400">{p.memberId} · {p.policy.provider} · {p.policy.name}</p>
+                </div>
+                <Pill tone={done ? "green" : open === 0 ? "sky" : "amber"}>{done ? "Shared" : open === 0 ? "Ready to share" : "In verification"}</Pill>
               </div>
-              <div className="mt-5"><div className="flex items-center justify-between text-xs font-medium text-slate-500"><span>{verified} of {total} documents verified</span><span>{Math.round((verified / total) * 100)}%</span></div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full origin-left animate-grow rounded-full bg-brand-600" style={{ width: `${(verified / total) * 100}%` }} /></div></div>
-              <ul className="mt-4 divide-y divide-slate-100">
-                {p.documents.map((d) => (
-                  <li key={d.name} className="flex items-start gap-3 py-2.5"><DocIcon status={d.status} className="mt-0.5" />
+
+              {p.claim && (
+                <p className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  Insurer claim {p.claim.id}
+                  <Pill tone={CLAIM_TONE[p.claim.status]}>{p.claim.status}{p.claim.approved ? ` · ${inr(p.claim.approved)}` : ""}</Pill>
+                </p>
+              )}
+
+              <p className="mt-4 text-xs font-semibold text-slate-500">{verified} of {p.documents.length} documents verified</p>
+              <ul className="mt-2 divide-y divide-slate-100">
+                {p.documents.map((d, i) => (
+                  <li key={d.name} className="flex items-start gap-3 py-2.5">
+                    <DocIcon status={d.status} className="mt-0.5" />
                     <span className="min-w-0 flex-1"><span className="block text-sm font-medium text-slate-800">{d.name}</span>{d.note && <span className="block text-xs text-slate-500">{d.note}</span>}</span>
-                    <Badge tone={docTone[d.status]}>{d.status}</Badge></li>
+                    {d.status !== "Verified" && (
+                      <button type="button" disabled={busy !== null} onClick={() => verify(p, i)} className="rounded-lg px-2 py-1 text-xs font-semibold text-care-700 transition hover:bg-care-50 disabled:opacity-50">
+                        {busy === `${p.id}-${i}` ? "Saving…" : "Mark verified"}
+                      </button>
+                    )}
+                    <Pill tone={docTone[d.status]}>{d.status}</Pill>
+                  </li>
                 ))}
               </ul>
-              <p className="mt-3 flex items-center gap-2 text-xs text-slate-500"><FiUserCheck className="shrink-0 text-brand-600" />Checked for accuracy, completeness and required details by {AGENT}</p>
-              <div className="mt-5 border-t border-slate-100 pt-4">
-                {done ? <p className="text-sm font-medium text-emerald-700">Sent to {p.policy.provider} · {done}</p> : (
-                  <button type="button" disabled={open > 0} onClick={() => { setShared((s) => ({ ...s, [p.id]: "Just now" })); toast(`Documents sent to ${p.policy.provider}`); }} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none">
-                    <FiSend />{open > 0 ? `Resolve ${open} document${open > 1 ? "s" : ""} to share` : `Send to ${p.policy.provider}`}
+              <p className="mt-3 flex items-center gap-2 text-xs text-slate-400"><FiUserCheck className="shrink-0" />Checked by {agent}</p>
+
+              <div className="mt-auto border-t border-slate-100 pt-4">
+                {done ? <p className="flex items-center gap-2 text-sm font-semibold text-care-700"><FiCheck />Sent to {p.policy.provider} · {done}</p> : (
+                  <button type="button" disabled={open > 0 || busy !== null} onClick={() => share(p)}
+                    className={buttonClass("primary", "w-full disabled:border disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:!opacity-100")}>
+                    <FiSend />{open > 0 ? `Resolve ${open} document${open > 1 ? "s" : ""} to share` : busy === p.id ? "Sending…" : `Send to ${p.policy.provider}`}
                   </button>
                 )}
               </div>
-            </Card>
+            </Surface>
           );
         })}
       </div>
-      {rows.length === 0 && <Card className="p-10 text-center text-sm text-slate-500">Nothing in this view.</Card>}
+      {rows.length === 0 && <Surface className="p-10 text-center text-sm text-slate-500">Nothing in this view.</Surface>}
     </div>
   );
 }

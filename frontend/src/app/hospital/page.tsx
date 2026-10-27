@@ -1,66 +1,91 @@
 import Link from "next/link";
-import { FiChevronRight } from "react-icons/fi";
-import AnimatedNumber from "@/components/AnimatedNumber";
-import Badge from "@/components/Badge";
-import Card from "@/components/Card";
-import Kpi from "@/components/Kpi";
-import Reveal from "@/components/Reveal";
-import StaticTable from "@/components/StaticTable";
+import { FiChevronRight, FiLayers, FiSend, FiShare2, FiUsers } from "react-icons/fi";
+import { Pill, SectionHeading, StatCard, Surface } from "@/components/portal/ui";
 import { cn } from "@/lib/cn";
 import MemberLookup from "./MemberLookup";
-import { HOSPITAL, PATIENTS, WARDS, admitted, claimState, verifiedCount, wardAvailable } from "./data";
-import { Avatar, statusTone } from "./ui";
+import { bedsFor, claimState, getHospitalDesk, verifiedCount, wardAvailable } from "./data";
+import { Avatar, BED_DOT, BED_LABEL, statusTone, wardTone } from "./ui";
 
-export default function HospitalDashboard() {
+export default async function HospitalDashboard() {
+  const { HOSPITAL, PATIENTS, WARDS, admitted } = await getHospitalDesk();
   const inHouse = admitted();
   const queue = inHouse.filter((p) => claimState(p) !== "Shared with insurer");
+  const freeBeds = WARDS.reduce((n, w) => n + wardAvailable(w), 0);
+  const totalBeds = WARDS.reduce((n, w) => n + w.total, 0);
+
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6">
-      <MemberLookup ids={PATIENTS.map((p) => p.memberId)} title={HOSPITAL.name} />
+    <div className="flex flex-col gap-6">
+      <MemberLookup ids={PATIENTS.map((p) => p.memberId)} title={HOSPITAL.name} location={HOSPITAL.location} />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Kpi label="Beds available"><AnimatedNumber value={WARDS.reduce((n, w) => n + wardAvailable(w), 0)} /></Kpi>
-        <Kpi label="Patients in hospital"><AnimatedNumber value={inHouse.length} /></Kpi>
-        <Kpi label="Claims to action"><AnimatedNumber value={queue.length} /></Kpi>
-        <Kpi label="Shared with insurers today"><AnimatedNumber value={inHouse.filter((p) => p.sharedAt).length} /></Kpi>
+      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <StatCard icon={FiLayers} value={freeBeds} label="Beds free" note={`of ${totalBeds} across ${WARDS.length} wards`} />
+        <StatCard icon={FiUsers} value={inHouse.length} label="Patients in hospital" note="Admitted or under observation" />
+        <StatCard icon={FiSend} value={queue.length} label="Claims to action" note="Documents to verify or share" />
+        <StatCard icon={FiShare2} value={inHouse.filter((p) => p.sharedAt).length} label="Shared with insurers" note="Today" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <Reveal className="lg:col-span-2">
-          <Card className="h-full">
-            <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Bed occupancy</h2><Link href="/hospital/beds" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">Bed map<FiChevronRight /></Link></div>
-            <ul className="px-3 pb-3">{WARDS.map((w, i) => {
-              const used = w.occupied + w.reserved; const pct = Math.round((used / w.total) * 100);
-              return <li key={w.id}><Link href="/hospital/beds" className="group block rounded-lg px-3 py-3 transition hover:bg-slate-50">
-                <div className="flex items-baseline justify-between text-sm"><span className="font-medium text-slate-900">{w.name}</span><span className="text-slate-500"><span className="font-medium text-slate-900">{wardAvailable(w)}</span> free of {w.total}</span></div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded bg-slate-100"><div className={cn("h-full origin-left animate-grow rounded", pct > 85 ? "bg-rose-500" : "bg-brand-600")} style={{ width: `${pct}%`, animationDelay: `${i * 90}ms` }} /></div>
-              </Link></li>;
-            })}</ul>
-          </Card>
-        </Reveal>
-        <Reveal className="lg:col-span-3" delay={100}>
-          <Card className="h-full overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Insurer claims</h2><Link href="/hospital/claims" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">Open<FiChevronRight /></Link></div>
-            <StaticTable rows={queue} rowKey={(p) => p.id} href={() => "/hospital/claims"} columns={[
-              { label: "Patient", render: (p) => <><span className="block font-medium text-slate-900">{p.name}</span><span className="text-xs text-slate-500">{p.policy.provider}</span></> },
-              { label: "Documents", render: (p) => <span className="text-slate-700">{verifiedCount(p)} of {p.documents.length} verified</span> },
-              { label: "Status", render: (p) => <Badge tone={claimState(p) === "Ready to share" ? "blue" : "yellow"}>{claimState(p)}</Badge> },
-            ]} />
-          </Card>
-        </Reveal>
-      </div>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.1fr]">
+        {/* Bed occupancy */}
+        <section>
+          <SectionHeading title="Bed occupancy" href="/hospital/beds" linkLabel="Bed map" />
+          <Surface className="divide-y divide-slate-100">
+            {WARDS.map((w) => (
+              <Link key={w.id} href="/hospital/beds" className="block px-5 py-4 transition first:rounded-t-2xl last:rounded-b-2xl hover:bg-slate-50/70">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-bold text-ink">{w.name}</p>
+                  <Pill tone={wardTone(w)}>{wardAvailable(w)} free of {w.total}</Pill>
+                </div>
+                <div aria-hidden="true" className="mt-3 flex flex-wrap gap-1">
+                  {bedsFor(w).map((b) => <span key={b.label} title={`${b.label} · ${BED_LABEL[b.status]}`} className={cn("size-2.5 rounded-[3px]", BED_DOT[b.status])} />)}
+                </div>
+              </Link>
+            ))}
+          </Surface>
+          <Legend />
+        </section>
 
-      <Reveal>
-        <Card className="overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Recent admissions</h2><Link href="/hospital/patients" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">All patients<FiChevronRight /></Link></div>
-          <StaticTable rows={inHouse.slice(0, 5)} rowKey={(p) => p.id} href={(p) => `/hospital/patients/${p.id}`} columns={[
-            { label: "Patient", render: (p) => <span className="flex items-center gap-3"><Avatar name={p.name} /><span><span className="block font-medium text-slate-900">{p.name}</span><span className="text-xs text-slate-500">{p.memberId}</span></span></span> },
-            { label: "Ward / bed", render: (p) => <span className="text-slate-700">{p.ward} · {p.bed}</span> },
-            { label: "Diagnosis", render: (p) => <span className="text-slate-700">{p.diagnosis}</span> },
-            { label: "Status", render: (p) => <Badge tone={statusTone[p.status]}>{p.status}</Badge> },
-          ]} />
-        </Card>
-      </Reveal>
+        {/* Claims queue */}
+        <section>
+          <SectionHeading title="Insurer claims" href="/hospital/claims" linkLabel="Open" />
+          <Surface className="divide-y divide-slate-100">
+            {queue.map((p) => (
+              <Link key={p.id} href="/hospital/claims" className="flex items-center gap-4 px-5 py-4 transition first:rounded-t-2xl last:rounded-b-2xl hover:bg-slate-50/70">
+                <Avatar name={p.name} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-ink">{p.name}</p>
+                  <p className="truncate text-xs text-slate-400">{p.policy.provider} · {verifiedCount(p)} of {p.documents.length} documents verified</p>
+                </div>
+                <Pill tone={claimState(p) === "Ready to share" ? "green" : "amber"}>{claimState(p)}</Pill>
+              </Link>
+            ))}
+          </Surface>
+
+          <div className="mt-6">
+            <SectionHeading title="Recent admissions" href="/hospital/patients" linkLabel="All patients" />
+            <Surface className="divide-y divide-slate-100">
+              {inHouse.slice(0, 4).map((p) => (
+                <Link key={p.id} href={`/hospital/patients/${p.id}`} className="flex items-center gap-4 px-5 py-3.5 transition first:rounded-t-2xl last:rounded-b-2xl hover:bg-slate-50/70">
+                  <Avatar name={p.name} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-ink">{p.name}</p>
+                    <p className="truncate text-xs text-slate-400">{p.ward} · {p.bed} · {p.diagnosis}</p>
+                  </div>
+                  <Pill tone={statusTone[p.status]}>{p.status}</Pill>
+                  <FiChevronRight className="hidden shrink-0 text-slate-300 sm:block" />
+                </Link>
+              ))}
+            </Surface>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function Legend() {
+  return (
+    <div className="mt-3 flex gap-5 px-1 text-xs font-medium text-slate-500">
+      {(["available", "reserved", "occupied"] as const).map((k) => <span key={k} className="flex items-center gap-1.5"><span className={cn("size-2.5 rounded-[3px]", BED_DOT[k])} />{BED_LABEL[k]}</span>)}
     </div>
   );
 }

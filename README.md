@@ -2,7 +2,7 @@
 
 > Rural and affordable healthcare & health-insurance platform.
 
-**Status:** Scaffolding phase — empty module directories exist; no application code has been written.
+**Status:** Working prototype. Next.js portals (patient, hospital, insurer) backed by a Spring Boot API and PostgreSQL, with live updates. No authentication yet.
 
 ---
 
@@ -50,7 +50,7 @@ InsureCare/
 └── README.md
 ```
 
-All `frontend/`, `backend/`, `ai/`, and `infrastructure/` directories are currently **empty** — they represent the intended module boundaries and will be populated as each component is implemented.
+`frontend/` and `backend/` are implemented; `ai/` and `infrastructure/` are still planned.
 
 ---
 
@@ -59,7 +59,7 @@ All `frontend/`, `backend/`, `ai/`, and `infrastructure/` directories are curren
 | Layer       | Stack (planned)     | Rationale                                   |
 |-------------|---------------------|---------------------------------------------|
 | Frontend    | Next.js, TypeScript | SSR + SPA; strong ecosystem for healthcare UIs |
-| Backend     | Java 21+, Spring Boot 3.x, JPA / Hibernate | Mature, transaction-safe, audit-logging built-in |
+| Backend     | Java 25+, Spring Boot 3.x, JPA / Hibernate | Mature, transaction-safe, audit-logging built-in |
 | Database    | PostgreSQL          | Relational integrity for claims & financial data |
 | AI / ML     | Python 3.14, scikit-learn / PyTorch | Rich ML ecosystem for risk & anomaly models |
 | Container   | Docker, Docker Compose | Consistent local dev; path to K8s deployment |
@@ -79,20 +79,20 @@ Exact versions and dependencies will be pinned as each module is scaffolded.
 
 ---
 
-## Getting Started (Future)
-
-Once the first service is scaffolded:
+## Getting Started
 
 ```bash
-# Clone the repo
-git clone https://github.com/your-org/insurecare.git
-
-# Start all services
-cd InsureCare
+# 1. Database + API (needs Docker; see backend/README.md to run without it)
 docker compose up -d
+
+# 2. Portals
+cd frontend
+cp .env.example .env.local
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Individual service setup instructions (e.g., `npm install` for the frontend, Maven/Gradle for the backend) will be documented in each module directory.
+Open the patient, hospital and insurer portals in separate tabs: a change in one (for example, approving a claim) appears in the others straight away. See [backend/README.md](backend/README.md) for the API and configuration.
 
 ---
 

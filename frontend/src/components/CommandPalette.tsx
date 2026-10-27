@@ -5,14 +5,22 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FiCornerDownLeft, FiSearch } from "react-icons/fi";
 import { cn } from "@/lib/cn";
 import type { Portal } from "@/lib/portals";
-import { paletteEntries } from "./palette-data";
+import { pageEntries, paletteEntries, type PaletteEntry } from "./palette-data";
 
 export default function CommandPalette({ portal, open, onClose }: { portal: Portal; open: boolean; onClose: () => void }) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [cursor, setCursor] = useState(0);
   const input = useRef<HTMLInputElement>(null);
-  const entries = useMemo(() => paletteEntries(portal), [portal]);
+  const [entries, setEntries] = useState<PaletteEntry[]>(() => pageEntries(portal));
+  // Load records each time the palette opens, so search reflects the latest data. Pages still work offline.
+  useEffect(() => {
+    if (!open) return;
+    let live = true;
+    setEntries(pageEntries(portal));
+    paletteEntries(portal).then((e) => { if (live) setEntries(e); }).catch(() => {});
+    return () => { live = false; };
+  }, [open, portal]);
   const results = useMemo(() => { const t = q.trim().toLowerCase(); return (t ? entries.filter((e) => e.keywords.includes(t)) : entries.filter((e) => e.group === "Pages")).slice(0, 9); }, [q, entries]);
 
   useEffect(() => { if (open) { setQ(""); setCursor(0); setTimeout(() => input.current?.focus(), 30); } }, [open]);

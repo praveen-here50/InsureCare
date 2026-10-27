@@ -1,16 +1,96 @@
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { FiArrowLeft, FiCheckCircle, FiClock, FiPhone, FiShield, FiMapPin, FiAlertCircle } from 'react-icons/fi';
-import Card from '@/components/Card';
-import { getHospital, HOSPITALS } from '../data';
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { FiAlertCircle, FiArrowLeft, FiCheck, FiClock, FiExternalLink, FiMap, FiMapPin, FiPhone, FiShield } from "react-icons/fi";
+import Photo from "@/components/Photo";
+import { buttonClass, Field, Pill, Surface } from "@/components/portal/ui";
+import { getPortal } from "../../portal";
+import { getHospital, mapsUrl } from "../data";
 
-export function generateStaticParams() { return HOSPITALS.map((hospital) => ({ id: hospital.id })); }
 
 export default async function HospitalDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const hospital = getHospital(id);
+  const { hospitals } = await getPortal();
+  const hospital = getHospital(hospitals, id);
   if (!hospital) notFound();
-  return <div className="mx-auto max-w-5xl"><Link href="/patient/hospitals" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-950"><FiArrowLeft aria-hidden="true" />Back to hospitals</Link><div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><div className="mb-2 flex flex-wrap items-center gap-2"><span className={`text-xs font-medium ${hospital.network === 'Network' ? 'text-emerald-700' : 'text-slate-500'}`}>{hospital.network}</span></div><h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{hospital.name}</h1><p className="mt-2 flex items-center gap-1 text-sm text-slate-500"><FiMapPin aria-hidden="true" />{hospital.address}</p></div><button type="button" className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800"><FiShield aria-hidden="true" />Check coverage</button></div><div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]"><div className="flex flex-col gap-4"><Card className="p-5"><h2 className="text-base font-bold text-slate-900">Hospital overview</h2><p className="mt-3 text-sm leading-6 text-slate-600">{hospital.description}</p><div className="mt-5 grid gap-4 border-t border-slate-100 pt-4 sm:grid-cols-3"><Detail label="Distance" value={hospital.distance} /><Detail label="Emergency" value={hospital.emergency ? 'Available 24/7' : 'Not available'} /><Detail label="Hours" value={hospital.hours} /></div></Card><Card className="p-5"><h2 className="text-base font-bold text-slate-900">Specialties and services</h2><div className="mt-4 grid gap-5 sm:grid-cols-2"><div><p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Specialties</p><ul className="mt-3 flex flex-col gap-2">{hospital.specialties.map((item) => <li key={item} className="flex items-center gap-2 text-sm text-slate-700"><FiCheckCircle className="text-slate-500" aria-hidden="true" />{item}</li>)}</ul></div><div><p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Services</p><ul className="mt-3 flex flex-col gap-2">{hospital.services.map((item) => <li key={item} className="flex items-center gap-2 text-sm text-slate-700"><FiCheckCircle className="text-slate-500" aria-hidden="true" />{item}</li>)}</ul></div></div></Card><Card className="border-amber-200 bg-amber-50/50 p-5"><div className="flex gap-3"><FiAlertCircle className="mt-0.5 shrink-0 text-amber-700" aria-hidden="true" /><div><h2 className="text-sm font-bold text-amber-950">Coverage verification is still required</h2><p className="mt-1 text-sm leading-6 text-amber-900/75">Confirm network status and cashless eligibility with the hospital and your insurer before admission.</p></div></div></Card></div><div className="flex flex-col gap-4"><Card className="p-5"><h2 className="text-base font-bold text-slate-900">Coverage snapshot</h2><div className="mt-4 flex flex-col gap-3 text-sm"><Row label="Network status" value={hospital.network} good={hospital.network === 'Network'} /><Row label="Cashless" value={hospital.cashless ? 'Available' : 'Not listed'} good={hospital.cashless} /><Row label="Schemes" value={`${hospital.schemes.length} listed`} /></div><button type="button" className="mt-5 w-full rounded-lg bg-teal-700 px-3 py-2.5 text-sm font-semibold text-white hover:bg-teal-800">Check coverage</button></Card><Card className="p-5"><h2 className="text-base font-bold text-slate-900">Contact and hours</h2><div className="mt-4 flex flex-col gap-3 text-sm text-slate-600"><p className="flex gap-2"><FiPhone className="text-slate-500" aria-hidden="true" />{hospital.phone}</p><p className="flex gap-2"><FiClock className="text-slate-500" aria-hidden="true" />{hospital.hours}</p><p className="flex gap-2"><FiMapPin className="text-slate-500" aria-hidden="true" />{hospital.locality}</p></div></Card><Card className="p-5"><h2 className="text-base font-bold text-slate-900">Supported schemes</h2><div className="mt-3 flex flex-col gap-2">{hospital.schemes.map((scheme) => <div key={scheme} className="rounded-md bg-slate-50 px-3 py-2 text-xs text-slate-600">{scheme}</div>)}</div></Card></div></div></div>;
+  const network = hospital.network === "Network";
+
+  return (
+    <div className="flex flex-col gap-6">
+      <Link href="/patient/hospitals" className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-care-700"><FiArrowLeft />All hospitals</Link>
+
+      <section className="relative overflow-hidden rounded-[28px] shadow-lift">
+        <div className="relative h-[300px] sm:h-[360px]">
+          <Photo src={hospital.image} alt={hospital.name} className="absolute inset-0" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" />
+        </div>
+        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-5 p-6 text-white sm:p-10 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="flex flex-wrap gap-2">
+              <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-care-800">{network ? "Cashless network" : "Non-network"}</span>
+              {hospital.emergency && <span className="rounded-full bg-rose-500 px-3 py-1 text-xs font-bold">24/7 emergency</span>}
+              <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">★ {hospital.rating}</span>
+            </div>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-[-0.035em] sm:text-[2.6rem] sm:leading-[1.1]">{hospital.name}</h1>
+            <p className="mt-2 flex items-center gap-1.5 text-white/80"><FiMapPin />{hospital.address}</p>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <a href={mapsUrl(hospital)} target="_blank" rel="noopener noreferrer" className={buttonClass("white")}><FiMap />Get directions</a>
+            <a href={`tel:${hospital.phone.replace(/\s/g, "")}`} className={buttonClass("secondary", "border-white/30 bg-white/10 text-white hover:border-white/50 hover:bg-white/20")}><FiPhone />Call</a>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="flex flex-col gap-6">
+          <Surface className="p-6 sm:p-7">
+            <h2 className="text-lg font-bold text-ink">About this hospital</h2>
+            <p className="mt-2 text-[15px] leading-7 text-slate-600">{hospital.description}</p>
+            <div className="mt-6 grid gap-5 border-t border-slate-100 pt-5 sm:grid-cols-3">
+              <Field label="Distance">{hospital.distance}</Field>
+              <Field label="Emergency">{hospital.emergency ? "Available 24/7" : "Not available"}</Field>
+              <Field label="Hours">{hospital.hours}</Field>
+            </div>
+          </Surface>
+
+          <Surface className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 sm:p-7">
+            {[{ title: "Specialities", items: hospital.specialties }, { title: "Services", items: hospital.services }].map((group) => (
+              <div key={group.title}>
+                <h2 className="text-lg font-bold text-ink">{group.title}</h2>
+                <ul className="mt-4 flex flex-col gap-2.5">
+                  {group.items.map((item) => <li key={item} className="flex items-center gap-2.5 text-sm font-medium text-slate-700"><span className="flex size-5 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><FiCheck className="size-3" /></span>{item}</li>)}
+                </ul>
+              </div>
+            ))}
+          </Surface>
+
+          <div className="flex gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 p-5">
+            <FiAlertCircle className="mt-0.5 shrink-0 text-amber-700" aria-hidden="true" />
+            <div><h2 className="text-sm font-bold text-amber-950">Confirm before admission</h2><p className="mt-1 text-sm leading-6 text-amber-900/80">Check network status and cashless eligibility with the hospital and your insurer before a planned admission.</p></div>
+          </div>
+        </div>
+
+        <aside className="flex flex-col gap-6">
+          <Surface className="p-5 sm:p-6">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-ink"><FiShield className="text-care-600" />Your coverage here</h2>
+            <dl className="mt-4 flex flex-col divide-y divide-slate-100 text-sm">
+              <div className="flex items-center justify-between py-3"><dt className="text-slate-500">Network status</dt><dd><Pill tone={network ? "green" : "slate"} dot>{hospital.network}</Pill></dd></div>
+              <div className="flex items-center justify-between py-3"><dt className="text-slate-500">Cashless</dt><dd><Pill tone={hospital.cashless ? "green" : "slate"}>{hospital.cashless ? "Available" : "Not listed"}</Pill></dd></div>
+              <div className="flex items-center justify-between py-3"><dt className="text-slate-500">Schemes accepted</dt><dd className="font-bold text-ink">{hospital.schemes.length}</dd></div>
+            </dl>
+            <div className="mt-3 flex flex-wrap gap-1.5">{hospital.schemes.map((s) => <Pill key={s} tone="sky">{s}</Pill>)}</div>
+          </Surface>
+
+          <Surface className="p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-ink">Contact and hours</h2>
+            <div className="mt-4 flex flex-col gap-3 text-sm font-medium text-slate-700">
+              <a href={`tel:${hospital.phone.replace(/\s/g, "")}`} className="flex items-center gap-2.5 hover:text-care-700"><FiPhone className="text-care-500" />{hospital.phone}</a>
+              <p className="flex items-center gap-2.5"><FiClock className="text-care-500" />{hospital.hours}</p>
+              <p className="flex items-center gap-2.5"><FiMapPin className="text-care-500" />{hospital.locality}</p>
+            </div>
+            <a href={mapsUrl(hospital)} target="_blank" rel="noopener noreferrer" className={buttonClass("secondary", "mt-5 w-full")}><FiMap className="text-care-600" />Open in Google Maps<FiExternalLink className="size-3.5 text-slate-400" /></a>
+          </Surface>
+        </aside>
+      </div>
+    </div>
+  );
 }
-function Detail({ label, value }: { label: string; value: string }) { return <div><p className="text-xs text-slate-400">{label}</p><p className="mt-1 text-sm font-semibold text-slate-800">{value}</p></div>; }
-function Row({ label, value, good }: { label: string; value: string; good?: boolean }) { return <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 last:border-0 last:pb-0"><span className="text-slate-500">{label}</span><span className={good ? 'font-semibold text-teal-700' : 'font-semibold text-slate-700'}>{value}</span></div>; }

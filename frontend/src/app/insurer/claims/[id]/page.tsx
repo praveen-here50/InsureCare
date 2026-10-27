@@ -5,17 +5,17 @@ import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import Reveal from "@/components/Reveal";
 import { cn } from "@/lib/cn";
-import { DocIcon, docTone } from "../../../hospital/ui";
+import { DocIcon } from "../../../hospital/ui";
 import { inr } from "../../../hospital/data";
 import ClaimDecision from "../../ClaimDecision";
-import { CLAIMS, getClaim, getHolder, getHospital, isOpen } from "../../data";
+import { getInsurerData, isOpen } from "../../data";
 import { claimTone } from "../../ui";
 
-export function generateStaticParams() { return CLAIMS.map((c) => ({ id: c.id })); }
 const DOC_TONE = { Verified: "Verified", Pending: "Pending review", Missing: "Missing" } as const;
 
 export default async function ClaimDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const { getClaim, getHolder, getHospital } = await getInsurerData();
   const c = getClaim(id);
   if (!c) notFound();
   const holder = getHolder(c.memberId.toLowerCase());
@@ -24,7 +24,7 @@ export default async function ClaimDetail({ params }: { params: Promise<{ id: st
   const checks = [
     { ok: true, label: "Policy is active", detail: holder ? `Valid till ${holder.policy.validTill}` : "" },
     { ok: c.waitingOk, label: "Waiting period completed", detail: holder ? `${holder.policy.waitingMonths}-month waiting period · started ${holder.policy.startedOn}` : "" },
-    { ok: true, label: "Treated at a network hospital", detail: hospital?.name ?? "" },
+    { ok: !!hospital, label: "Treated at a network hospital", detail: hospital?.name ?? c.providerName ?? "" },
     { ok: !!holder && c.claimed <= holder.policy.balance, label: "Amount within remaining cover", detail: holder ? `${inr(holder.policy.balance)} remaining` : "" },
     { ok: verified === c.docs.length, label: "All documents verified by the agent", detail: `${verified} of ${c.docs.length} verified` },
   ];
@@ -53,7 +53,7 @@ export default async function ClaimDetail({ params }: { params: Promise<{ id: st
             ))}</ul></Card></Reveal>
           <Reveal><Card className="p-5 sm:p-6"><h2 className="font-semibold text-slate-900">Documents from the hospital</h2>
             <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500"><FiUserCheck className="text-brand-600" />Checked by the claims verification agent before sharing</p>
-            <ul className="mt-3 divide-y divide-slate-100">{c.docs.map((d) => <li key={d.name} className="flex items-center gap-3 py-2.5"><DocIcon status={DOC_TONE[d.status]} /><span className="flex-1 text-sm font-medium text-slate-800">{d.name}</span><Badge tone={docTone[DOC_TONE[d.status]]}>{DOC_TONE[d.status]}</Badge></li>)}</ul></Card></Reveal>
+            <ul className="mt-3 divide-y divide-slate-100">{c.docs.map((d) => <li key={d.name} className="flex items-center gap-3 py-2.5"><DocIcon status={DOC_TONE[d.status]} /><span className="flex-1 text-sm font-medium text-slate-800">{d.name}</span><Badge tone="blue">{DOC_TONE[d.status]}</Badge></li>)}</ul></Card></Reveal>
           <Reveal><Card className="p-5 sm:p-6"><h2 className="font-semibold text-slate-900">Claim progress</h2>
             <ol className="mt-4 space-y-4 border-l-2 border-brand-100 pl-5">{c.timeline.map((t) => (
               <li key={t.label} className="relative"><span className={cn("absolute -left-[27px] top-0.5 size-3.5 rounded-full border-2 border-white ring-2", t.done ? "bg-brand-600 ring-brand-100" : t.current ? "bg-white ring-brand-500" : "bg-slate-200 ring-slate-100")} />
@@ -62,7 +62,7 @@ export default async function ClaimDetail({ params }: { params: Promise<{ id: st
         </div>
 
         <div className="flex flex-col gap-6">
-          <ClaimDecision claimId={c.id} claimed={c.claimed} locked={!isOpen(c)} />
+          <ClaimDecision claimId={c.id} claimed={c.claimed} status={c.status} open={isOpen(c)} />
           {c.flags.length > 0 && <Card className="p-5"><h2 className="flex items-center gap-2 font-semibold text-slate-900"><FiAlertTriangle className="text-amber-500" />Flags</h2><ul className="mt-3 space-y-2">{c.flags.map((f) => <li key={f} className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">{f}</li>)}</ul></Card>}
           {holder && <Card className="p-5"><p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Policyholder</p><p className="mt-2 font-semibold text-slate-900">{holder.name}</p><p className="text-sm text-slate-500">{holder.memberId} · {holder.policy.name}</p>
             <Link href={`/insurer/policyholders/${holder.id}`} className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-slate-950">View profile <FiArrowRight /></Link></Card>}

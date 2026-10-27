@@ -1,11 +1,13 @@
+import { PageIntro } from "@/components/portal/ui";
 import ClaimsBoard from "../ClaimsBoard";
-import { admitted } from "../data";
+import { getHospitalDesk } from "../data";
 
-export default function InsurerClaimsPage() {
+export default async function InsurerClaimsPage() {
+  const { AGENT, admitted } = await getHospitalDesk();
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-7">
-      <div><h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Insurer claims</h1></div>
-      <ClaimsBoard patients={admitted()} />
+    <div className="flex flex-col gap-6">
+      <PageIntro eyebrow="Insurer claims" title="Claims to verify and share" description="Send each patient's documents to their insurer once every document is verified." />
+      <ClaimsBoard patients={admitted()} agent={AGENT} />
     </div>
   );
 }

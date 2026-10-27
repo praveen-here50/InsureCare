@@ -9,12 +9,14 @@ import StaticTable from "@/components/StaticTable";
 import { cn } from "@/lib/cn";
 import { Avatar } from "../hospital/ui";
 import GlobalSearch, { type SearchEntry } from "./GlobalSearch";
-import { CLAIMS, HOLDERS, INSURER, NET_HOSPITALS, claimViews, claimsAt, getHospital, isOpen, type ClaimStatus } from "./data";
+import { getInsurerData, isOpen, type ClaimStatus } from "./data";
 import { ClaimsStatic, claimTone } from "./ui";
 
-const BAR: Record<ClaimStatus, string> = { Received: "bg-slate-400", "Under review": "bg-brand-600", "Query raised": "bg-amber-500", Approved: "bg-emerald-500", Settled: "bg-emerald-700", Rejected: "bg-rose-500" };
+// Shades of the one brand blue, lightest for new claims, darkest for closed ones.
+const BAR: Record<ClaimStatus, string> = { Received: "bg-brand-200", "Under review": "bg-brand-300", "Query raised": "bg-brand-400", Approved: "bg-brand-600", Settled: "bg-brand-800", Rejected: "bg-brand-950" };
 
-export default function InsurerDashboard() {
+export default async function InsurerDashboard() {
+  const { CLAIMS, HOLDERS, INSURER, NET_HOSPITALS, claimViews, claimsAt, getHospital } = await getInsurerData();
   const open = CLAIMS.filter(isOpen);
   const admitted = HOLDERS.filter((h) => h.admission);
   const approved = CLAIMS.reduce((n, c) => n + (c.status === "Approved" || c.status === "Settled" ? (c.approved ?? 0) : 0), 0);
@@ -72,7 +74,7 @@ export default function InsurerDashboard() {
             { label: "Hospital", render: (h) => <><span className="block font-medium text-slate-900">{h.name}</span><span className="text-xs text-slate-500">{h.speciality}</span></> },
             { label: "Open claims", render: (h) => <span className="text-slate-700">{claimsAt(h.id).filter(isOpen).length}</span> },
             { label: "Avg. turnaround", render: (h) => <span className="text-slate-600">{h.avgTat} days</span> },
-            { label: "Status", render: () => <Badge tone="green">Cashless</Badge> },
+            { label: "Status", render: () => <Badge tone="blue">Cashless</Badge> },
           ]} />
         </Card>
       </Reveal>

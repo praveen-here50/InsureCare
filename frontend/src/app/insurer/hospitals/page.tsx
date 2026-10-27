@@ -2,9 +2,10 @@ import Card from "@/components/Card";
 import PageHeader from "@/components/PageHeader";
 import StaticTable from "@/components/StaticTable";
 import { inr } from "../../hospital/data";
-import { CLAIMS, HOLDERS, NET_HOSPITALS, claimsAt, isOpen } from "../data";
+import { getInsurerData, isOpen } from "../data";
 
-export default function HospitalsPage() {
+export default async function HospitalsPage() {
+  const { CLAIMS, HOLDERS, NET_HOSPITALS, claimsAt } = await getInsurerData();
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <PageHeader title="Network hospitals" />

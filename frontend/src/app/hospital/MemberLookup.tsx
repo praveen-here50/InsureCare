@@ -2,11 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiSearch } from "react-icons/fi";
-import Photo from "@/components/Photo";
-import { IMG } from "@/lib/images";
+import { FiMapPin, FiSearch } from "react-icons/fi";
+import { buttonClass, Eyebrow, Surface } from "@/components/portal/ui";
 
-export default function MemberLookup({ ids, title }: { ids: string[]; title: string }) {
+export default function MemberLookup({ ids, title, location }: { ids: string[]; title: string; location: string }) {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -16,20 +15,23 @@ export default function MemberLookup({ ids, title }: { ids: string[]; title: str
     router.push(`/hospital/patients/${id.toLowerCase()}`);
   };
   return (
-    <section className="relative overflow-hidden rounded-xl">
-      <Photo src={IMG.lobby} alt="Hospital reception" className="absolute inset-0" position="center 60%" />
-      <span className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/65 to-slate-950/20" />
-      <div className="relative px-6 py-10 sm:px-10 sm:py-12">
-        <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">{title}</h1>
-        <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="mt-6 flex max-w-xl flex-col gap-2 sm:flex-row">
-          <label className="relative flex-1"><span className="sr-only">Member ID</span>
-            <FiSearch className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input value={value} onChange={(e) => { setValue(e.target.value); setError(""); }} placeholder="Patient Member ID" autoComplete="off" className="h-12 w-full rounded-lg border-0 bg-white pl-10 pr-3 text-sm uppercase text-slate-900 placeholder:normal-case placeholder:text-slate-400" />
-          </label>
-          <button type="submit" className="h-12 rounded-lg bg-brand-600 px-6 text-sm font-semibold text-white transition hover:bg-brand-500 active:scale-[0.98]">Open record</button>
-        </form>
-        {error && <p role="alert" className="mt-3 text-sm text-rose-200">{error}</p>}
+    <Surface className="flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <Eyebrow>Hospital workspace</Eyebrow>
+        <h1 className="mt-2 text-[1.75rem] font-extrabold leading-tight tracking-[-0.03em] text-ink sm:text-4xl">{title}</h1>
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-slate-500"><FiMapPin className="text-slate-400" />{location}</p>
       </div>
-    </section>
+      <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="w-full lg:max-w-md">
+        <label htmlFor="member-id" className="text-sm font-semibold text-slate-700">Open a patient record</label>
+        <div className="mt-2 flex gap-2">
+          <div className="relative flex-1">
+            <FiSearch className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input id="member-id" value={value} onChange={(e) => { setValue(e.target.value); setError(""); }} placeholder="Member ID, e.g. IC-2208" autoComplete="off" className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 pl-10 pr-3 text-sm uppercase text-ink outline-none transition placeholder:normal-case placeholder:text-slate-400 focus:border-care-400 focus:bg-white focus:ring-4 focus:ring-care-100" />
+          </div>
+          <button type="submit" className={buttonClass("primary")}>Open</button>
+        </div>
+        {error && <p role="alert" className="mt-2 text-sm font-medium text-rose-600">{error}</p>}
+      </form>
+    </Surface>
   );
 }

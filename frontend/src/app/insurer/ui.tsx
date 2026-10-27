@@ -3,7 +3,8 @@ import StaticTable from "@/components/StaticTable";
 import { inr } from "../hospital/data";
 import type { ClaimStatus, ClaimView } from "./data";
 
-export const claimTone: Record<ClaimStatus, "blue" | "yellow" | "red" | "green" | "gray"> = { Received: "gray", "Under review": "blue", "Query raised": "yellow", Approved: "green", Settled: "green", Rejected: "red" };
+// One standard colour for every claim stage; the label itself says which stage it is.
+export const claimTone: Record<ClaimStatus, "blue"> = { Received: "blue", "Under review": "blue", "Query raised": "blue", Approved: "blue", Settled: "blue", Rejected: "blue" };
 
 /** Read-only claims table. Each row opens the claim. */
 export function ClaimsStatic({ claims }: { claims: ClaimView[] }) {

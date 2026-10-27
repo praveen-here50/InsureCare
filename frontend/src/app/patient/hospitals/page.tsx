@@ -1,5 +1,7 @@
+import { getPortal } from '../portal';
 import HospitalExplorer from './HospitalExplorer';
 
-export default function HospitalsPage() {
-  return <HospitalExplorer />;
+export default async function HospitalsPage() {
+  const { hospitals } = await getPortal();
+  return <HospitalExplorer hospitals={hospitals} />;
 }

@@ -1,0 +1,37 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: insurecare-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/insurecare}
+    username: ${DB_USER:insurecare}
+    password: ${DB_PASSWORD:insurecare}
+  jackson:
+    default-property-inclusion: non_null
+  mvc:
+    problemdetails:
+      enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 11MB
+
+insurecare:
+  # Comma-separated browser origins allowed to call the API and open the live-updates socket.
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+  # Load seed.json into an empty database on startup.
+  seed: ${SEED_DATA:true}
+  # Dates shown in the portals ("today", "Just now") use this zone.
+  zone: Asia/Kolkata
+  # The insurer portal is operated by this insurer; it sees claims and policyholders for this name only.
+  insurer-name: CarePlus Insurance

@@ -1,11 +1,12 @@
-import PageHeader from "@/components/PageHeader";
+import { PageIntro } from "@/components/portal/ui";
 import PatientDirectory from "../PatientDirectory";
-import { admitted } from "../data";
+import { getHospitalDesk } from "../data";
 
-export default function PatientsPage() {
+export default async function PatientsPage() {
+  const { admitted } = await getHospitalDesk();
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6">
-      <PageHeader title="Patients" />
+    <div className="flex flex-col gap-6">
+      <PageIntro eyebrow="Patients" title="Patients in hospital" description="Everyone currently admitted, under observation or ready to go home." />
       <PatientDirectory patients={admitted()} />
     </div>
   );

@@ -6,13 +6,13 @@ import Card from "@/components/Card";
 import Reveal from "@/components/Reveal";
 import { Avatar } from "../../../hospital/ui";
 import { inr } from "../../../hospital/data";
-import { HOLDERS, NET_HOSPITALS, claimViews, claimsAt, getHospital, isOpen } from "../../data";
+import { getInsurerData, isOpen } from "../../data";
 import { ClaimsStatic } from "../../ui";
 
-export function generateStaticParams() { return NET_HOSPITALS.map((h) => ({ id: h.id })); }
 
 export default async function HospitalDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const { HOLDERS, claimViews, claimsAt, getHospital } = await getInsurerData();
   const h = getHospital(id);
   if (!h) notFound();
   const claims = claimsAt(h.id);
@@ -21,7 +21,7 @@ export default async function HospitalDetail({ params }: { params: Promise<{ id:
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <Link href="/insurer/hospitals" className="inline-flex w-fit items-center gap-2 text-sm font-medium text-slate-500 hover:text-brand-700"><FiArrowLeft />Network hospitals</Link>
-      <Card className="bg-white p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-bold tracking-tight text-brand-950">{h.name}</h1><Badge tone="green">Cashless network</Badge></div>
+      <Card className="bg-white p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-bold tracking-tight text-brand-950">{h.name}</h1><Badge tone="blue">Cashless network</Badge></div>
         <p className="mt-1 text-slate-600">{h.speciality} · {h.city}</p><p className="mt-0.5 flex items-center gap-1.5 text-sm text-slate-500"><FiPhone className="size-3.5" />{h.phone}<FiClock className="ml-3 size-3.5" />{h.avgTat}-day average turnaround</p></Card>
       <Reveal><div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{stats.map(([v, k]) => <div key={k} className="rounded-2xl border border-brand-200/70 bg-brand-50 p-4"><p className="text-2xl font-bold text-brand-900">{v}</p><p className="mt-1 text-xs font-medium text-slate-600">{k}</p></div>)}</div></Reveal>
       <div className="grid gap-6 lg:grid-cols-3">

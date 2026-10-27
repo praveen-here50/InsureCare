@@ -1,0 +1,35 @@
+# Local stack: PostgreSQL + the Spring Boot backend.
+#   docker compose up -d          # database and API on http://localhost:8080
+#   docker compose up -d postgres # database only, when running the backend from your IDE
+# The frontend runs separately: cd frontend && npm run dev
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: insurecare
+      POSTGRES_USER: insurecare
+      POSTGRES_PASSWORD: insurecare
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U insurecare -d insurecare"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/insurecare
+      DB_USER: insurecare
+      DB_PASSWORD: insurecare
+      ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:

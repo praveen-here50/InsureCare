@@ -1,99 +1,134 @@
 import Link from "next/link";
-import { FiChevronRight } from "react-icons/fi";
-import AnimatedNumber from "@/components/AnimatedNumber";
-import Badge from "@/components/Badge";
-import Card from "@/components/Card";
-import Kpi from "@/components/Kpi";
-import PageHeader from "@/components/PageHeader";
+import { FiActivity, FiAlertCircle, FiArrowRight, FiCalendar, FiChevronRight, FiFileText, FiMapPin, FiPieChart, FiShield } from "react-icons/fi";
 import Photo from "@/components/Photo";
-import Reveal from "@/components/Reveal";
-import StaticTable from "@/components/StaticTable";
 import { IMG } from "@/lib/images";
-import { claims } from "./claims/data";
-import { HOSPITALS } from "./hospitals/data";
+import { buttonClass, IconBadge, inr, inrShort, Pill, SectionHeading, StageTracker, StatCard, Surface } from "@/components/portal/ui";
+import { claimStages, isOpenClaim, needsAction, statusLabel, statusTone } from "./claims/data";
+import { formatDocDate } from "./documents/data";
+import { getPortal } from "./portal";
+import { daysUntil, formatDate, policyTone, policyTotals } from "./policies/data";
 
-const policies = [
-  { id: "family-health-shield", name: "Family Health Shield Plus", provider: "CarePlus Insurance", coverage: 1500000, used: 0, validTill: "15 Mar 2027", status: "Active" },
-  { id: "critical-illness-rider", name: "Critical Illness Rider", provider: "SecureLife Assurance", coverage: 500000, used: 0, validTill: "30 Jun 2027", status: "Active" },
-  { id: "accidental-death-benefit", name: "Accidental Death Benefit", provider: "SafeGuard General", coverage: 1000000, used: 0, validTill: "14 Jan 2027", status: "Expiring soon" },
-];
-const documents = [
-  { name: "Policy certificate, Family Health Shield Plus", date: "12 Sep 2026", type: "Policy" },
-  { name: "Discharge summary, Riverbend Community Hospital", date: "10 Sep 2026", type: "Medical" },
-  { name: "Aadhaar card", date: "28 Aug 2026", type: "Identity" },
-];
-const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
-const total = policies.reduce((n, p) => n + p.coverage, 0);
-const open = claims.filter((c) => !["Settled", "Approved", "Rejected"].includes(c.status));
-const tone = (s: string) => (s === "Settled" || s === "Approved" ? "green" : s === "Rejected" ? "red" : s.startsWith("Additional") ? "yellow" : "blue");
+export default async function PatientDashboard() {
+  const { member, claims, policies: POLICIES, hospitals, documents } = await getPortal();
+  const { totalCoverage, totalUsed, nextRenewal } = policyTotals(POLICIES);
+  const openClaims = claims.filter(isOpenClaim);
+  const actionNeeded = claims.find(needsAction);
+  const nearby = hospitals.filter((h) => h.network === "Network").slice(0, 3);
 
-export default function PatientDashboard() {
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6">
-      <PageHeader title="Overview" />
+    <div className="flex flex-col gap-6">
+      {/* Welcome banner */}
+      <section className="relative overflow-hidden rounded-3xl bg-care-800 text-white">
+        <div className="absolute inset-y-0 right-0 hidden w-[40%] md:block">
+          <Photo src={IMG.family} alt="" position="center 30%" className="absolute inset-0" />
+          <div className="absolute inset-0 bg-gradient-to-r from-care-800 via-care-800/30 to-transparent" />
+        </div>
+        <div className="relative max-w-2xl px-6 py-8 sm:px-9 sm:py-10">
+          <p className="text-xs font-semibold text-care-200">Member ID {member.memberId}</p>
+          <h1 className="mt-2 text-[1.75rem] font-extrabold tracking-[-0.03em] sm:text-4xl">Welcome back, {member.firstName}</h1>
+          <p className="mt-2 max-w-lg text-[15px] leading-7 text-white/80">
+            Your family is covered up to <span className="font-semibold text-white">{inr(totalCoverage)}</span> across {POLICIES.length} policies.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/patient/claims" className={buttonClass("white")}>Track my claims <FiArrowRight /></Link>
+            <Link href="/patient/hospitals" className={buttonClass("secondary", "border-white/25 bg-white/10 text-white hover:border-white/40 hover:bg-white/20")}><FiMapPin />Find a hospital</Link>
+          </div>
+        </div>
+      </section>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Kpi label="Total coverage"><AnimatedNumber value={total} prefix="₹" /></Kpi>
-        <Kpi label="Active policies"><AnimatedNumber value={policies.length} /></Kpi>
-        <Kpi label="Claims in progress" hint={open[0] ? `${open[0].id}, ${open[0].status.toLowerCase()}` : undefined}><AnimatedNumber value={open.length} /></Kpi>
-        <Kpi label="Next renewal" hint="Family Health Shield Plus">12 days</Kpi>
+      {/* Action needed */}
+      {actionNeeded && (
+        <Link href={`/patient/claims/${actionNeeded.id}`} className="group flex items-center gap-4 rounded-2xl border border-amber-200 bg-amber-50/70 px-5 py-4 transition hover:border-amber-300">
+          <FiAlertCircle className="size-5 shrink-0 text-amber-600" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-ink">{actionNeeded.id} needs one more document</p>
+            <p className="mt-0.5 text-sm text-slate-600">Upload your {actionNeeded.documents.find((d) => d.status === "Required")?.name.toLowerCase()} so the review can continue.</p>
+          </div>
+          <span className="hidden items-center gap-1.5 text-sm font-semibold text-amber-800 sm:inline-flex">Resolve <FiArrowRight className="transition group-hover:translate-x-1" /></span>
+          <FiChevronRight className="shrink-0 text-amber-700 sm:hidden" />
+        </Link>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <StatCard icon={FiShield} value={inr(totalCoverage)} label="Total cover" note={`Across ${POLICIES.length} policies`} />
+        <StatCard icon={FiPieChart} value={`${Math.round((1 - totalUsed / totalCoverage) * 1000) / 10}%`} label="Cover remaining" note={`${inr(totalUsed)} used this year`} />
+        <StatCard icon={FiActivity} value={openClaims.length} label="Open claims" note={actionNeeded ? "1 needs your action" : "All on track"} />
+        <StatCard icon={FiCalendar} value={`${daysUntil(nextRenewal.validTill)} days`} label="Next renewal" note={nextRenewal.name} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Reveal className="lg:col-span-2">
-          <Card className="h-full overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Policies</h2><Link href="/patient/policies" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">View all<FiChevronRight /></Link></div>
-            <StaticTable rows={policies} rowKey={(p) => p.id} href={(p) => `/patient/policies/${p.id}`} columns={[
-              { label: "Policy", render: (p) => <><span className="block font-medium text-slate-900">{p.name}</span><span className="text-xs text-slate-500">{p.provider}</span></> },
-              { label: "Cover", render: (p) => <span className="font-medium text-slate-900">{inr(p.coverage)}</span> },
-              { label: "Valid till", render: (p) => <span className="text-slate-600">{p.validTill}</span> },
-              { label: "Status", render: (p) => <Badge tone={p.status === "Active" ? "green" : "yellow"}>{p.status}</Badge> },
-            ]} />
-          </Card>
-        </Reveal>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.15fr]">
+        {/* Claims */}
+        <section>
+          <SectionHeading title="Claims" href="/patient/claims" />
+          <Surface className="divide-y divide-slate-100">
+            {claims.map((c) => (
+              <Link key={c.id} href={`/patient/claims/${c.id}`} className="block px-5 py-4 transition first:rounded-t-2xl last:rounded-b-2xl hover:bg-slate-50/70">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-ink">{c.type}</p>
+                    <p className="truncate text-xs text-slate-400">{c.id} · {c.amountClaimed}</p>
+                  </div>
+                  <Pill tone={statusTone[c.status]}>{statusLabel[c.status]}</Pill>
+                </div>
+                <StageTracker stages={claimStages(c)} attention={needsAction(c)} className="mt-4 max-w-md" />
+              </Link>
+            ))}
+          </Surface>
+        </section>
 
-        <Reveal delay={100}>
-          <Link href="/patient/hospitals" className="group relative block h-full min-h-[260px] overflow-hidden rounded-xl">
-            <Photo src={IMG.building} alt="Hospital building" className="absolute inset-0 transition-transform duration-700 group-hover:scale-105" />
-            <span className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent" />
-            <span className="absolute inset-x-0 bottom-0 p-6 text-white"><span className="block text-lg font-semibold">Find a network hospital</span><span className="mt-1 flex items-center gap-1 text-sm text-white/80">{HOSPITALS.filter((h) => h.network === "Network").length} cashless hospitals near you<FiChevronRight className="transition-transform group-hover:translate-x-1" /></span></span>
-          </Link>
-        </Reveal>
+        <div className="flex flex-col gap-6">
+          {/* Policies */}
+          <section>
+            <SectionHeading title="Policies" href="/patient/policies" />
+            <Surface className="divide-y divide-slate-100">
+              {POLICIES.map((p) => (
+                <Link key={p.id} href={`/patient/policies/${p.id}`} className="flex items-center gap-4 px-5 py-4 transition first:rounded-t-2xl last:rounded-b-2xl hover:bg-slate-50/70">
+                  <IconBadge icon={FiShield} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1"><p className="truncate text-sm font-bold text-ink">{p.name}</p>{p.status !== "Active" && <Pill tone={policyTone(p)}>{p.status}</Pill>}</div>
+                    <p className="mt-0.5 truncate text-xs text-slate-400">{p.provider} · Renews {formatDate(p.validTill)}</p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-sm font-bold text-ink">{inrShort(p.coverage - p.used)}</p>
+                    <p className="text-xs text-slate-400">left of {inrShort(p.coverage)}</p>
+                  </div>
+                </Link>
+              ))}
+            </Surface>
+          </section>
+
+          {/* Hospitals */}
+          <section>
+            <SectionHeading title="Cashless hospitals nearby" href="/patient/hospitals" />
+            <Surface className="divide-y divide-slate-100">
+              {nearby.map((h) => (
+                <Link key={h.id} href={`/patient/hospitals/${h.id}`} className="flex items-center gap-4 px-5 py-3.5 transition first:rounded-t-2xl last:rounded-b-2xl hover:bg-slate-50/70">
+                  <Photo src={h.image} alt="" className="size-12 shrink-0 rounded-xl" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-ink">{h.name}</p>
+                    <p className="truncate text-xs text-slate-400">{h.distance} · {h.specialties.slice(0, 2).join(", ")}</p>
+                  </div>
+                  <span className="shrink-0 text-xs font-semibold text-slate-500">★ {h.rating.split(" ")[0]}</span>
+                </Link>
+              ))}
+            </Surface>
+          </section>
+        </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Reveal>
-          <Card className="h-full overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Recent claims</h2><Link href="/patient/claims" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">View all<FiChevronRight /></Link></div>
-            <StaticTable rows={claims.slice(0, 4)} rowKey={(c) => c.id} href={(c) => `/patient/claims/${c.id}`} columns={[
-              { label: "Claim", render: (c) => <><span className="block font-medium text-slate-900">{c.id}</span><span className="text-xs text-slate-500">{c.provider}</span></> },
-              { label: "Amount", render: (c) => <span className="text-slate-700">{c.amountClaimed}</span> },
-              { label: "Status", render: (c) => <Badge tone={tone(c.status)}>{c.status === "Additional Documents Required" ? "Documents needed" : c.status}</Badge> },
-            ]} />
-          </Card>
-        </Reveal>
-        <Reveal delay={100}>
-          <Card className="h-full overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Nearby hospitals</h2><Link href="/patient/hospitals" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">View all<FiChevronRight /></Link></div>
-            <StaticTable rows={HOSPITALS.slice(0, 4)} rowKey={(h) => h.id} href={(h) => `/patient/hospitals/${h.id}`} columns={[
-              { label: "Hospital", render: (h) => <span className="font-medium text-slate-900">{h.name}</span> },
-              { label: "Distance", render: (h) => <span className="text-slate-600">{h.distance}</span> },
-              { label: "Network", render: (h) => <Badge tone={h.network === "Network" ? "green" : "gray"}>{h.network === "Network" ? "Cashless" : "Non-network"}</Badge> },
-            ]} />
-          </Card>
-        </Reveal>
-      </div>
-
-      <Reveal>
-        <Card className="overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Documents</h2><Link href="/patient/documents" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">View all<FiChevronRight /></Link></div>
-          <StaticTable rows={documents} rowKey={(d) => d.name} href={() => "/patient/documents"} columns={[
-            { label: "Name", render: (d) => <span className="font-medium text-slate-900">{d.name}</span> },
-            { label: "Type", render: (d) => <span className="text-slate-600">{d.type}</span> },
-            { label: "Added", render: (d) => <span className="text-slate-600">{d.date}</span>, align: "right" },
-          ]} />
-        </Card>
-      </Reveal>
+      {/* Documents */}
+      <section>
+        <SectionHeading title="Recent documents" href="/patient/documents" />
+        <Surface className="grid grid-cols-1 divide-y divide-slate-100 md:grid-cols-2 md:divide-y-0">
+          {documents.slice(0, 4).map((d, i) => (
+            <Link key={d.id} href="/patient/documents" className={`flex items-center gap-3 px-5 py-3.5 transition hover:bg-slate-50/70 ${i >= 2 ? "md:border-t md:border-slate-100" : ""} ${i % 2 === 1 ? "md:border-l md:border-slate-100" : ""}`}>
+              <IconBadge icon={FiFileText} className="size-9" />
+              <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-ink">{d.name}</p><p className="text-xs text-slate-400">{d.category} · {formatDocDate(d.dateAdded)}</p></div>
+            </Link>
+          ))}
+        </Surface>
+      </section>
     </div>
   );
 }

@@ -4,7 +4,19 @@
 @tailwind utilities;
 
 @layer base {
-  :root { color-scheme: light; }
+  :root {
+    color-scheme: light;
+    /* Portal accent: sky blue (patient portal, landing page). */
+    --care-50: 240 248 255; --care-100: 224 240 254; --care-200: 185 225 253; --care-300: 124 201 251;
+    --care-400: 54 173 246; --care-500: 12 147 230; --care-600: 0 120 200; --care-700: 1 97 162;
+    --care-800: 6 82 134; --care-900: 11 69 111; --care-950: 7 43 73;
+  }
+  /* Portal accent: fresh green (hospital portal). */
+  .theme-green {
+    --care-50: 240 253 244; --care-100: 220 252 231; --care-200: 187 247 208; --care-300: 134 239 172;
+    --care-400: 74 222 128; --care-500: 34 197 94; --care-600: 22 163 74; --care-700: 21 128 61;
+    --care-800: 22 101 52; --care-900: 20 83 45; --care-950: 5 46 22;
+  }
   html { font-feature-settings: "cv11", "ss01"; }
   body {
     @apply bg-slate-50 text-slate-900 antialiased;

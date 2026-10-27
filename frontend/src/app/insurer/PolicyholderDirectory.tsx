@@ -22,7 +22,7 @@ export default function PolicyholderDirectory({ holders }: { holders: HolderView
     { key: "name", label: "Policyholder", sort: (h) => h.name, render: (h) => <span className="flex items-center gap-3"><Avatar name={h.name} /><span><span className="block font-medium text-slate-900">{h.name}</span><span className="text-xs text-slate-500">{h.memberId} · {h.age} yrs · {h.gender}</span></span></span> },
     { key: "policy", label: "Policy", sort: (h) => h.policy, render: (h) => <><span className="block text-slate-900">{h.policy}</span><span className="text-xs text-slate-500">{h.policyNumber}</span></> },
     { key: "hospital", label: "Current hospital", sort: (h) => h.hospital ?? "~", render: (h) => h.hospital ? <><span className="block text-slate-900">{h.hospital}</span><span className="text-xs text-slate-500">{h.location}</span></> : <span className="text-slate-400">Not admitted</span> },
-    { key: "claims", label: "Open claims", sort: (h) => h.openClaims, render: (h) => h.openClaims > 0 ? <Badge tone="yellow">{h.openClaims} open</Badge> : <span className="text-slate-400">None</span> },
+    { key: "claims", label: "Open claims", sort: (h) => h.openClaims, render: (h) => h.openClaims > 0 ? <Badge tone="blue">{h.openClaims} open</Badge> : <span className="text-slate-400">None</span> },
   ];
   return (
     <div className="flex flex-col gap-4">

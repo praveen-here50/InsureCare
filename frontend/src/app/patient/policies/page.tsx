@@ -1,40 +1,76 @@
 import Link from "next/link";
-import Card from "@/components/Card";
-import Badge from "@/components/Badge";
-import { FiArrowRight, FiCalendar, FiCheckCircle, FiChevronRight, FiClock, FiFileText, FiGrid, FiShield, FiUsers } from "react-icons/fi";
+import { FiArrowRight, FiAward, FiCalendar, FiShield, FiUsers } from "react-icons/fi";
+import { cn } from "@/lib/cn";
+import { IconBadge, inr, PageIntro, Pill, SectionHeading, StatCard, Surface } from "@/components/portal/ui";
+import { getPortal } from "../portal";
+import { daysUntil, formatDate, policyTone, policyTotals, type Policy } from "./data";
 
-const policies = [
-  { id: "family-health-shield", provider: "CarePlus Insurance", name: "Family Health Shield Plus", number: "IC-FH-••••-4821", coverage: "₹15,00,000", members: "4 members", validity: "15 Mar 2027", status: "Active", network: "Cashless network available", renewal: "12 days" },
-  { id: "critical-illness-rider", provider: "SecureLife Assurance", name: "Critical Illness Rider", number: "IC-CI-••••-9037", coverage: "₹5,00,000", members: "1 member", validity: "30 Jun 2027", status: "Active", network: "Network access available" },
-  { id: "accidental-death-benefit", provider: "SafeGuard General", name: "Accidental Death Benefit", number: "IC-AD-••••-1764", coverage: "₹10,00,000", members: "1 member", validity: "14 Jan 2027", status: "Expiring soon", network: "Benefit-only cover" },
-];
-const schemes = [
-  { name: "Ayushman Bharat PM-JAY", detail: "₹5,00,000 family coverage", status: "Enrolled" },
-  { name: "Chiranjeevi Yojana", detail: "Cashless treatment support", status: "Applied" },
-];
+export default async function PoliciesPage() {
+  const { policies: POLICIES, schemes: SCHEMES } = await getPortal();
+  const { totalCoverage, nextRenewal } = policyTotals(POLICIES);
+  return (
+    <div className="flex flex-col gap-8">
+      <PageIntro eyebrow="My policies" title="Everything you're covered for" description="Your insurance plans and government schemes in one view. Open any policy to see benefits, exclusions and waiting periods." />
 
-export default function PoliciesPage() {
-  return <div className="mx-auto flex max-w-7xl flex-col gap-6">
-    <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">My policies</h1></div><Link href="/patient" className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-950"><FiArrowRight className="rotate-180" /> Back to dashboard</Link></div>
-    
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[{ label: "Active policies", value: "03", note: "All policies listed", icon: FiShield }, { label: "Total coverage", value: "₹30,00,000", note: "Across insurance policies", icon: FiCheckCircle }, { label: "Government schemes", value: "02", note: "1 enrolled · 1 applied", icon: FiFileText }, { label: "Upcoming renewal", value: "12 days", note: "Family Health Shield Plus", icon: FiCalendar }].map((stat) => { const Icon = stat.icon; return <Card key={stat.label} className="p-5"><div className="flex items-start justify-between"><div><p className="text-sm font-medium text-slate-500">{stat.label}</p><p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">{stat.value}</p><p className="mt-1 text-xs text-slate-500">{stat.note}</p></div><span className="rounded-lg bg-slate-100 p-2.5 text-slate-600"><Icon /></span></div></Card>; })}</div>
-    <div className="flex items-center justify-between gap-4"><div><h2 className="text-base font-semibold text-slate-950">Insurance policies</h2><p className="mt-1 text-sm text-slate-500">Your active and renewing plans</p></div><button type="button" className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:border-teal-200 hover:text-teal-700"><FiGrid /> Compare policies</button></div>
-    <div className="flex flex-col gap-4">{policies.map((policy) => <Card key={policy.id} className="p-5 sm:p-6"><div className="flex flex-col gap-5"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div className="flex items-start gap-3"><span className="rounded-lg bg-slate-100 p-2.5 text-slate-600"><FiShield /></span><div><p className="text-xs font-medium text-slate-500">{policy.provider}</p><h3 className="mt-1 text-base font-semibold text-slate-950">{policy.name}</h3><p className="mt-1 text-xs text-slate-500">Policy {policy.number}</p></div></div><Badge tone={policy.status === "Active" ? "green" : "blue"}>{policy.status}</Badge></div><div className="grid gap-4 border-y border-slate-100 py-4 sm:grid-cols-2 lg:grid-cols-4"><div><p className="text-xs text-slate-500">Coverage amount</p><p className="mt-1 text-sm font-semibold text-slate-900">{policy.coverage}</p></div><div><p className="text-xs text-slate-500">Members covered</p><p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-slate-900"><FiUsers className="text-slate-500" />{policy.members}</p></div><div><p className="text-xs text-slate-500">Valid until</p><p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-slate-900"><FiCalendar className="text-slate-500" />{policy.validity}</p></div><div><p className="text-xs text-slate-500">Hospital network</p><p className="mt-1 text-sm font-semibold text-slate-900">{policy.network}</p></div></div><div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div className="flex items-center gap-2 text-xs text-slate-500">{policy.renewal ? <><FiClock className="text-amber-600" /> Renewal due in {policy.renewal}</> : <><FiCheckCircle className="text-slate-500" /> Policy in good standing</>}</div><Link href={`/patient/policies/${policy.id}`} className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-950">View details <FiChevronRight /></Link></div></div></Card>)}</div>
-    <section><div className="mb-4"><h2 className="text-base font-semibold text-slate-950">Government schemes</h2><p className="mt-1 text-sm text-slate-500">Public healthcare benefits</p></div><div className="grid gap-4 lg:grid-cols-2">{schemes.map((scheme) => <Card key={scheme.name} className="p-5"><div className="flex items-start justify-between gap-4"><div><h3 className="text-sm font-semibold text-slate-900">{scheme.name}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{scheme.detail}</p></div><Badge tone={scheme.status === "Enrolled" ? "green" : "blue"}>{scheme.status}</Badge></div></Card>)}</div></section>
-  </div>;
+      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <StatCard icon={FiShield} value={POLICIES.length} label="Active policies" note="Health, illness and accident" />
+        <StatCard icon={FiAward} value={inr(totalCoverage)} label="Total cover" note="Across all policies" />
+        <StatCard icon={FiUsers} value={SCHEMES.length} label="Government schemes" note={`${SCHEMES.filter((s) => s.status === "Enrolled").length} enrolled · ${SCHEMES.filter((s) => s.status === "Applied").length} applied`} />
+        <StatCard icon={FiCalendar} value={`${daysUntil(nextRenewal.validTill)} days`} label="Next renewal" note={nextRenewal.name} />
+      </div>
+
+      <section>
+        <SectionHeading title="Insurance policies" description="Tap a card to see full benefits" />
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3">
+          {POLICIES.map((p) => <PolicyTile key={p.id} policy={p} />)}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading title="Government schemes" description="Public healthcare benefits linked to your account" />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {SCHEMES.map((s) => (
+            <Surface key={s.name} className="flex items-start gap-4 p-5">
+              <IconBadge icon={FiAward} />
+              <div className="flex-1"><h3 className="font-bold text-ink">{s.name}</h3><p className="mt-1 text-sm leading-6 text-slate-500">{s.detail}</p></div>
+              <Pill tone={s.status === "Enrolled" ? "green" : "sky"} dot>{s.status}</Pill>
+            </Surface>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
 }
 
-void policies;
-void schemes;
-void Badge;
-void Card;
-void Link;
-void FiArrowRight;
-void FiCalendar;
-void FiCheckCircle;
-void FiChevronRight;
-void FiClock;
-void FiFileText;
-void FiGrid;
-void FiShield;
-void FiUsers;
+function PolicyTile({ policy: p }: { policy: Policy }) {
+  const days = daysUntil(p.validTill);
+  return (
+    <Link href={`/patient/policies/${p.id}`} className="group">
+      <Surface className="h-full overflow-hidden transition duration-300 group-hover:-translate-y-1 group-hover:shadow-lift">
+        {/* Card face */}
+        <div className={cn("relative overflow-hidden p-6 text-white", p.face)}>
+          <div className="relative flex items-start justify-between">
+            <div><p className="text-xs font-semibold text-white/70">{p.provider} · {p.kind}</p><h3 className="mt-1 text-xl font-extrabold tracking-tight">{p.name}</h3></div>
+          </div>
+          <p className="relative mt-8 text-[11px] font-bold uppercase tracking-[0.16em] text-white/60">Sum insured</p>
+          <p className="relative text-3xl font-extrabold tracking-[-0.03em]">{inr(p.coverage)}</p>
+          <p className="relative mt-4 font-mono text-sm tracking-wider text-white/80">{p.number}</p>
+        </div>
+        {/* Details */}
+        <div className="flex flex-col gap-4 p-5">
+          <div className="flex items-center justify-between">
+            <Pill tone={policyTone(p)} dot>{p.status}</Pill>
+            <span className="text-xs font-medium text-slate-400">Valid till {formatDate(p.validTill)}</span>
+          </div>
+          <div>
+            <div className="mb-1.5 flex justify-between text-xs"><span className="font-medium text-slate-500">Cover remaining</span><span className="font-bold text-ink">{inr(p.coverage - p.used)}</span></div>
+          </div>
+          <div className="flex items-center justify-between border-t border-slate-100 pt-4 text-sm">
+            <span className="flex items-center gap-1.5 text-slate-500"><FiUsers className="text-slate-400" />{p.members.length} {p.members.length === 1 ? "member" : "members"} · renews in {days} days</span>
+            <FiArrowRight className="text-care-600 transition group-hover:translate-x-1" />
+          </div>
+        </div>
+      </Surface>
+    </Link>
+  );
+}
