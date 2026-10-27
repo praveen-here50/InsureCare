@@ -12,11 +12,18 @@ export type Policyholder = {
 
 export type ClaimStatus = "Received" | "Under review" | "Query raised" | "Approved" | "Settled" | "Rejected";
 export type DocState = "Verified" | "Pending" | "Missing";
+export type CheckStatus = "Checking" | "Passed" | "Needs review" | "High risk";
+export type Finding = { severity: "high" | "review" | "pass"; title: string; detail: string };
+/** The hospital document behind a claim document: its file and the automatic authenticity checks on it. */
+export type ClaimDoc = {
+  id?: number; name: string; status: DocState; fileName?: string; fileUrl?: string; uploadedAt?: string;
+  check?: { status: CheckStatus; score?: number; checkedAt?: string; findings: Finding[] };
+};
 export type Claim = {
   /** hospitalId is absent for providers outside the hospital network (clinics, pharmacies); providerName names them. */
   id: string; memberId: string; hospitalId?: string; providerName?: string; type: string; diagnosis: string; claimed: number; approved?: number;
   status: ClaimStatus; submittedOn: string; updatedOn: string; preauth: boolean; officer: string; waitingOk: boolean;
-  docs: { name: string; status: DocState }[]; timeline: { label: string; date: string; done: boolean; current: boolean }[];
+  docs: ClaimDoc[]; timeline: { label: string; date: string; done: boolean; current: boolean }[];
   note?: string; flags: string[];
 };
 

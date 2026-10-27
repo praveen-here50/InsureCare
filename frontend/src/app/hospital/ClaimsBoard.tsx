@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiCheck, FiSend, FiUserCheck, FiX } from "react-icons/fi";
+import { FiCheck, FiLoader, FiPaperclip, FiSend, FiShield, FiUpload, FiUserCheck, FiX } from "react-icons/fi";
 import { useToast } from "@/components/Toast";
 import { buttonClass, Pill, PillTabs, Surface, type Tone } from "@/components/portal/ui";
-import { send } from "@/lib/api";
-import { HOSPITAL_ID, type ClaimLink, type Patient, inr, verifiedCount } from "./data";
+import { apiUrl, send } from "@/lib/api";
+import { cn } from "@/lib/cn";
+import { HOSPITAL_ID, type ClaimLink, type Doc, type Patient, inr, verifiedCount } from "./data";
 import { Avatar, DocIcon, docTone } from "./ui";
 
+const ACCEPTED = ["application/pdf", "image/jpeg", "image/png"];
+const MAX_BYTES = 10 * 1024 * 1024;
 const FILTERS = ["All", "Ready to share", "In verification", "Shared"] as const;
 type Filter = (typeof FILTERS)[number];
 const CLAIM_TONE: Record<ClaimLink["status"], Tone> = { Received: "slate", "Under review": "sky", "Query raised": "amber", Approved: "green", Settled: "green", Rejected: "rose" };
@@ -29,6 +32,18 @@ export default function ClaimsBoard({ patients, agent }: { patients: Patient[]; 
     try { await action(); router.refresh(); } catch (e) { toast(e instanceof Error ? e.message : "Something went wrong"); } finally { setBusy(null); }
   };
   const verify = (p: Patient, position: number) => run(`${p.id}-${position}`, () => send("PATCH", `/api/hospitals/${HOSPITAL_ID}/patients/${p.id}/documents/${position}`, { status: "Verified" }));
+  /** Uploads the file for a document; the backend checks it for signs of editing, copying or AI generation. */
+  const upload = (p: Patient, position: number, file: File | undefined) => {
+    if (!file) return;
+    if (!ACCEPTED.includes(file.type)) { toast("Please choose a PDF, JPG or PNG file."); return; }
+    if (file.size > MAX_BYTES) { toast("Files can be up to 10 MB."); return; }
+    const form = new FormData();
+    form.append("file", file);
+    return run(`${p.id}-${position}-file`, async () => {
+      await send("POST", `/api/hospitals/${HOSPITAL_ID}/patients/${p.id}/documents/${position}/file`, form);
+      toast("Uploaded. Checking the file…");
+    });
+  };
   const share = (p: Patient) => run(p.id, () => send("POST", `/api/hospitals/${HOSPITAL_ID}/patients/${p.id}/share`));
 
   return (
@@ -78,13 +93,28 @@ export default function ClaimsBoard({ patients, agent }: { patients: Patient[]; 
                 {p.documents.map((d, i) => (
                   <li key={d.name} className="flex items-start gap-3 py-2.5">
                     <DocIcon status={d.status} className="mt-0.5" />
-                    <span className="min-w-0 flex-1"><span className="block text-sm font-medium text-slate-800">{d.name}</span>{d.note && <span className="block text-xs text-slate-500">{d.note}</span>}</span>
-                    {d.status !== "Verified" && (
-                      <button type="button" disabled={busy !== null} onClick={() => verify(p, i)} className="rounded-lg px-2 py-1 text-xs font-semibold text-care-700 transition hover:bg-care-50 disabled:opacity-50">
-                        {busy === `${p.id}-${i}` ? "Saving…" : "Mark verified"}
-                      </button>
-                    )}
-                    <Pill tone={docTone[d.status]}>{d.status}</Pill>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-medium text-slate-800">{d.name}</span>
+                      {d.note && <span className="block text-xs text-slate-500">{d.note}</span>}
+                      <FileLine doc={d} />
+                    </span>
+                    <span className="flex shrink-0 flex-col items-end gap-1.5">
+                      <Pill tone={docTone[d.status]}>{d.status}</Pill>
+                      <span className="flex items-center gap-0.5">
+                        {!done && (
+                          <label className={cn("inline-flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-care-700 transition hover:bg-care-50", busy !== null && "pointer-events-none opacity-50")}>
+                            <FiUpload className="size-3.5" />{busy === `${p.id}-${i}-file` ? "Uploading…" : d.fileUrl ? "Replace" : "Upload"}
+                            <input type="file" accept={ACCEPTED.join(",")} className="sr-only" disabled={busy !== null}
+                              onChange={(e) => { upload(p, i, e.target.files?.[0]); e.target.value = ""; }} />
+                          </label>
+                        )}
+                        {d.status !== "Verified" && (
+                          <button type="button" disabled={busy !== null} onClick={() => verify(p, i)} className="rounded-lg px-2 py-1 text-xs font-semibold text-care-700 transition hover:bg-care-50 disabled:opacity-50">
+                            {busy === `${p.id}-${i}` ? "Saving…" : "Mark verified"}
+                          </button>
+                        )}
+                      </span>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -104,5 +134,21 @@ export default function ClaimsBoard({ patients, agent }: { patients: Patient[]; 
       </div>
       {rows.length === 0 && <Surface className="p-10 text-center text-sm text-slate-500">Nothing in this view.</Surface>}
     </div>
+  );
+}
+
+/** The uploaded file under a document's name: link, upload time and whether the automatic checks have run. */
+function FileLine({ doc }: { doc: Doc }) {
+  if (!doc.fileUrl) return <span className="mt-0.5 block text-xs text-slate-400">No file uploaded</span>;
+  return (
+    <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500">
+      <a href={apiUrl(doc.fileUrl)} target="_blank" rel="noopener noreferrer" className="inline-flex min-w-0 max-w-full items-center gap-1 font-medium text-care-700 hover:text-care-800">
+        <FiPaperclip className="size-3 shrink-0" /><span className="truncate">{doc.fileName}</span>
+      </a>
+      {doc.uploadedAt && <span>{doc.uploadedAt}</span>}
+      {doc.check === "Checking"
+        ? <span className="inline-flex items-center gap-1"><FiLoader className="size-3 animate-spin" />Checking file…</span>
+        : doc.check === "Checked" && <span className="inline-flex items-center gap-1"><FiShield className="size-3 text-care-600" />File checked</span>}
+    </span>
   );
 }

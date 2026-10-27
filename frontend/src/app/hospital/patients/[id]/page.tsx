@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FiAlertTriangle, FiArrowLeft, FiArrowRight, FiCornerUpRight, FiLock, FiPhone, FiUserCheck } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiArrowRight, FiCornerUpRight, FiLock, FiPaperclip, FiPhone, FiUserCheck } from "react-icons/fi";
 import { Field, Pill, Surface } from "@/components/portal/ui";
+import { apiUrl } from "@/lib/api";
 import { claimState, getHospitalDesk, inr, verifiedCount } from "../../data";
 import { Avatar, DocIcon, docTone, statusTone } from "../../ui";
 
@@ -96,7 +97,13 @@ export default async function PatientDetail({ params }: { params: Promise<{ id: 
             <Surface className="p-5">
               <h2 className="flex items-center gap-2 text-lg font-bold text-ink"><FiUserCheck className="text-slate-400" />Insurer documents</h2>
               <p className="mt-1 text-xs text-slate-400">{verifiedCount(p)} of {p.documents.length} verified · {claimState(p)}</p>
-              <ul className="mt-3 space-y-2.5">{p.documents.map((d) => <li key={d.name} className="flex items-center gap-2.5 text-sm text-slate-700"><DocIcon status={d.status} /><span className="flex-1">{d.name}</span><Pill tone={docTone[d.status]}>{d.status}</Pill></li>)}</ul>
+              <ul className="mt-3 space-y-2.5">{p.documents.map((d) => (
+                <li key={d.name} className="flex items-center gap-2.5 text-sm text-slate-700">
+                  <DocIcon status={d.status} />
+                  <span className="min-w-0 flex-1">{d.name}{d.fileUrl && <a href={apiUrl(d.fileUrl)} target="_blank" rel="noopener noreferrer" aria-label={`Open ${d.fileName}`} className="ml-1.5 inline-flex align-[-2px] text-care-700 hover:text-care-800"><FiPaperclip className="size-3.5" /></a>}</span>
+                  <Pill tone={docTone[d.status]}>{d.status}</Pill>
+                </li>
+              ))}</ul>
               <Link href="/hospital/claims" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-care-700 hover:text-care-800">Go to insurer claims <FiArrowRight /></Link>
             </Surface>
           )}

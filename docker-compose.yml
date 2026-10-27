@@ -1,5 +1,5 @@
-# Local stack: PostgreSQL + the Spring Boot backend.
-#   docker compose up -d          # database and API on http://localhost:8080
+# Local stack: PostgreSQL, the Spring Boot backend and the document verifier.
+#   docker compose up -d          # database, verifier and API on http://localhost:8080
 #   docker compose up -d postgres # database only, when running the backend from your IDE
 # The frontend runs separately: cd frontend && npm run dev
 services:
@@ -18,16 +18,26 @@ services:
       interval: 5s
       retries: 10
 
+  # OCR, error level analysis and the AI-image classifier for claim documents (verifier/).
+  # Runs locally and offline: documents never leave this machine.
+  verifier:
+    build: ./verifier
+    ports:
+      - "8000:8000"
+
   backend:
     build: ./backend
     depends_on:
       postgres:
         condition: service_healthy
+      verifier:
+        condition: service_started
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/insurecare
       DB_USER: insurecare
       DB_PASSWORD: insurecare
       ALLOWED_ORIGINS: http://localhost:3000
+      VERIFIER_URL: http://verifier:8000
     ports:
       - "8080:8080"
 

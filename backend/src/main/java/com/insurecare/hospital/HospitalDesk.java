@@ -1,17 +1,26 @@
 package com.insurecare.hospital;
 
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.insurecare.checks.CheckRunner;
+import com.insurecare.checks.DocumentFlags;
+import com.insurecare.checks.DocumentUploaded;
 import com.insurecare.config.AppProperties;
 import com.insurecare.domain.Admission;
 import com.insurecare.domain.AdmissionDocument;
@@ -22,6 +31,8 @@ import com.insurecare.domain.CareServiceRepository;
 import com.insurecare.domain.Claim;
 import com.insurecare.domain.ClaimDocument;
 import com.insurecare.domain.ClaimRepository;
+import com.insurecare.domain.DocumentFile;
+import com.insurecare.domain.DocumentFileRepository;
 import com.insurecare.domain.Hospital;
 import com.insurecare.domain.HospitalRepository;
 import com.insurecare.domain.Member;
@@ -50,17 +61,20 @@ public class HospitalDesk {
     private final CareServiceRepository services;
     private final AdmissionRepository admissions;
     private final ClaimRepository claims;
+    private final DocumentFileRepository files;
     private final ApplicationEventPublisher events;
     private final AppProperties props;
 
     public HospitalDesk(HospitalRepository hospitals, WardRepository wards, BedRepository beds, CareServiceRepository services,
-                        AdmissionRepository admissions, ClaimRepository claims, ApplicationEventPublisher events, AppProperties props) {
+                        AdmissionRepository admissions, ClaimRepository claims, DocumentFileRepository files, ApplicationEventPublisher events,
+                        AppProperties props) {
         this.hospitals = hospitals;
         this.wards = wards;
         this.beds = beds;
         this.services = services;
         this.admissions = admissions;
         this.claims = claims;
+        this.files = files;
         this.events = events;
         this.props = props;
     }
@@ -112,6 +126,47 @@ public class HospitalDesk {
         events.publishEvent(new Change("patients", doc.getName() + " for " + admission.getMember().getName() + ": " + status));
     }
 
+    /**
+     * Saves the file for one of a patient's documents and starts its automatic checks. A new or replaced
+     * file always goes back to "Pending review", so the agent looks at what was actually uploaded.
+     */
+    public DocView uploadDocument(String hospitalId, String memberRef, int position, MultipartFile file) throws IOException {
+        if (file.isEmpty()) throw ApiErrors.badRequest("The file is empty.");
+        byte[] content = file.getBytes();
+        String type = sniffType(content);
+        if (type == null) throw ApiErrors.badRequest("Please choose a PDF, JPG or PNG file.");
+
+        Admission admission = admission(hospitalId, memberRef);
+        AdmissionDocument doc = admission.getDocuments().stream().filter(d -> d.getPosition() == position).findFirst()
+                .orElseThrow(() -> ApiErrors.notFound("Document"));
+        DocumentFile stored = files.findById(doc.getId()).orElseGet(() -> {
+            DocumentFile f = new DocumentFile();
+            f.setDocumentId(doc.getId());
+            return f;
+        });
+        stored.setContentType(type);
+        stored.setContent(content);
+        stored.setSha256(HexFormat.of().formatHex(sha256(content)));
+        stored.setPageHashes(List.of());
+        stored.setExtractedText(null);
+        files.save(stored);
+
+        doc.setFileName(fileName(file.getOriginalFilename(), doc.getName(), type));
+        doc.setFileSize(file.getSize());
+        doc.setUploadedAt(Instant.now());
+        doc.setCheckStatus(CheckRunner.CHECKING);
+        doc.setCheckScore(null);
+        doc.setFindings(List.of());
+        doc.setCheckedAt(null);
+        doc.setStatus(AdmissionDocument.PENDING);
+        doc.setNote(null);
+        openClaim(admission).ifPresent(c -> syncDocuments(c, admission));
+
+        events.publishEvent(new DocumentUploaded(doc.getId()));
+        events.publishEvent(new Change("patients", doc.getName() + " uploaded for " + admission.getMember().getName()));
+        return docView(doc);
+    }
+
     /** Sends a patient's verified documents to their insurer, opening a claim if none is open. */
     public ClaimLink share(String hospitalId, String memberRef) {
         Admission admission = admission(hospitalId, memberRef);
@@ -156,8 +211,44 @@ public class HospitalDesk {
 
     private static void syncDocuments(Claim claim, Admission admission) {
         List<ClaimDocument> docs = new ArrayList<>();
-        for (AdmissionDocument d : admission.getDocuments()) docs.add(ClaimDocument.of(d.getName(), ClaimDocument.fromAdmissionStatus(d.getStatus())));
+        for (AdmissionDocument d : admission.getDocuments()) docs.add(ClaimDocument.from(d));
         claim.replaceDocuments(docs);
+        DocumentFlags.refresh(claim);
+    }
+
+    /** The real file type from the first bytes, whatever the browser claimed: PDF, JPEG or PNG, else null. */
+    static String sniffType(byte[] b) {
+        if (b.length >= 5 && b[0] == '%' && b[1] == 'P' && b[2] == 'D' && b[3] == 'F' && b[4] == '-') return "application/pdf";
+        if (b.length >= 3 && (b[0] & 0xFF) == 0xFF && (b[1] & 0xFF) == 0xD8 && (b[2] & 0xFF) == 0xFF) return "image/jpeg";
+        if (b.length >= 8 && (b[0] & 0xFF) == 0x89 && b[1] == 'P' && b[2] == 'N' && b[3] == 'G') return "image/png";
+        return null;
+    }
+
+    /** A safe download name: the uploaded name without any path, or the document name, with the right extension. */
+    private static String fileName(String original, String documentName, String type) {
+        String ext = switch (type) {
+            case "application/pdf" -> ".pdf";
+            case "image/jpeg" -> ".jpg";
+            default -> ".png";
+        };
+        String base = original == null ? "" : original.replaceAll(".*[/\\\\]", "").replaceAll("[\\p{Cntrl}\"]", "").trim();
+        if (base.isEmpty()) base = documentName;
+        if (base.length() > 120) base = base.substring(0, 120);
+        return base.toLowerCase(Locale.ROOT).endsWith(ext) || (ext.equals(".jpg") && base.toLowerCase(Locale.ROOT).endsWith(".jpeg")) ? base : base + ext;
+    }
+
+    private static byte[] sha256(byte[] content) {
+        try {
+            return MessageDigest.getInstance("SHA-256").digest(content);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private DocView docView(AdmissionDocument d) {
+        return new DocView(d.getId(), d.getName(), d.getStatus(), d.getNote(), d.getFileName(),
+                d.hasFile() ? "/api/document-files/" + d.getId() : null, Fmt.stamp(d.getUploadedAt(), props.zone()),
+                d.getCheckStatus() == null ? null : CheckRunner.CHECKING.equals(d.getCheckStatus()) ? "Checking" : "Checked");
     }
 
     private Optional<Claim> openClaim(Admission admission) {
@@ -180,7 +271,7 @@ public class HospitalDesk {
                 a.getStatus(), a.getWard(), a.getBed(), Fmt.day(a.getAdmittedOn()), a.getDoctor(), a.getDiagnosis(),
                 new PolicyView(m.getPolicyName(), m.getPolicyProvider(), m.getPolicyNumber(), m.getCoverage(), m.getBalance(), m.isCashless(), Fmt.day(m.getValidTill())),
                 m.getAllergies(), m.getMedications(), m.getHistory(), a.getTreatments(),
-                a.getDocuments().stream().map(d -> new DocView(d.getName(), d.getStatus(), d.getNote())).toList(),
+                a.getDocuments().stream().map(this::docView).toList(),
                 Fmt.stamp(a.getSharedAt(), props.zone()),
                 claim == null ? null : new ClaimLink(claim.getId(), claim.getStatus(), claim.getApproved()));
     }

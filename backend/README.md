@@ -25,12 +25,28 @@ The API listens on http://localhost:8080. On first start, Flyway creates the sch
 | `ALLOWED_ORIGINS` | `http://localhost:3000` | Browser origins allowed to call the API and open the socket (comma-separated) |
 | `SEED_DATA` | `true` | Load `seed.json` into an empty database |
 | `PORT` | `8080` | HTTP port |
+| `VERIFIER_URL` | `http://localhost:8000` | Document verifier (`verifier/`): OCR and the AI-image model. Blank turns those checks off; the other checks still run |
 
 To start over with fresh demo data, drop and recreate the `insurecare` database.
 
 ## How live updates work
 
 Every change runs in a transaction that publishes a `Change` event. After the commit, `LiveUpdates` pushes `{topic, message, at}` to every browser connected to `ws://localhost:8080/live`. Each portal shows the message as a toast and re-reads its page data, so a decision made in one portal appears in the others within a moment.
+
+## Document checks
+
+When the hospital uploads a file for a claim document, `checks/CheckRunner` examines it in the background and stores a grade (**Passed**, **Needs review** or **High risk**), a 0-100 risk score and the findings behind it. The insurer sees them on the claim; the hospital only sees that its file was checked. Everything runs on this machine with free, open-source tools: no document leaves it.
+
+| Check | How |
+|---|---|
+| Made with AI | IPTC "trained algorithmic media" in content credentials (C2PA) or XMP, AI tool names in metadata, Stable Diffusion settings; for photos and scans, an AI-image classifier (`haywoodsloan/ai-image-detector-deploy`, Apache-2.0) in the verifier |
+| Edited | Design tools (Photoshop, Canva, GIMP...) or PDF editors in the metadata, PDF revisions saved after the original, modified long after it was created, error level analysis on JPEGs |
+| Copied | The identical file (SHA-256), or the same page (256-bit perceptual hash) with nearly the same wording (85%+ word overlap), uploaded for another patient |
+| Content | Text from the PDF or OCR (Tesseract, English + Hindi) compared with the claim: patient name, member or policy number, hospital name, dates against the admission and today, bill total against the estimate |
+
+These are warning signs, not proof: the claims officer opens the file and decides. Checks interrupted by a restart resume on startup, and "Check again" re-runs them (for example after the verifier was down).
+
+The verifier (`verifier/`, Python) is its own container because OCR and the image model need their own libraries. Its first `docker compose build` downloads about 2 GB (PyTorch for CPU and the 780 MB model) and takes several minutes; after that it starts offline.
 
 ## API
 
@@ -46,6 +62,9 @@ Every change runs in a transaction that publishes a `Change` event. After the co
 | POST | `/api/members/{member}/documents` (multipart `file`, `name`, `category`) | Upload to the document vault (PDF/JPG/PNG, 10 MB max) |
 | DELETE | `/api/members/{member}/documents/{docId}` | Remove a document |
 | GET | `/api/documents/{docId}/file` | Download a stored file |
+| POST | `/api/hospitals/{id}/patients/{member}/documents/{position}/file` (multipart `file`) | Upload the file for a hospital document (PDF/JPG/PNG, 10 MB max); its checks start in the background |
+| GET | `/api/document-files/{documentId}` | Open an uploaded hospital document |
+| POST | `/api/document-files/{documentId}/recheck` | Run the document checks again |
 
 Errors are returned as RFC 7807 problem details. Two people changing the same claim at once get `409 Conflict` (optimistic locking).
 

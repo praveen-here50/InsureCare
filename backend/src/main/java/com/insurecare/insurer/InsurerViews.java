@@ -2,6 +2,8 @@ package com.insurecare.insurer;
 
 import java.util.List;
 
+import com.insurecare.domain.CheckFinding;
+
 /** JSON shapes for the insurer portal (frontend/src/app/insurer/data.ts). */
 public final class InsurerViews {
 
@@ -32,7 +34,18 @@ public final class InsurerViews {
             List<Doc> docs, List<Step> timeline, String note, List<String> flags) {
     }
 
-    public record Doc(String name, String status) {
+    /** A claim document; the file fields and {@code check} are empty when the hospital has not uploaded a file. */
+    public record Doc(Long id, String name, String status, String fileName, String fileUrl, String uploadedAt, DocCheck check) {
+    }
+
+    /**
+     * The automatic authenticity checks on a document.
+     *
+     * @param status   Checking, Passed, Needs review or High risk
+     * @param score    0-100, higher is riskier
+     * @param findings most serious first
+     */
+    public record DocCheck(String status, Integer score, String checkedAt, List<CheckFinding> findings) {
     }
 
     public record Step(String label, String date, boolean done, boolean current) {

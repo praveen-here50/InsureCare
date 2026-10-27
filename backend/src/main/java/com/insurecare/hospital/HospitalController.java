@@ -1,5 +1,8 @@
 package com.insurecare.hospital;
 
+import java.io.IOException;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -7,11 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.insurecare.hospital.HospitalViews.BedChange;
 import com.insurecare.hospital.HospitalViews.BedView;
 import com.insurecare.hospital.HospitalViews.ClaimLink;
+import com.insurecare.hospital.HospitalViews.DocView;
 import com.insurecare.hospital.HospitalViews.DocumentChange;
 import com.insurecare.hospital.HospitalViews.Workspace;
 
@@ -41,6 +47,13 @@ public class HospitalController {
                                             @RequestBody DocumentChange change) {
         desk.setDocumentStatus(hospitalId, memberRef, position, change.status());
         return ResponseEntity.noContent().build();
+    }
+
+    /** Uploads the file for a document (PDF/JPG/PNG, 10 MB max); its authenticity checks start straight away. */
+    @PostMapping(path = "/patients/{memberRef}/documents/{position}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public DocView uploadDocument(@PathVariable String hospitalId, @PathVariable String memberRef, @PathVariable int position,
+                                  @RequestParam MultipartFile file) throws IOException {
+        return desk.uploadDocument(hospitalId, memberRef, position, file);
     }
 
     @PostMapping("/patients/{memberRef}/share")

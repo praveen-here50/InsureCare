@@ -36,7 +36,11 @@ public final class HospitalViews {
     public record PolicyView(String name, String provider, String number, long coverage, long balance, boolean cashless, String validTill) {
     }
 
-    public record DocView(String name, String status, String note) {
+    /**
+     * One of a patient's insurer documents. {@code check} is only "Checking" or "Checked": the hospital sees that its
+     * upload was examined, while the findings go to the insurer.
+     */
+    public record DocView(Long id, String name, String status, String note, String fileName, String fileUrl, String uploadedAt, String check) {
     }
 
     /** The insurer's latest decision on this patient's claim, so the desk sees approvals as they happen. */

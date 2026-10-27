@@ -25,12 +25,23 @@ public class ClaimDocument {
     private int position;
     private String name;
     private String status;
+    /** The hospital document this was copied from, which holds the file and its checks; null for older claims. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "source_id")
+    private AdmissionDocument source;
 
     public static ClaimDocument of(String name, String status) {
         ClaimDocument d = new ClaimDocument();
         d.setName(name);
         d.setStatus(status);
         return d;
+    }
+
+    /** A claim document mirroring one of the hospital's documents. */
+    public static ClaimDocument from(AdmissionDocument d) {
+        ClaimDocument c = of(d.getName(), fromAdmissionStatus(d.getStatus()));
+        c.setSource(d);
+        return c;
     }
 
     /** Maps the hospital's verification status to what the insurer sees. */

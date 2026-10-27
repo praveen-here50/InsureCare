@@ -35,3 +35,5 @@ insurecare:
   zone: Asia/Kolkata
   # The insurer portal is operated by this insurer; it sees claims and policyholders for this name only.
   insurer-name: CarePlus Insurance
+  # Document verifier (verifier/): OCR, error level analysis and the AI-image model. Runs locally; blank turns those checks off.
+  verifier-url: ${VERIFIER_URL:http://localhost:8000}

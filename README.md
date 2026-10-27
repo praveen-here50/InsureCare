@@ -82,7 +82,7 @@ Exact versions and dependencies will be pinned as each module is scaffolded.
 ## Getting Started
 
 ```bash
-# 1. Database + API (needs Docker; see backend/README.md to run without it)
+# 1. Database, document verifier and API (needs Docker; see backend/README.md to run without it)
 docker compose up -d
 
 # 2. Portals

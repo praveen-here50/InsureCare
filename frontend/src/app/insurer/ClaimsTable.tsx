@@ -8,7 +8,7 @@ import DataTable, { type Column } from "@/components/DataTable";
 import Tabs from "@/components/Tabs";
 import { inr } from "../hospital/data";
 import { OPEN, type ClaimView } from "./data";
-import { claimTone } from "./ui";
+import { ClaimCell, claimTone } from "./ui";
 
 const TABS = ["All", "Needs action", "Approved / settled", "Rejected"] as const;
 const match = (tab: (typeof TABS)[number], c: ClaimView) =>
@@ -23,7 +23,7 @@ export default function ClaimsTable({ claims, hospitals }: { claims: ClaimView[]
     return claims.filter((c) => match(tab, c) && (!hospital || c.hospitalId === hospital) && (!t || [c.id, c.memberId, c.patientName, c.hospitalName, c.diagnosis].some((v) => v.toLowerCase().includes(t))));
   }, [claims, q, tab, hospital]);
   const columns: Column<ClaimView>[] = [
-    { key: "id", label: "Claim", sort: (c) => c.id, render: (c) => <><span className="block font-medium text-slate-900">{c.id}</span><span className="text-xs text-slate-500">{c.type}</span></> },
+    { key: "id", label: "Claim", sort: (c) => c.id, render: (c) => <ClaimCell c={c} /> },
     { key: "patient", label: "Patient", sort: (c) => c.patientName, render: (c) => <><span className="block text-slate-900">{c.patientName}</span><span className="text-xs text-slate-500">{c.memberId}</span></> },
     { key: "dx", label: "Diagnosis", sort: (c) => c.diagnosis, render: (c) => <span className="text-slate-700">{c.diagnosis}</span> },
     { key: "hospital", label: "Hospital", sort: (c) => c.hospitalName, render: (c) => <span className="text-slate-600">{c.hospitalName}</span> },

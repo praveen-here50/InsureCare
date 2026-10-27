@@ -1,5 +1,6 @@
 package com.insurecare.insurer;
 
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.insurecare.config.AppProperties;
 import com.insurecare.domain.Admission;
 import com.insurecare.domain.AdmissionRepository;
+import com.insurecare.domain.AdmissionDocument;
 import com.insurecare.domain.Claim;
+import com.insurecare.domain.ClaimDocument;
 import com.insurecare.domain.ClaimRepository;
 import com.insurecare.domain.HospitalRepository;
 import com.insurecare.domain.Member;
@@ -20,6 +23,7 @@ import com.insurecare.domain.PolicyRepository;
 import com.insurecare.insurer.InsurerViews.ClaimView;
 import com.insurecare.insurer.InsurerViews.Decision;
 import com.insurecare.insurer.InsurerViews.Doc;
+import com.insurecare.insurer.InsurerViews.DocCheck;
 import com.insurecare.insurer.InsurerViews.Holder;
 import com.insurecare.insurer.InsurerViews.HolderPolicy;
 import com.insurecare.insurer.InsurerViews.Info;
@@ -68,7 +72,7 @@ public class ClaimsDesk {
                 .map(m -> holder(m, inHospital.get(m.getId())))
                 .toList();
 
-        List<ClaimView> claimViews = claims.findByInsurerOrderBySubmittedOnDescIdDesc(insurer).stream().map(ClaimsDesk::view).toList();
+        List<ClaimView> claimViews = claims.findByInsurerOrderBySubmittedOnDescIdDesc(insurer).stream().map(c -> view(c, props.zone())).toList();
         return new Snapshot(new Info(insurer, "Claims operations"), network, holders, claimViews);
     }
 
@@ -124,7 +128,7 @@ public class ClaimsDesk {
         }
         c.setUpdatedOn(props.today());
         events.publishEvent(new Change("claims", c.getId() + " " + summary));
-        return view(c);
+        return view(c, props.zone());
     }
 
     private static void requireOpen(Claim c) {
@@ -138,12 +142,21 @@ public class ClaimsDesk {
                 m.getDeclared(), stay);
     }
 
-    static ClaimView view(Claim c) {
+    static ClaimView view(Claim c, ZoneId zone) {
         return new ClaimView(
                 c.getId(), c.getMember().getMemberId(), c.getHospitalId(), c.getProviderName(), c.getType(), c.getDiagnosis(), c.getClaimed(), c.getApproved(),
                 c.getStatus(), Fmt.day(c.getSubmittedOn()), Fmt.day(c.getUpdatedOn()), c.isPreauth(), c.getOfficer(), c.isWaitingOk(),
-                c.getDocuments().stream().map(d -> new Doc(d.getName(), d.getStatus())).toList(),
+                c.getDocuments().stream().map(d -> doc(d, zone)).toList(),
                 c.getTimeline().stream().map(s -> new Step(s.label(), Fmt.dayShort(s.date()), s.done(), s.current())).toList(),
                 c.getNote(), c.getFlags());
+    }
+
+    /** A claim document with the hospital's file and the result of its automatic checks, when there is one. */
+    private static Doc doc(ClaimDocument d, ZoneId zone) {
+        AdmissionDocument src = d.getSource();
+        if (src == null || !src.hasFile()) return new Doc(src == null ? null : src.getId(), d.getName(), d.getStatus(), null, null, null, null);
+        DocCheck check = src.getCheckStatus() == null ? null
+                : new DocCheck(src.getCheckStatus(), src.getCheckScore(), Fmt.stamp(src.getCheckedAt(), zone), src.getFindings());
+        return new Doc(src.getId(), d.getName(), d.getStatus(), src.getFileName(), "/api/document-files/" + src.getId(), Fmt.stamp(src.getUploadedAt(), zone), check);
     }
 }

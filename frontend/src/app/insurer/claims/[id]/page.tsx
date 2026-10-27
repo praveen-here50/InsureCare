@@ -1,17 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FiAlertTriangle, FiArrowLeft, FiArrowRight, FiCheck, FiPhone, FiUserCheck, FiX } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiArrowRight, FiCheck, FiPhone, FiX } from "react-icons/fi";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import Reveal from "@/components/Reveal";
 import { cn } from "@/lib/cn";
-import { DocIcon } from "../../../hospital/ui";
 import { inr } from "../../../hospital/data";
 import ClaimDecision from "../../ClaimDecision";
+import DocumentChecks from "../../DocumentChecks";
 import { getInsurerData, isOpen } from "../../data";
 import { claimTone } from "../../ui";
-
-const DOC_TONE = { Verified: "Verified", Pending: "Pending review", Missing: "Missing" } as const;
 
 export default async function ClaimDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,6 +26,19 @@ export default async function ClaimDetail({ params }: { params: Promise<{ id: st
     { ok: !!holder && c.claimed <= holder.policy.balance, label: "Amount within remaining cover", detail: holder ? `${inr(holder.policy.balance)} remaining` : "" },
     { ok: verified === c.docs.length, label: "All documents verified by the agent", detail: `${verified} of ${c.docs.length} verified` },
   ];
+  // Only claims with uploaded files get the authenticity line; older claims have the agent's check alone.
+  const files = c.docs.filter((d) => d.check);
+  if (files.length > 0) {
+    const n = (s: string) => files.filter((d) => d.check!.status === s).length;
+    const [high, review, checking] = [n("High risk"), n("Needs review"), n("Checking")];
+    checks.push({
+      ok: high === 0 && review === 0 && checking === 0,
+      label: "Document authenticity checks passed",
+      detail: checking ? `${checking} file${checking > 1 ? "s" : ""} still being checked`
+        : high || review ? [high && `${high} high risk`, review && `${review} need${review === 1 ? "s" : ""} review`].filter(Boolean).join(" · ")
+        : `${files.length} uploaded file${files.length > 1 ? "s" : ""} passed`,
+    });
+  }
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -51,9 +62,7 @@ export default async function ClaimDetail({ params }: { params: Promise<{ id: st
               <li key={k.label} className="flex items-center gap-3 py-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-full", k.ok ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-500")}>{k.ok ? <FiCheck /> : <FiX />}</span>
                 <span className="min-w-0 flex-1"><span className="block text-sm font-medium text-slate-900">{k.label}</span><span className="block text-xs text-slate-500">{k.detail}</span></span></li>
             ))}</ul></Card></Reveal>
-          <Reveal><Card className="p-5 sm:p-6"><h2 className="font-semibold text-slate-900">Documents from the hospital</h2>
-            <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500"><FiUserCheck className="text-brand-600" />Checked by the claims verification agent before sharing</p>
-            <ul className="mt-3 divide-y divide-slate-100">{c.docs.map((d) => <li key={d.name} className="flex items-center gap-3 py-2.5"><DocIcon status={DOC_TONE[d.status]} /><span className="flex-1 text-sm font-medium text-slate-800">{d.name}</span><Badge tone="blue">{DOC_TONE[d.status]}</Badge></li>)}</ul></Card></Reveal>
+          <Reveal><DocumentChecks docs={c.docs} /></Reveal>
           <Reveal><Card className="p-5 sm:p-6"><h2 className="font-semibold text-slate-900">Claim progress</h2>
             <ol className="mt-4 space-y-4 border-l-2 border-brand-100 pl-5">{c.timeline.map((t) => (
               <li key={t.label} className="relative"><span className={cn("absolute -left-[27px] top-0.5 size-3.5 rounded-full border-2 border-white ring-2", t.done ? "bg-brand-600 ring-brand-100" : t.current ? "bg-white ring-brand-500" : "bg-slate-200 ring-slate-100")} />

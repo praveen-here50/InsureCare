@@ -19,7 +19,8 @@ export type Service = { name: string; available: boolean; note: string; referTo?
 export type PatientStatus = "Admitted" | "Under observation" | "Ready for discharge" | "Not admitted";
 export type DocStatus = "Verified" | "Pending review" | "Needs correction" | "Missing";
 export type Coverage = "Covered" | "Partially covered" | "Not covered";
-export type Doc = { name: string; status: DocStatus; note?: string };
+/** A document the hospital verifies for the insurer. `check` only says whether the uploaded file has been examined; the findings go to the insurer. */
+export type Doc = { id: number; name: string; status: DocStatus; note?: string; fileName?: string; fileUrl?: string; uploadedAt?: string; check?: "Checking" | "Checked" };
 /** The insurer's latest position on this patient's claim. */
 export type ClaimLink = { id: string; status: "Received" | "Under review" | "Query raised" | "Approved" | "Settled" | "Rejected"; approved?: number };
 export type Patient = {
