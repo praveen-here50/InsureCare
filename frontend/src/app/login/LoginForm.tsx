@@ -97,67 +97,70 @@ export default function LoginForm({ next }: { next?: string }) {
         </div>
       </aside>
 
-      <main className="flex flex-1 flex-col px-5 py-5 sm:px-10">
+      <main className="flex flex-1 flex-col bg-slate-50 px-4 py-5 sm:px-10">
         <div className="flex items-center justify-between gap-4">
           <div className={cn("flex items-center gap-3", panelOpen && "lg:invisible")}>
             <button type="button" onClick={() => togglePanel(true)} aria-label={t("Show side panel")} title={t("Show side panel")}
               className="hidden size-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition hover:bg-slate-50 hover:text-slate-900 lg:flex"><FiChevronsRight /></button>
             <Link href="/" aria-label={t("InsureCare home")}><Logo /></Link>
           </div>
-          <div role="radiogroup" aria-label={t("Language")} className="flex rounded-xl bg-slate-100 p-1 text-sm font-semibold">
+          <div role="radiogroup" aria-label={t("Language")} className="flex rounded-xl border border-slate-200 bg-white p-1 text-sm font-semibold shadow-soft">
             {([["en", "English"], ["ta", "தமிழ்"]] as const).map(([value, label]) => (
-              <button key={value} type="button" role="radio" aria-checked={lang === value} onClick={() => setLang(value)} className={cn("rounded-lg px-3 py-1.5 transition", lang === value ? "bg-white text-slate-900 shadow-soft" : "text-slate-500 hover:text-slate-900")}>{label}</button>
+              <button key={value} type="button" role="radio" aria-checked={lang === value} onClick={() => setLang(value)} className={cn("rounded-lg px-3 py-1.5 transition", lang === value ? "bg-care-50 text-care-700" : "text-slate-500 hover:text-slate-900")}>{label}</button>
             ))}
           </div>
         </div>
 
-        <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center py-4">
-          <h1 className="text-[1.75rem] font-bold tracking-tight">{t("Welcome back")}</h1>
-          <p className="mt-2 text-[15px] leading-6 text-slate-500">{t("Patients use their member ID. Hospital and insurer staff use their work email.")}</p>
+        <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col justify-center py-6">
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-lift sm:p-8">
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-care-700 via-care-500 to-care-300" />
+            <span className="mb-5 flex size-12 items-center justify-center rounded-2xl bg-care-50 text-care-600 ring-1 ring-inset ring-care-100"><FiLock className="size-5" /></span>
+            <h1 className="text-[1.75rem] font-bold tracking-tight">{t("Welcome back")}</h1>
+            <p className="mt-2 text-[15px] leading-6 text-slate-500">{t("Patients use their member ID. Hospital and insurer staff use their work email.")}</p>
 
-          <form onSubmit={signIn} className="mt-7 flex flex-col gap-4" noValidate>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-semibold text-slate-700">{t("Member ID or work email")}</span>
-              <span className="relative">
-                <FiUser aria-hidden="true" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="none" spellCheck={false} required
-                  placeholder={t("IC-7842 or name@hospital.example")} className={cn(fieldClass, "pr-3.5")} />
-              </span>
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-semibold text-slate-700">{t("Password")}</span>
-              <span className="relative">
-                <FiLock aria-hidden="true" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input value={password} onChange={(e) => setPassword(e.target.value)} type={show ? "text" : "password"} autoComplete="current-password" required className={cn(fieldClass, "pr-12")} />
-                <button type="button" onClick={() => setShow((s) => !s)} aria-label={show ? t("Hide password") : t("Show password")} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-slate-900">
-                  {show ? <FiEyeOff /> : <FiEye />}
-                </button>
-              </span>
-            </label>
-
-            {error && <p role="alert" className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">{error}</p>}
-
-            <button type="submit" disabled={busy || !username.trim() || !password} className={buttonClass("primary", "h-12 text-[15px]")}>
-              {busy ? <><FiLoader className="animate-spin" />{t("Signing in…")}</> : <>{t("Sign in")}<FiArrowRight /></>}
-            </button>
-          </form>
-
-          {DEMO_SITE && (
-            <section className="mt-7">
-              <div className="flex items-center gap-3 text-xs font-medium text-slate-400"><span className="h-px flex-1 bg-slate-200" />{t("Or try a demo account")}<span className="h-px flex-1 bg-slate-200" /></div>
-              <div className="mt-4 flex flex-col gap-2">
-                {DEMO.map(({ icon: Icon, who, role, username: demoUser }) => (
-                  <button key={demoUser} type="button" onClick={() => { setUsername(demoUser); setPassword(DEMO_PASSWORD); setError(null); }}
-                    className={cn("flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition hover:border-care-200 hover:bg-care-50", username === demoUser ? "border-care-300 bg-care-50" : "border-slate-200")}>
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-care-50 text-care-600"><Icon className="size-4" /></span>
-                    <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{who}</span><span className="block truncate text-xs text-slate-500">{t(role)}</span></span>
-                    <span className="text-xs font-medium text-care-700">{t("Use")}</span>
+            <form onSubmit={signIn} className="mt-7 flex flex-col gap-4" noValidate>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-semibold text-slate-700">{t("Member ID or work email")}</span>
+                <span className="relative">
+                  <FiUser aria-hidden="true" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="none" spellCheck={false} required
+                    placeholder={t("IC-7842 or name@hospital.example")} className={cn(fieldClass, "pr-3.5")} />
+                </span>
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-semibold text-slate-700">{t("Password")}</span>
+                <span className="relative">
+                  <FiLock aria-hidden="true" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input value={password} onChange={(e) => setPassword(e.target.value)} type={show ? "text" : "password"} autoComplete="current-password" required className={cn(fieldClass, "pr-12")} />
+                  <button type="button" onClick={() => setShow((s) => !s)} aria-label={show ? t("Hide password") : t("Show password")} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-slate-900">
+                    {show ? <FiEyeOff /> : <FiEye />}
                   </button>
-                ))}
-              </div>
-            </section>
-          )}
+                </span>
+              </label>
 
+              {error && <p role="alert" className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">{error}</p>}
+
+              <button type="submit" disabled={busy || !username.trim() || !password} className={buttonClass("primary", "h-12 text-[15px]")}>
+                {busy ? <><FiLoader className="animate-spin" />{t("Signing in…")}</> : <>{t("Sign in")}<FiArrowRight /></>}
+              </button>
+            </form>
+
+            {DEMO_SITE && (
+              <section className="mt-7">
+                <div className="flex items-center gap-3 text-xs font-medium text-slate-400"><span className="h-px flex-1 bg-slate-200" />{t("Or try a demo account")}<span className="h-px flex-1 bg-slate-200" /></div>
+                <div className="mt-4 flex flex-col gap-2">
+                  {DEMO.map(({ icon: Icon, who, role, username: demoUser }) => (
+                    <button key={demoUser} type="button" onClick={() => { setUsername(demoUser); setPassword(DEMO_PASSWORD); setError(null); }}
+                      className={cn("flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition hover:border-care-200 hover:bg-care-50", username === demoUser ? "border-care-300 bg-care-50" : "border-slate-200")}>
+                      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-care-50 text-care-600"><Icon className="size-4" /></span>
+                      <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{who}</span><span className="block truncate text-xs text-slate-500">{t(role)}</span></span>
+                      <span className="text-xs font-medium text-care-700">{t("Use")}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
         </div>
 
         <p className="text-center text-xs text-slate-400 lg:hidden">{t("Your health records are shown only to you, your hospital and your insurer.")}</p>
