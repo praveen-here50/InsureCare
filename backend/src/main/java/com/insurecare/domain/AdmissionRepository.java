@@ -15,5 +15,8 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
     @EntityGraph(attributePaths = {"member", "documents"})
     Optional<Admission> findFirstByHospitalIdAndMemberIdOrderByIdDesc(String hospitalId, String memberRef);
 
+    @EntityGraph(attributePaths = "documents")
+    List<Admission> findByMemberIdOrderByAdmittedOnDesc(String memberRef);
+
     List<Admission> findByStatusIn(Collection<String> statuses);
 }

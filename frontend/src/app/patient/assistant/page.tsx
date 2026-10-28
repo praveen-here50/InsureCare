@@ -4,29 +4,26 @@ import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { FiArrowRight, FiFileText, FiHeart, FiInfo, FiMapPin, FiSend, FiShield } from "react-icons/fi";
 import type { IconType } from "react-icons";
+import { ApiError, send } from "@/lib/api";
 import { cn } from "@/lib/cn";
-import { Eyebrow, Surface } from "@/components/portal/ui";
+import { Surface } from "@/components/portal/ui";
+import { MEMBER_REF } from "../portal";
 
-type Message = { id: number; role: "user" | "assistant"; text: string; source?: string };
+// `failed` marks an error shown in the chat; it is not sent back as part of the conversation.
+type Message = { id: number; role: "user" | "assistant"; text: string; source?: string; failed?: boolean };
+type Reply = { text: string; source?: string };
 
 const suggestedQuestions = ["What does my policy cover?", "Is cataract surgery covered?", "What documents are needed for a claim?", "Find hospitals in my network", "When does my policy expire?", "Explain my government scheme", "What's the status of my claim?"];
 const helpTopics: Array<[IconType, string]> = [[FiShield, "Policies"], [FiFileText, "Documents"], [FiHeart, "Claims"], [FiMapPin, "Hospitals"]];
 const quickLinks: Array<[string, string]> = [["My policies", "/patient/policies"], ["My documents", "/patient/documents"], ["My claims", "/patient/claims"], ["Find a hospital", "/patient/hospitals"]];
 
-// Pre-written demo answers. A real assistant will answer from the member's own documents via the backend.
-const demoReplies: Record<string, { text: string; source?: string }> = {
-  "What does my policy cover?": { text: "Family Health Shield Plus includes hospitalisation, day-care procedures, and eligible pre- and post-hospitalisation expenses. Please review your policy terms or contact the insurer before relying on this information.", source: "Family Health Shield Plus · Policy document" },
-  "Is cataract surgery covered?": { text: "Based on your policy information, cataract surgery is listed under covered hospitalisation benefits. A waiting period may apply. This is not a coverage confirmation, so please review your policy terms or contact the insurer before treatment.", source: "Family Health Shield Plus · Policy document" },
-  "What documents are needed for a claim?": { text: "The standard checklist includes your claim form, hospital discharge summary, itemised bills, prescriptions, and identity or policy documents. Your insurer may request additional records.", source: "Claim checklist · Document library" },
-  "Find hospitals in my network": { text: "You have 3 cashless network hospitals near Kurnool. Open Find a hospital to filter by speciality, distance and emergency care.", source: "Hospital directory" },
-  "When does my policy expire?": { text: "Your Family Health Shield Plus policy is active through 15 March 2027. Please confirm the date on your policy document.", source: "Family Health Shield Plus · Policy document" },
-  "Explain my government scheme": { text: "You're enrolled in Ayushman Bharat PM-JAY, which offers up to ₹5,00,000 of family cover per year at empanelled hospitals. Your Chiranjeevi Yojana application is still being processed.", source: "Government scheme guide" },
-  "What's the status of my claim?": { text: "CLM-1038 needs a diagnostic report before review can continue. CLM-1019 is under review, and CLM-1042 was approved for ₹43,200.", source: "Claim records" },
-};
-
 const initialMessages: Message[] = [{ id: 1, role: "assistant", text: "Hello, Priya. I can help you understand your policies, benefits, claims, documents, and healthcare options. What would you like to know?" }];
 
-function getReply(question: string) { return demoReplies[question] ?? { text: "I couldn't find supporting information for that in your documents, so I won't guess. Try one of the suggested questions, or contact your insurer on 1800-000-000." }; }
+/** Answers come from the backend (POST /api/members/{id}/assistant), which reads the member's own records. */
+async function askAssistant(conversation: Message[]) {
+  const messages = conversation.filter((m) => !m.failed).map(({ role, text }) => ({ role, text }));
+  return (await send<Reply>("POST", `/api/members/${MEMBER_REF}/assistant`, { messages }))!;
+}
 
 export default function AssistantPage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -36,14 +33,22 @@ export default function AssistantPage() {
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [messages, thinking]);
 
-  function submitQuestion(question: string) {
+  async function submitQuestion(question: string) {
     const value = question.trim();
     if (!value || thinking) return;
-    const reply = getReply(value);
+    const conversation: Message[] = [...messages, { id: Date.now(), role: "user", text: value }];
     setInput("");
-    setMessages((current) => [...current, { id: Date.now(), role: "user", text: value }]);
+    setMessages(conversation);
     setThinking(true);
-    window.setTimeout(() => { setMessages((current) => [...current, { id: Date.now() + 1, role: "assistant", text: reply.text, source: reply.source }]); setThinking(false); }, 650);
+    let answer: Message;
+    try {
+      const reply = await askAssistant(conversation);
+      answer = { id: Date.now(), role: "assistant", text: reply.text, source: reply.source };
+    } catch (error) {
+      answer = { id: Date.now(), role: "assistant", failed: true, text: error instanceof ApiError ? error.message : "I couldn't reach InsureCare just now. Please check your connection and try again." };
+    }
+    setMessages((current) => [...current, answer]);
+    setThinking(false);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); submitQuestion(input); }
@@ -51,8 +56,7 @@ export default function AssistantPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Eyebrow>Assistant</Eyebrow>
-        <h1 className="mt-2 text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-[2.5rem] sm:leading-[1.1]">Ask InsureCare</h1>
+        <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-[2.5rem] sm:leading-[1.1]">Ask InsureCare</h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-7 text-slate-500">Get quick answers about your cover, claims and documents in plain language.</p>
       </div>
 
@@ -60,7 +64,7 @@ export default function AssistantPage() {
         <Surface className="flex h-[min(680px,calc(100vh-260px))] min-h-[520px] flex-col overflow-hidden">
           <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
             <span className="relative flex size-10 items-center justify-center rounded-xl bg-care-700 text-xs font-bold text-white">IC<span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-emerald-500 ring-2 ring-white" /></span>
-            <div className="flex-1"><h2 className="font-bold text-ink">InsureCare assistant</h2><p className="text-xs text-slate-400">Demo answers · not connected to live records yet</p></div>
+            <div className="flex-1"><h2 className="font-bold text-ink">InsureCare assistant</h2><p className="text-xs text-slate-400">Answers from your InsureCare records</p></div>
           </div>
 
           <div className="flex-1 space-y-5 overflow-y-auto bg-[#F8FAFD] p-5 sm:p-6" aria-live="polite">
@@ -68,7 +72,7 @@ export default function AssistantPage() {
               <div key={m.id} className={cn("flex gap-3", m.role === "user" ? "justify-end" : "justify-start")}>
                 {m.role === "assistant" && <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ink text-[10px] font-bold text-white">IC</span>}
                 <div className={cn("flex max-w-[82%] flex-col gap-1.5", m.role === "user" ? "items-end" : "items-start")}>
-                  <div className={cn("rounded-2xl px-4 py-3 text-[15px] leading-7", m.role === "user" ? "rounded-tr-md bg-care-600 text-white" : "rounded-tl-md border border-slate-200/80 bg-white text-slate-700 shadow-soft")}>{m.text}</div>
+                  <div className={cn("whitespace-pre-line rounded-2xl px-4 py-3 text-[15px] leading-7", m.role === "user" ? "rounded-tr-md bg-care-600 text-white" : m.failed ? "rounded-tl-md border border-amber-200 bg-amber-50 text-amber-800" : "rounded-tl-md border border-slate-200/80 bg-white text-slate-700 shadow-soft")}>{m.text}</div>
                   {m.source && <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs text-slate-500 ring-1 ring-slate-200"><FiFileText className="size-3 text-care-500" />{m.source}</span>}
                 </div>
               </div>

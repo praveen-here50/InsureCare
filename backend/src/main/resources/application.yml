@@ -37,3 +37,9 @@ insurecare:
   insurer-name: CarePlus Insurance
   # Document verifier (verifier/): OCR, error level analysis and the AI-image model. Runs locally; blank turns those checks off.
   verifier-url: ${VERIFIER_URL:http://localhost:8000}
+  # Ask InsureCare, the patient assistant: answers from the member's own records with an OpenAI-compatible chat API
+  # (Groq's free tier by default; key from console.groq.com). A blank key turns it off.
+  assistant:
+    url: ${ASSISTANT_URL:https://api.groq.com/openai/v1}
+    api-key: ${GROQ_API_KEY:}
+    model: ${ASSISTANT_MODEL:openai/gpt-oss-120b}

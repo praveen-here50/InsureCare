@@ -38,6 +38,9 @@ services:
       DB_PASSWORD: insurecare
       ALLOWED_ORIGINS: http://localhost:3000
       VERIFIER_URL: http://verifier:8000
+      # Ask InsureCare (patient assistant). Set it in your shell or a .env file next to this one; blank turns the assistant off.
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      ASSISTANT_MODEL: ${ASSISTANT_MODEL:-openai/gpt-oss-120b}
     ports:
       - "8080:8080"
 

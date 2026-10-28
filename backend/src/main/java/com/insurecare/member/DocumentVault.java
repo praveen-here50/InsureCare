@@ -58,6 +58,7 @@ public class DocumentVault {
         documents.save(d);
 
         events.publishEvent(new Change("documents", d.getName() + " added"));
+        events.publishEvent(new DocumentText.Added(d.getId()));
         return new DocumentView(d.getId(), d.getName(), d.getCategory(), d.getDateAdded().toString(), d.getType(), d.getStatus(), d.getSizeMb(),
                 "/api/documents/" + d.getId() + "/file");
     }

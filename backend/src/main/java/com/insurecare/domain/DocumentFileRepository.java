@@ -1,5 +1,6 @@
 package com.insurecare.domain;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,11 @@ public interface DocumentFileRepository extends JpaRepository<DocumentFile, Long
             from DocumentFile f, AdmissionDocument d join d.admission a join a.member m
             where d.id = f.documentId and f.documentId <> :excludeId""")
     List<DocumentFingerprint> fingerprintsExcept(@Param("excludeId") Long excludeId);
+
+    /** Text read from these documents' files by the checks; never loads file bytes. */
+    @Query("select new com.insurecare.domain.DocumentFileRepository$Text(f.documentId, f.extractedText) from DocumentFile f where f.documentId in :ids")
+    List<Text> textOf(@Param("ids") Collection<Long> ids);
+
+    record Text(Long documentId, String text) {
+    }
 }

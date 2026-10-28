@@ -26,6 +26,9 @@ The API listens on http://localhost:8080. On first start, Flyway creates the sch
 | `SEED_DATA` | `true` | Load `seed.json` into an empty database |
 | `PORT` | `8080` | HTTP port |
 | `VERIFIER_URL` | `http://localhost:8000` | Document verifier (`verifier/`): OCR and the AI-image model. Blank turns those checks off; the other checks still run |
+| `GROQ_API_KEY` | (blank) | Turns on Ask InsureCare, the patient assistant (free key from console.groq.com). Blank leaves it off (the endpoint answers 503) |
+| `ASSISTANT_MODEL` | `openai/gpt-oss-120b` | Model the assistant uses (must be one your Groq key lists at `/openai/v1/models`) |
+| `ASSISTANT_URL` | `https://api.groq.com/openai/v1` | Any OpenAI-compatible chat API (Groq, a local Ollama at `http://localhost:11434/v1`, ...) |
 
 To start over with fresh demo data, drop and recreate the `insurecare` database.
 
@@ -59,6 +62,7 @@ The verifier (`verifier/`, Python) is its own container because OCR and the imag
 | GET | `/api/insurer` | Insurer portal: network hospitals, policyholders, claims |
 | POST | `/api/insurer/claims/{id}/decision` `{action, note?, amount?}` | `approve`, `query`, `reject`, `settle` |
 | GET | `/api/members/{member}/portal` | Patient portal: claims, policies, schemes, hospitals, documents |
+| POST | `/api/members/{member}/assistant` `{messages: [{role, text}]}` | Ask InsureCare: answers the last question from the member's live records (policies, claims, schemes, hospital stays, medical history, document text); returns `{text, source?}` |
 | POST | `/api/members/{member}/documents` (multipart `file`, `name`, `category`) | Upload to the document vault (PDF/JPG/PNG, 10 MB max) |
 | DELETE | `/api/members/{member}/documents/{docId}` | Remove a document |
 | GET | `/api/documents/{docId}/file` | Download a stored file |
