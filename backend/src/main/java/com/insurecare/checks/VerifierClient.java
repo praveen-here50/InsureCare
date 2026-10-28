@@ -42,10 +42,14 @@ public class VerifierClient {
     private final boolean enabled;
 
     public VerifierClient(RestClient.Builder builder, AppProperties props) {
-        enabled = props.verifierUrl() != null && !props.verifierUrl().isBlank();
+        enabled = props.verifierOn();
         JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
         factory.setReadTimeout(Duration.ofSeconds(120)); // OCR of a dense page can take a while on CPU
         http = builder.baseUrl(enabled ? props.verifierUrl() : "http://localhost").requestFactory(factory).build();
+    }
+
+    public boolean enabled() {
+        return enabled;
     }
 
     public Analysis analyze(BufferedImage page, boolean ocr) throws Unavailable {

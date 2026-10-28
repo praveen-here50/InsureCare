@@ -26,7 +26,8 @@ export type Claim = {
   note?: string; flags: string[];
 };
 
-export type Snapshot = { insurer: { name: string; tagline: string }; hospitals: NetHospital[]; holders: Policyholder[]; claims: Claim[] };
+/** `imageChecks`: whether OCR and the AI-image model run on this server (the document verifier is set up). */
+export type Snapshot = { insurer: { name: string; tagline: string; imageChecks: boolean }; hospitals: NetHospital[]; holders: Policyholder[]; claims: Claim[] };
 
 export const OPEN: ClaimStatus[] = ["Received", "Under review", "Query raised"];
 export const isOpen = (c: Claim) => OPEN.includes(c.status);

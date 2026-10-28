@@ -25,14 +25,16 @@ The API listens on http://localhost:8080. On first start, Flyway creates the sch
 | `ALLOWED_ORIGINS` | `http://localhost:3000` | Browser origins allowed to call the API and open the socket (comma-separated; `*` matches any part, e.g. `http://192.168.*:3000`) |
 | `SEED_DATA` | `true` | Load `seed.json` into an empty database, and create the demo sign-in accounts when there are none |
 | `DEMO_PASSWORD` | `insurecare` | Password of every demo account |
+| `DEMO_RESET` | (blank) | Cron schedule (zone Asia/Kolkata) for putting the demo data back as it started, e.g. `0 0 3 * * *` for 3 AM daily. Undoes visitors' changes and deletes their uploads; signed-in visitors stay signed in. Blank means never |
 | `SESSION_COOKIE_SECURE` | `false` | Send the session cookie over HTTPS only; set `true` when the portals are served over HTTPS |
 | `PORT` | `8080` | HTTP port |
 | `VERIFIER_URL` | `http://localhost:8000` | Document verifier (`verifier/`): OCR and the AI-image model. Blank turns those checks off; the other checks still run |
 | `GROQ_API_KEY` | (blank) | Turns on Ask InsureCare, the patient assistant (free key from console.groq.com). Blank leaves it off (the endpoint answers 503) |
 | `ASSISTANT_MODEL` | `openai/gpt-oss-120b` | Model the assistant uses (must be one your Groq key lists at `/openai/v1/models`) |
+| `ASSISTANT_QUESTIONS_PER_HOUR` | `10` | Questions one signed-in visitor (browser session) may ask per hour, so one person can't use up the shared free tier; `0` for no limit |
 | `ASSISTANT_URL` | `https://api.groq.com/openai/v1` | Any OpenAI-compatible chat API (Groq, a local Ollama at `http://localhost:11434/v1`, ...) |
 
-To start over with fresh demo data, drop and recreate the `insurecare` database.
+To start over with fresh demo data, drop and recreate the `insurecare` database, or set `DEMO_RESET` to reset it on a schedule.
 
 ## Sign-in
 

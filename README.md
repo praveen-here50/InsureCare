@@ -111,7 +111,8 @@ Working prototype with demo data. Before real patients use it:
 
 - **Accounts** exist only as demo data: no sign-up, password change or reset, and no limit on wrong password attempts yet.
 - **Patient data and the AI:** each assistant question sends that patient's records to Groq. Get consent, or point `ASSISTANT_URL` at a model on your own server (e.g. Ollama).
-- **Groq's free tier** allows only a few questions a minute in total.
+- **Groq's free tier** allows only a few questions a minute in total. Each visitor may ask 10 questions an hour (`ASSISTANT_QUESTIONS_PER_HOUR`).
+- **Public demo:** set `DEMO_RESET=0 0 3 * * *` to put the demo data back every night, undoing visitors' changes and deleting their uploads. Upload forms warn visitors not to upload real documents.
 - **HTTPS:** serve the portals over HTTPS and set `SESSION_COOKIE_SECURE=true`; hide the demo accounts with `NEXT_PUBLIC_SHOW_DEMO_ACCOUNTS=false`.
 - Hospital names are made up; addresses are real Chennai streets. Photos are from Unsplash.
 

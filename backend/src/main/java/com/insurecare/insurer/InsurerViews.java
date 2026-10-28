@@ -13,7 +13,8 @@ public final class InsurerViews {
     public record Snapshot(Info insurer, List<NetHospital> hospitals, List<Holder> holders, List<ClaimView> claims) {
     }
 
-    public record Info(String name, String tagline) {
+    /** {@code imageChecks}: whether OCR and the AI-image model run here (the document verifier is configured). */
+    public record Info(String name, String tagline, boolean imageChecks) {
     }
 
     public record NetHospital(String id, String name, String city, String speciality, String phone, Integer avgTat) {

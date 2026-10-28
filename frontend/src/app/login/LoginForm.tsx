@@ -10,12 +10,12 @@ import Logo from "@/components/portal/Logo";
 import { buttonClass } from "@/components/portal/ui";
 import { ApiError, send } from "@/lib/api";
 import { cn } from "@/lib/cn";
+import { DEMO_SITE } from "@/lib/demo";
 import { IMG } from "@/lib/images";
 import { homeOf, type Session } from "@/lib/session-types";
 import { useLang, useSetLang, useT } from "@/components/portal/LanguageContext";
 
 // Demo accounts created by the backend when it runs with demo data (SEED_DATA). Hide them once real accounts exist.
-const SHOW_DEMO = process.env.NEXT_PUBLIC_SHOW_DEMO_ACCOUNTS !== "false";
 const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? "insurecare";
 const DEMO: Array<{ icon: IconType; who: string; role: string; username: string }> = [
   { icon: FiUser, who: "Priya Raman", role: "Patient", username: "IC-7842" },
@@ -142,7 +142,7 @@ export default function LoginForm({ next }: { next?: string }) {
             </button>
           </form>
 
-          {SHOW_DEMO && (
+          {DEMO_SITE && (
             <section className="mt-7">
               <div className="flex items-center gap-3 text-xs font-medium text-slate-400"><span className="h-px flex-1 bg-slate-200" />{t("Or try a demo account")}<span className="h-px flex-1 bg-slate-200" /></div>
               <div className="mt-4 flex flex-col gap-2">

@@ -1,10 +1,11 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { FiCheckCircle, FiFile, FiLock, FiUploadCloud, FiX } from 'react-icons/fi';
+import { FiAlertTriangle, FiCheckCircle, FiFile, FiLock, FiUploadCloud, FiX } from 'react-icons/fi';
 import { cn } from '@/lib/cn';
 import { buttonClass, Surface } from '@/components/portal/ui';
 import { send } from '@/lib/api';
+import { DEMO_SITE } from '@/lib/demo';
 import { useSession } from '@/components/portal/SessionContext';
 import { useT } from '@/components/portal/LanguageContext';
 import { ACCEPTED_TYPES, CATEGORIES, MAX_SIZE_MB } from '../data';
@@ -105,6 +106,7 @@ export default function UploadSection({ onUploaded, onClose }: UploadSectionProp
               {CATEGORIES.map((c) => <option key={c} value={c}>{t(c)}</option>)}
             </select>
           </label>
+          {DEMO_SITE && <p className="flex items-start gap-2 rounded-xl bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800"><FiAlertTriangle className="mt-0.5 shrink-0" />{t("This is a demo site that anyone can open. Don't upload real medical or personal documents.")}</p>}
           {error && <p role="alert" className="rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">{error}</p>}
           <p className="flex items-start gap-2 text-xs leading-5 text-slate-400"><FiLock className="mt-0.5 shrink-0" />{t("Files are stored securely in your InsureCare document vault.")}</p>
           <div className="mt-auto flex gap-3">
