@@ -94,7 +94,7 @@ Password for all: `insurecare`
 1. Connect the phone to the same Wi-Fi as the computer.
 2. Start the portals with `npm run dev -- --hostname 0.0.0.0` (in `frontend/`).
 3. Find the computer's address (`ipconfig` on Windows, "IPv4 Address" under Wi-Fi) and open `http://<that address>:3000` on the phone.
-4. For live updates on the phone, add `http://<that address>:3000` to `ALLOWED_ORIGINS` in `.env` and run `docker compose up -d backend`.
+4. To sign in from the phone, add your network to `ALLOWED_ORIGINS` in `.env`, e.g. `http://192.168.*:3000` or `http://10.*:3000` (`*` matches any part, so a new Wi-Fi address still works), and run `docker compose up -d backend`.
 
 ### Tests
 

@@ -21,6 +21,6 @@ public class LiveUpdatesConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(liveUpdates, "/live").setAllowedOrigins(props.allowedOrigins().toArray(String[]::new));
+        registry.addHandler(liveUpdates, "/live").setAllowedOriginPatterns(props.allowedOrigins().toArray(String[]::new));
     }
 }
