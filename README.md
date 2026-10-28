@@ -120,4 +120,4 @@ Working prototype with demo data. Before real patients use it:
 
 ## License
 
-Proprietary — internal use. License to be determined.
+[MIT](LICENSE)
