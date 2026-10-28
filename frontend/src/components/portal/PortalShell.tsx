@@ -163,6 +163,7 @@ function TopBar({ pathname, onMenu, onSearch }: { pathname: string; onMenu: () =
               <p className="text-sm font-bold text-ink">{t("Notifications")}</p>
               <button type="button" onClick={() => setRead(Object.fromEntries(NOTES.map((n) => [n.id, true])))} className="text-xs font-semibold text-care-600 hover:text-care-800">{t("Mark all read")}</button>
             </div>
+            {NOTES.length === 0 && <p className="px-4 py-6 text-center text-sm text-slate-500">{t("You're all caught up")}</p>}
             <ul className="p-1.5">{NOTES.map((n) => (
               <li key={n.id}>
                 <Link href={n.href} onClick={() => { setRead((r) => ({ ...r, [n.id]: true })); close(); }} className="flex items-start gap-3 rounded-xl px-3 py-3 transition hover:bg-slate-50">

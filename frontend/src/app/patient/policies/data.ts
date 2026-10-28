@@ -42,6 +42,7 @@ export function policyTotals(policies: Policy[]) {
   return {
     totalCoverage: policies.reduce((n, p) => n + p.coverage, 0),
     totalUsed: policies.reduce((n, p) => n + p.used, 0),
-    nextRenewal: [...policies].sort((a, b) => daysUntil(a.validTill) - daysUntil(b.validTill))[0],
+    /** Undefined when the member has no policies yet. */
+    nextRenewal: [...policies].sort((a, b) => daysUntil(a.validTill) - daysUntil(b.validTill))[0] as Policy | undefined,
   };
 }

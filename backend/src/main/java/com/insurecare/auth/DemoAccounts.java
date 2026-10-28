@@ -22,7 +22,7 @@ import com.insurecare.domain.MemberRepository;
 
 /**
  * With demo data on (SEED_DATA), creates sign-in accounts when there are none: one per member (username = member ID),
- * the Riverbend admissions desk and a CarePlus claims officer, all with the demo password. Runs after the seed data is loaded.
+ * the Adyar Community admissions desk and a CarePlus claims officer, all with the demo password. Runs after the seed data is loaded.
  */
 @Component
 public class DemoAccounts {
@@ -53,9 +53,9 @@ public class DemoAccounts {
         String hash = passwords.encode(demoPassword);
         List<Account> created = new ArrayList<>();
         members.findAll().forEach(m -> created.add(account(m.getMemberId(), hash, Role.PATIENT, m.getName(), null, m.getId(), null)));
-        if (hospitals.existsById("riverbend"))
-            created.add(account("anita.rao@riverbend.example", hash, Role.HOSPITAL, "Anita Rao", "anita.rao@riverbend.example", null, "riverbend"));
-        created.add(account("rahul.menon@careplus.example", hash, Role.INSURER, "Rahul Menon", "rahul.menon@careplus.example", null, null));
+        if (hospitals.existsById("adyar-community"))
+            created.add(account("rukmini.rajan@adyarcommunity.example", hash, Role.HOSPITAL, "Rukmini Rajan", "rukmini.rajan@adyarcommunity.example", null, "adyar-community"));
+        created.add(account("arun.prakash@careplus.example", hash, Role.INSURER, "Arun Prakash", "arun.prakash@careplus.example", null, null));
         accounts.saveAll(created);
         log.info("Created {} demo sign-in accounts (password from DEMO_PASSWORD)", created.size());
     }

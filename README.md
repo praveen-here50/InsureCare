@@ -1,98 +1,119 @@
 # InsureCare
 
-> Rural and affordable healthcare & health-insurance platform.
+> Health cover, claims and care in one place, for patients, hospitals and insurers in Tamil Nadu.
 
-**Status:** Working prototype. Next.js portals (patient, hospital, insurer) backed by a Spring Boot API and PostgreSQL, with live updates. No authentication yet.
+![InsureCare home page](docs/screenshots/home.png)
 
----
-
-## Purpose
-
-InsureCare aims to bridge the gap between rural patients, healthcare providers, insurance carriers, and government health schemes through a unified digital platform. The core goals are:
-
-- **Patients** — discover hospitals, manage insurance enrollment, track claims, and access tele-consultation.
-- **Hospitals** — register services, submit claims, reconcile payments, and manage patient admissions digitally.
-- **Insurers & Schemes** — onboard beneficiary lists, adjudicate claims, disburse payments, and generate program analytics.
+InsureCare connects the three people in every health-insurance claim. **Patients** see their cover, follow claims and keep their medical documents. **Hospital desks** manage beds and admissions and send verified documents to the insurer. **Insurers** review claims, with every uploaded document checked automatically for signs of fraud. A change in one portal appears in the others within seconds.
 
 ---
 
-## High-Level Architecture (Planned)
+## Features
+
+| | |
+|---|---|
+| **Three portals, one record** | Patient, hospital and insurer portals on the same data, updated live over a WebSocket. |
+| **Sign-in and access control** | Every account sees only its own data: a patient their records, a hospital its patients, an insurer its claims. |
+| **Ask InsureCare (AI assistant)** | Answers a patient's questions from their own policies, claims, hospital stays, medical history and documents, streamed as it writes (Groq, free tier). |
+| **Document fraud checks** | Each hospital upload is checked for editing, copying from another patient and AI generation, with OCR in English and Tamil. |
+| **Tamil** | The patient portal and sign-in page in English or தமிழ், chosen in Settings. |
+| **Cashless hospital finder** | Network hospitals in Chennai with filters, coverage check and Google Maps directions. |
+| **Works on phones** | Responsive layouts with bottom navigation; open it on a phone on the same Wi-Fi. |
+
+<table>
+<tr>
+<td><img src="docs/screenshots/patient-dashboard.png" alt="Patient dashboard" /></td>
+<td><img src="docs/screenshots/patient-claim-tamil.png" alt="Claim in Tamil" /></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/hospital-dashboard.png" alt="Hospital desk" /></td>
+<td><img src="docs/screenshots/insurer-claim-checks.png" alt="Insurer claim review" /></td>
+</tr>
+</table>
+
+---
+
+## Architecture
 
 ```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Frontend   │────▶│   Backend    │────▶│     AI       │
-│ (Next.js)    │◀────│ (Spring Boot)│◀────│ (Python)     │
-└──────────────┘     └──────┬───────┘     └──────────────┘
-                            │
-                     ┌──────┴───────┐
-                     │  PostgreSQL  │
-                     └──────────────┘
+┌──────────────┐  /api (same origin)  ┌──────────────┐      ┌──────────────┐
+│   Frontend   │─────────────────────▶│   Backend    │─────▶│  PostgreSQL  │
+│  Next.js 16  │◀── live updates ─────│ Spring Boot  │      └──────────────┘
+└──────────────┘      (WebSocket)     └──────┬───────┘
+                                             │
+                         ┌───────────────────┼───────────────────┐
+                         ▼                                       ▼
+                ┌─────────────────┐                     ┌─────────────────┐
+                │    Verifier     │                     │    Groq API     │
+                │ Python: OCR,    │                     │  AI assistant   │
+                │ AI-image model  │                     │  (free tier)    │
+                └─────────────────┘                     └─────────────────┘
 ```
 
-- **Frontend** — Next.js SPA serving patients, hospital staff, and insurer dashboards.
-- **Backend** — Spring Boot REST API handling auth, business workflows, and data persistence.
-- **AI** — Python-based risk scoring, fraud detection, claim anomaly detection, and NLP for unstructured medical records.
-- **Infrastructure** — Docker Compose for local dev; Helm charts / Terraform for production deployment.
+| Part | Stack | Details |
+|---|---|---|
+| `frontend/` | Next.js 16, React 19, TypeScript, Tailwind | Portals, sign-in, Tamil translations (`src/locales/ta.json`) |
+| `backend/` | Java 25, Spring Boot 3.5, Spring Security, JPA, Flyway | REST API, sessions, access rules, document checks, assistant. See [backend/README.md](backend/README.md) |
+| `verifier/` | Python, FastAPI, Tesseract, PyTorch | OCR (English + Tamil), error level analysis, AI-image classifier. Runs locally; documents never leave the machine |
+| Database | PostgreSQL 16 | Seeded with Chennai demo data on first start |
 
 ---
 
-## Repository Structure
+## Run it
 
-```
-InsureCare/
-├── frontend/         # Next.js / Node.js application (planned)
-├── backend/          # Java / Spring Boot application (planned)
-├── ai/               # Python / ML components (planned)
-├── infrastructure/   # Docker, Kubernetes, Terraform configs (planned)
-├── docs/             # Architecture decisions, API specs, design docs
-├── .gitignore        # Polyglot gitignore for the monorepo
-├── docker-compose.yml     # Multi-service local development setup
-└── README.md
-```
-
-`frontend/` and `backend/` are implemented; `ai/` and `infrastructure/` are still planned.
-
----
-
-## Technology Direction
-
-| Layer       | Stack (planned)     | Rationale                                   |
-|-------------|---------------------|---------------------------------------------|
-| Frontend    | Next.js, TypeScript | SSR + SPA; strong ecosystem for healthcare UIs |
-| Backend     | Java 25+, Spring Boot 3.x, JPA / Hibernate | Mature, transaction-safe, audit-logging built-in |
-| Database    | PostgreSQL          | Relational integrity for claims & financial data |
-| AI / ML     | Python 3.14, scikit-learn / PyTorch | Rich ML ecosystem for risk & anomaly models |
-| Container   | Docker, Docker Compose | Consistent local dev; path to K8s deployment |
-| CI          | GitHub Actions      | Lint, type-check, test, build per component |
-
-Exact versions and dependencies will be pinned as each module is scaffolded.
-
----
-
-## Development Principles
-
-1. **Zero-defect:** Root-cause-driven fixes; test-first for new features.
-2. **Minimal & modular:** Keep the codebase lean; extract shared logic early.
-3. **Type-safe:** TypeScript on the frontend, strict typing on the backend, typed Python where feasible.
-4. **CI-gated:** Every push runs linting, type-checking, and tests before merge.
-5. **Documented:** Architecture Decision Records (ADRs) in `docs/` for significant choices.
-
----
-
-## Getting Started
+You need **Docker** and **Node.js 20.9+**.
 
 ```bash
-# 1. Database, document verifier and API (needs Docker; see backend/README.md to run without it)
+# 1. Settings: copy the example and add a free Groq key (console.groq.com) for the assistant
+cp .env.example .env
+
+# 2. Database, verifier and API on http://localhost:8080
 docker compose up -d
 
-# 2. Portals
+# 3. Portals on http://localhost:3000
 cd frontend
 cp .env.example .env.local
 npm install
-npm run dev        # http://localhost:3000
+npm run dev
 ```
 
-Open the patient, hospital and insurer portals in separate tabs: a change in one (for example, approving a claim) appears in the others straight away. See [backend/README.md](backend/README.md) for the API and configuration.
+The verifier's first build downloads about 2 GB (PyTorch and the image model). Without a Groq key everything works except the assistant.
+
+### Demo accounts
+
+Password for all: `insurecare`
+
+| Sign in with | Who | Portal |
+|---|---|---|
+| `IC-7842` | Priya Raman, patient (other members: their member ID) | Patient |
+| `rukmini.rajan@adyarcommunity.example` | Rukmini Rajan, Adyar Community Hospital desk | Hospital |
+| `arun.prakash@careplus.example` | Arun Prakash, CarePlus claims officer | Insurer |
+
+### On a phone
+
+1. Connect the phone to the same Wi-Fi as the computer.
+2. Start the portals with `npm run dev -- --hostname 0.0.0.0` (in `frontend/`).
+3. Find the computer's address (`ipconfig` on Windows, "IPv4 Address" under Wi-Fi) and open `http://<that address>:3000` on the phone.
+4. For live updates on the phone, add `http://<that address>:3000` to `ALLOWED_ORIGINS` in `.env` and run `docker compose up -d backend`.
+
+### Tests
+
+```bash
+cd backend && ./mvnw test            # 33 tests: access rules, assistant, document checks, claims
+cd frontend && npx tsc --noEmit && npm run build
+```
+
+---
+
+## Status and limits
+
+Working prototype with demo data. Before real patients use it:
+
+- **Accounts** exist only as demo data: no sign-up, password change or reset, and no limit on wrong password attempts yet.
+- **Patient data and the AI:** each assistant question sends that patient's records to Groq. Get consent, or point `ASSISTANT_URL` at a model on your own server (e.g. Ollama).
+- **Groq's free tier** allows only a few questions a minute in total.
+- **HTTPS:** serve the portals over HTTPS and set `SESSION_COOKIE_SECURE=true`; hide the demo accounts with `NEXT_PUBLIC_SHOW_DEMO_ACCOUNTS=false`.
+- Hospital names are made up; addresses are real Chennai streets. Photos are from Unsplash.
 
 ---
 

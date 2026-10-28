@@ -43,7 +43,7 @@ class DocumentInspectorTest {
     private static final Instant UPLOADED = Instant.parse("2026-10-27T06:00:00Z");
 
     private static final String[] GOOD_BILL = {
-            "Riverbend Community Hospital", "Interim bill  No. RB/2026/1182", "Patient: Meera Joshi   Member ID: IC-4471",
+            "Adyar Community Hospital", "Interim bill  No. RB/2026/1182", "Patient: Meena Krishnan   Member ID: IC-4471",
             "Policy: IC-FH-4471   Admitted: 22/10/2026", "Room charges (5 days)   18,000", "Pharmacy   9,450", "Investigations   6,200",
             "Grand total   Rs. 33,650", "Date: 26/10/2026"};
 
@@ -72,7 +72,7 @@ class DocumentInspectorTest {
 
     @Test
     void billForSomeoneElseWithAFutureDateAndInflatedTotalNeedsReview() {
-        String text = "Riverbend Community Hospital\nPatient: Rahul Verma\nDate: 14/12/2026\nGrand total Rs. 4,95,000";
+        String text = "Adyar Community Hospital\nPatient: Rahul Verma\nDate: 14/12/2026\nGrand total Rs. 4,95,000";
         List<CheckFinding> f = ContentChecks.check(DocKind.BILL, text, expected());
         assertThat(f).filteredOn(x -> x.severity().equals(CheckFinding.REVIEW)).extracting(CheckFinding::title)
                 .contains("Patient name not found", "Dated in the future", "Bill is higher than the estimate");
@@ -115,7 +115,7 @@ class DocumentInspectorTest {
     void sameBillUploadedForAnotherPatientIsHighRisk() throws IOException {
         byte[] bill = pdf(GOOD_BILL, "HIS Billing 4.2", ADMITTED.plusDays(4), null);
         Report first = inspector.inspect(subject(bill, "application/pdf", "Interim bill"), List.of());
-        DocumentFingerprint other = new DocumentFingerprint(99L, "sha-other", first.pageHashes(), first.text(), "ic-9001", "Rahul Verma", "riverbend", "Interim bill");
+        DocumentFingerprint other = new DocumentFingerprint(99L, "sha-other", first.pageHashes(), first.text(), "ic-9001", "Rahul Verma", "adyar-community", "Interim bill");
 
         Report copy = inspector.inspect(subject(bill, "application/pdf", "Interim bill"), List.of(other));
         assertThat(copy.status()).isEqualTo(DocumentInspector.HIGH_RISK);
@@ -125,21 +125,21 @@ class DocumentInspectorTest {
     @Test
     void differentBillsOnTheSameHospitalTemplateAreNotCopies() throws IOException {
         Report a = inspector.inspect(subject(pdf(GOOD_BILL, "HIS Billing 4.2", ADMITTED.plusDays(4), null), "application/pdf", "Interim bill"), List.of());
-        String[] other = {"Riverbend Community Hospital", "Interim bill  No. RB/2026/1207", "Patient: Arjun Nair   Member ID: IC-5120",
+        String[] other = {"Adyar Community Hospital", "Interim bill  No. RB/2026/1207", "Patient: Arjun Nair   Member ID: IC-5120",
                 "Policy: IC-SH-5120   Admitted: 19/10/2026", "ICU charges (3 days)   54,000", "Surgery   1,20,000", "Implants   38,500",
                 "Grand total   Rs. 2,12,500", "Date: 25/10/2026"};
         Report b = inspector.inspect(subject(pdf(other, "HIS Billing 4.2", ADMITTED.plusDays(3), null), "application/pdf", "Interim bill"), List.of());
         List<CheckFinding> out = new ArrayList<>();
         DocumentInspector.duplicates(subject(new byte[0], "application/pdf", "Interim bill"), DocKind.BILL, b.pageHashes(), b.text(),
-                List.of(new DocumentFingerprint(7L, "x", a.pageHashes(), a.text(), "ic-4471", "Meera Joshi", "riverbend", "Interim bill")), out);
+                List.of(new DocumentFingerprint(7L, "x", a.pageHashes(), a.text(), "ic-4471", "Meena Krishnan", "adyar-community", "Interim bill")), out);
         assertThat(out).extracting(CheckFinding::title).containsExactly("Not a copy of another document");
     }
 
     @Test
     void sameIdProofForTheSamePatientIsFine() {
         List<CheckFinding> out = new ArrayList<>();
-        Subject s = new Subject(new byte[0], "image/jpeg", "Patient ID proof", "same", UPLOADED, "ic-4471", "Meera Joshi", List.of(), null, ADMITTED, null, TODAY, ZONE);
-        DocumentInspector.duplicates(s, DocKind.IDENTITY, List.of(), "", List.of(new DocumentFingerprint(5L, "same", List.of(), "", "ic-4471", "Meera Joshi", "riverbend", "Patient ID proof")), out);
+        Subject s = new Subject(new byte[0], "image/jpeg", "Patient ID proof", "same", UPLOADED, "ic-4471", "Meena Krishnan", List.of(), null, ADMITTED, null, TODAY, ZONE);
+        DocumentInspector.duplicates(s, DocKind.IDENTITY, List.of(), "", List.of(new DocumentFingerprint(5L, "same", List.of(), "", "ic-4471", "Meena Krishnan", "adyar-community", "Patient ID proof")), out);
         assertThat(out).extracting(CheckFinding::severity).containsOnly(CheckFinding.PASS);
     }
 
@@ -191,12 +191,12 @@ class DocumentInspectorTest {
     // ---------- helpers ----------
 
     private static ContentChecks.Expected expected() {
-        return new ContentChecks.Expected("Meera Joshi", List.of("IC-FH-4471", "IC-4471"), "Riverbend Community Hospital", ADMITTED, 62000L, TODAY);
+        return new ContentChecks.Expected("Meena Krishnan", List.of("IC-FH-4471", "IC-4471"), "Adyar Community Hospital", ADMITTED, 62000L, TODAY);
     }
 
     private static Subject subject(byte[] content, String type, String name) {
-        return new Subject(content, type, name, "sha-" + content.length, UPLOADED, "ic-4471", "Meera Joshi", List.of("IC-FH-4471", "IC-4471"),
-                "Riverbend Community Hospital", ADMITTED, 62000L, TODAY, ZONE);
+        return new Subject(content, type, name, "sha-" + content.length, UPLOADED, "ic-4471", "Meena Krishnan", List.of("IC-FH-4471", "IC-4471"),
+                "Adyar Community Hospital", ADMITTED, 62000L, TODAY, ZONE);
     }
 
     private static byte[] pdf(String[] lines, String producer, LocalDate created, LocalDate modified) throws IOException {

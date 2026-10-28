@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useToast } from "@/components/Toast";
-import { LIVE_URL } from "@/lib/api";
+import { liveUrl } from "@/lib/api";
 
 type LiveMessage = { topic: string; message: string; at: string };
 
@@ -23,7 +23,7 @@ export default function LiveUpdates() {
     let closed = false;
 
     const connect = () => {
-      socket = new WebSocket(LIVE_URL);
+      socket = new WebSocket(liveUrl());
       socket.onopen = () => {
         // Anything may have changed while we were disconnected.
         if (attempts > 0) router.refresh();

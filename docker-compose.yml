@@ -36,7 +36,8 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/insurecare
       DB_USER: insurecare
       DB_PASSWORD: insurecare
-      ALLOWED_ORIGINS: http://localhost:3000
+      # Browser origins allowed to open the live-updates socket. Add http://<this PC's Wi-Fi address>:3000 in .env to use a phone.
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
       VERIFIER_URL: http://verifier:8000
       # Ask InsureCare (patient assistant). Set it in your shell or a .env file next to this one; blank turns the assistant off.
       GROQ_API_KEY: ${GROQ_API_KEY:-}

@@ -50,45 +50,45 @@ class MemberRecordsTest {
     void member() {
         priya.setId("ic-7842");
         priya.setMemberId("IC-7842");
-        priya.setName("Priya Sharma");
+        priya.setName("Priya Raman");
         priya.setAge(34);
         priya.setGender("Female");
         priya.setBloodGroup("A+");
         priya.setAllergies(List.of("Penicillin"));
         priya.setHistory(List.of(new Member.HistoryItem("2026", "Laparoscopic appendectomy")));
         when(members.findById("ic-7842")).thenReturn(Optional.of(priya));
-        Hospital riverbend = new Hospital();
-        riverbend.setId("riverbend");
-        riverbend.setName("Riverbend Community Hospital");
-        when(hospitals.findAll()).thenReturn(List.of(riverbend));
+        Hospital adyar = new Hospital();
+        adyar.setId("adyar-community");
+        adyar.setName("Adyar Community Hospital");
+        when(hospitals.findAll()).thenReturn(List.of(adyar));
     }
 
     private void portal(List<PolicyView> policies, List<PatientClaim> claims, List<DirectoryHospital> nearby, List<DocumentView> docs) {
-        when(portal.portal("ic-7842")).thenReturn(new Portal(new Info("ic-7842", "IC-7842", "Priya Sharma", "Priya"), claims, policies,
+        when(portal.portal("ic-7842")).thenReturn(new Portal(new Info("ic-7842", "IC-7842", "Priya Raman", "Priya"), claims, policies,
                 List.of(new SchemeView("Ayushman Bharat PM-JAY", "₹5,00,000 family cover per year", "Enrolled")), nearby, docs));
     }
 
     @Test
     void briefingCarriesHealthCoverClaimsStaysAndDocumentText() {
         PolicyView shield = new PolicyView("fhs", "CarePlus Insurance", "Family Health Shield Plus", "Family floater", "IC-FH-4821", 1_500_000, 43_200,
-                List.of("Priya Sharma"), "2026-03-16", "2027-03-15", "Active", null, "Cashless at participating hospitals", null,
+                List.of("Priya Raman"), "2026-03-16", "2027-03-15", "Active", null, "Cashless at participating hospitals", null,
                 List.of(new Policy.Section("Waiting periods", List.of("Pre-existing conditions: 24 months"))), List.of("Policy certificate"));
         PatientClaim claim = new PatientClaim("CLM-1038", "Day-care procedure", "Meadowline Diagnostic Centre", "Family Health Shield Plus · IC-FH-4821",
                 "4 Sep 2026", "6 Sep 2026", "₹12,800", null, 12_800, null, "Additional Documents Required", "9 Sep 2026",
                 "Some documents are needed before review can continue.", List.of(new ClaimDoc("Diagnostic report", "Required")), List.of());
-        DirectoryHospital nearby = new DirectoryHospital("riverbend", "Riverbend Community Hospital", "3.2 km", "Nandyal Road", "Network", true, true,
-                List.of("Cardiology"), "4.6 / 5", null, "Open 24 hours", "+91 90000 10001", null, List.of(), List.of(), null);
+        DirectoryHospital nearby = new DirectoryHospital("adyar-community", "Adyar Community Hospital", "3.2 km", "LB Road", "Network", true, true,
+                List.of("Cardiology"), "4.6 / 5", null, "Open 24 hours", "+91 44 2441 0001", null, List.of(), List.of(), null);
         portal(List.of(shield), List.of(claim), List.of(nearby),
                 List.of(new DocumentView("doc-1", "Prescription", "Prescriptions", "2026-10-28", "PDF", "pending", 0.1, "/api/documents/doc-1/file"),
                         new DocumentView("doc-2", "Aadhaar card", "Government / KYC", "2026-08-28", "PDF", "verified", 0.1, null)));
         when(documentText.of("doc-1")).thenReturn("Rx: Metformin   500 mg\ntwice daily");
 
         Admission stay = new Admission();
-        stay.setHospitalId("riverbend");
+        stay.setHospitalId("adyar-community");
         stay.setStatus("Admitted");
         stay.setAdmittedOn(LocalDate.of(2026, 10, 20));
         stay.setDiagnosis("Acute appendicitis");
-        stay.setDoctor("Dr. Anil Rao");
+        stay.setDoctor("Dr. Anand Kumar");
         stay.setTreatments(List.of(new Admission.Treatment("Appendectomy", "Covered")));
         AdmissionDocument summary = new AdmissionDocument();
         summary.setId(7L);
@@ -102,7 +102,7 @@ class MemberRecordsTest {
         String briefing = records.briefing("ic-7842");
 
         assertThat(briefing).startsWith("Today is ")
-                .contains("Priya Sharma, member ID IC-7842, age 34, Female. Blood group: A+.")
+                .contains("Priya Raman, member ID IC-7842, age 34, Female. Blood group: A+.")
                 .contains("Allergies: Penicillin")
                 .contains("Current medications: none recorded")
                 .contains("- 2026: Laparoscopic appendectomy")
@@ -110,10 +110,10 @@ class MemberRecordsTest {
                 .contains("Waiting periods: Pre-existing conditions: 24 months")
                 .contains("Ayushman Bharat PM-JAY (Enrolled)")
                 .contains("CLM-1038", "Diagnostic report (Required)")
-                .contains("Riverbend Community Hospital: Admitted, admitted 20 Oct 2026. Diagnosis: Acute appendicitis. Doctor: Dr. Anil Rao.")
+                .contains("Adyar Community Hospital: Admitted, admitted 20 Oct 2026. Diagnosis: Acute appendicitis. Doctor: Dr. Anand Kumar.")
                 .contains("Treatments: Appendectomy (Covered)")
                 .contains("<document_text>Discharged in stable condition.</document_text>")
-                .contains("Riverbend Community Hospital, 3.2 km, Nandyal Road. Network, cashless, 24x7 emergency.")
+                .contains("Adyar Community Hospital, 3.2 km, LB Road. Network, cashless, 24x7 emergency.")
                 // Whitespace is flattened; a sample document without a file is listed but not read.
                 .contains("<document_text>Rx: Metformin 500 mg twice daily</document_text>")
                 .contains("- Aadhaar card (Government / KYC");

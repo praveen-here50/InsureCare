@@ -18,7 +18,7 @@ export default async function PoliciesPage() {
         <StatCard icon={FiShield} value={POLICIES.length} label={t("Active policies")} note={t("Health, illness and accident")} />
         <StatCard icon={FiAward} value={inr(totalCoverage)} label={t("Total cover")} note={t("Across all policies")} />
         <StatCard icon={FiUsers} value={SCHEMES.length} label={t("Government schemes")} note={t("{enrolled} enrolled · {applied} applied", { enrolled: SCHEMES.filter((s) => s.status === "Enrolled").length, applied: SCHEMES.filter((s) => s.status === "Applied").length })} />
-        <StatCard icon={FiCalendar} value={t("{n} days", { n: daysUntil(nextRenewal.validTill) })} label={t("Next renewal")} note={nextRenewal.name} />
+        <StatCard icon={FiCalendar} value={nextRenewal ? t("{n} days", { n: daysUntil(nextRenewal.validTill) }) : "—"} label={t("Next renewal")} note={nextRenewal?.name ?? t("No policy yet")} />
       </div>
 
       <section>
@@ -26,6 +26,7 @@ export default async function PoliciesPage() {
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3">
           {POLICIES.map((p) => <PolicyTile key={p.id} policy={p} t={t} />)}
         </div>
+        {POLICIES.length === 0 && <Surface><p className="px-5 py-6 text-sm text-slate-500">{t("No insurance policies are linked to your account yet. Your insurer adds them when your cover starts.")}</p></Surface>}
       </section>
 
       <section>

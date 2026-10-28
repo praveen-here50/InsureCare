@@ -44,7 +44,7 @@ class PatientClaimTest {
     void queryIsShownAsActionNeededWithTheInsurersNote() {
         Claim c = claim(Claim.QUERY_RAISED, 2);
         c.setNote("Please upload the diagnostic report.");
-        PatientClaim view = MemberPortal.patientClaim(c, "Riverbend Community Hospital");
+        PatientClaim view = MemberPortal.patientClaim(c, "Adyar Community Hospital");
 
         assertThat(view.status()).isEqualTo("Additional Documents Required");
         assertThat(view.documents()).extracting(MemberViews.ClaimDoc::status).containsExactly("Received", "Required");
@@ -57,12 +57,12 @@ class PatientClaimTest {
     void approvedClaimShowsTheAmountAndRejectedHasNoSettlementStep() {
         Claim approved = claim(Claim.APPROVED, 4);
         approved.setApproved(43200L);
-        PatientClaim a = MemberPortal.patientClaim(approved, "Riverbend");
+        PatientClaim a = MemberPortal.patientClaim(approved, "Adyar Community");
         assertThat(a.amountApproved()).isEqualTo("₹43,200");
         assertThat(a.timeline().get(3).label()).isEqualTo("Approved");
         assertThat(a.timeline().get(3).note()).isEqualTo("Approved amount: ₹43,200.");
 
-        PatientClaim r = MemberPortal.patientClaim(claim(Claim.REJECTED, 4), "Riverbend");
+        PatientClaim r = MemberPortal.patientClaim(claim(Claim.REJECTED, 4), "Adyar Community");
         assertThat(r.timeline()).extracting(TimelineItem::label).containsExactly("Claim submitted", "Documents verified", "Insurer review", "Rejected");
         assertThat(r.timeline().getLast().current()).isTrue();
     }

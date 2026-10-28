@@ -19,7 +19,7 @@ export type Hospital = {
   image: string;
 };
 
-export const DEMO_LOCATION = 'Kurnool, Andhra Pradesh';
+export const DEMO_LOCATION = 'Chennai, Tamil Nadu';
 
 export function getHospital(hospitals: Hospital[], id: string) { return hospitals.find((hospital) => hospital.id === id); }
 

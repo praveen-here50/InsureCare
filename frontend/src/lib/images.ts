@@ -9,6 +9,7 @@ export const IMG = {
   laptop: u("photo-1576091160550-2173dba999ef"),
   lobby: u("photo-1519494026892-80bbd2d6fd0d"),
   building: u("photo-1586773860418-d37222d8fce3"),
+  clinicBuilding: u("photo-1587351021759-3e566b6af7cc"),
   ward: u("photo-1538108149393-fbbd81895907"),
   surgery: u("photo-1551076805-e1869033e561"),
   office: u("photo-1497366811353-6870744d04b2"),

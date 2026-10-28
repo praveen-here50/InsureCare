@@ -1,4 +1,5 @@
 // Patient portal data for the signed-in member, served by the backend (GET /api/members/{id}/portal).
+import { cache } from "react";
 import { apiUrl } from "@/lib/api";
 import { IMG } from "@/lib/images";
 import { requireSession } from "@/lib/session";
@@ -15,7 +16,8 @@ type Raw = {
   documents: Document[];
 };
 
-export async function getPortal() {
+/** Loads once per request, so the layout (notifications) and the page share it. */
+export const getPortal = cache(async () => {
   const { memberRef } = await requireSession("patient");
   const p = await serverApi<Raw>(`/api/members/${memberRef}/portal`);
   return {
@@ -23,4 +25,4 @@ export async function getPortal() {
     hospitals: p.hospitals.map((h): Hospital => ({ ...h, image: IMG[h.image] ?? IMG.building })),
     documents: p.documents.map((d) => ({ ...d, url: d.url && apiUrl(d.url) })),
   };
-}
+});

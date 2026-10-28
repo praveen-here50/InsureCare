@@ -17,9 +17,9 @@ import com.insurecare.domain.Account.Role;
 
 class AccessTest {
 
-    private static final SignedIn PRIYA = new SignedIn(1, "ic-7842", null, Role.PATIENT, "Priya Sharma", null, "ic-7842", null);
-    private static final SignedIn ANITA = new SignedIn(2, "anita.rao@riverbend.example", null, Role.HOSPITAL, "Anita Rao", null, null, "riverbend");
-    private static final SignedIn RAHUL = new SignedIn(3, "rahul.menon@careplus.example", null, Role.INSURER, "Rahul Menon", null, null, null);
+    private static final SignedIn PRIYA = new SignedIn(1, "ic-7842", null, Role.PATIENT, "Priya Raman", null, "ic-7842", null);
+    private static final SignedIn RUKMINI = new SignedIn(2, "rukmini.rajan@adyarcommunity.example", null, Role.HOSPITAL, "Rukmini Rajan", null, null, "adyar-community");
+    private static final SignedIn ARUN = new SignedIn(3, "arun.prakash@careplus.example", null, Role.INSURER, "Arun Prakash", null, null, null);
 
     private static Authentication as(SignedIn who) {
         return UsernamePasswordAuthenticationToken.authenticated(who, null, who.getAuthorities());
@@ -38,23 +38,23 @@ class AccessTest {
 
     @Test
     void staffCannotOpenAPatientsPortalEvenForTheirOwnPatients() {
-        assertThat(allows(Access.ownMember(), as(ANITA), "memberRef", "ic-7842")).isFalse();
-        assertThat(allows(Access.ownMember(), as(RAHUL), "memberRef", "ic-7842")).isFalse();
+        assertThat(allows(Access.ownMember(), as(RUKMINI), "memberRef", "ic-7842")).isFalse();
+        assertThat(allows(Access.ownMember(), as(ARUN), "memberRef", "ic-7842")).isFalse();
     }
 
     @Test
     void hospitalStaffReachOnlyTheirOwnHospital() {
-        assertThat(allows(Access.ownHospital(), as(ANITA), "hospitalId", "riverbend")).isTrue();
-        assertThat(allows(Access.ownHospital(), as(ANITA), "hospitalId", "apex-neuro")).isFalse();
-        assertThat(allows(Access.ownHospital(), as(PRIYA), "hospitalId", "riverbend")).isFalse();
-        assertThat(allows(Access.ownHospital(), as(RAHUL), "hospitalId", "riverbend")).isFalse();
+        assertThat(allows(Access.ownHospital(), as(RUKMINI), "hospitalId", "adyar-community")).isTrue();
+        assertThat(allows(Access.ownHospital(), as(RUKMINI), "hospitalId", "guindy-neuro")).isFalse();
+        assertThat(allows(Access.ownHospital(), as(PRIYA), "hospitalId", "adyar-community")).isFalse();
+        assertThat(allows(Access.ownHospital(), as(ARUN), "hospitalId", "adyar-community")).isFalse();
     }
 
     @Test
     void nobodySignedInReachesNothing() {
         Authentication anonymous = new AnonymousAuthenticationToken("key", "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
         assertThat(allows(Access.ownMember(), anonymous, "memberRef", "ic-7842")).isFalse();
-        assertThat(allows(Access.ownHospital(), null, "hospitalId", "riverbend")).isFalse();
+        assertThat(allows(Access.ownHospital(), null, "hospitalId", "adyar-community")).isFalse();
     }
 
     @Test
@@ -65,7 +65,7 @@ class AccessTest {
 
     @Test
     void theSessionCopyHasNoPasswordHash() {
-        SignedIn withHash = new SignedIn(1, "ic-7842", "$2a$10$hash", Role.PATIENT, "Priya Sharma", null, "ic-7842", null);
+        SignedIn withHash = new SignedIn(1, "ic-7842", "$2a$10$hash", Role.PATIENT, "Priya Raman", null, "ic-7842", null);
         assertThat(withHash.withoutPassword().getPassword()).isNull();
         assertThat(withHash.withoutPassword().memberRef()).isEqualTo("ic-7842");
     }

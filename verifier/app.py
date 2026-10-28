@@ -14,7 +14,7 @@ from PIL import Image, ImageChops, UnidentifiedImageError
 from transformers import AutoImageProcessor, AutoModelForImageClassification
 
 MODEL_ID = os.environ.get("AI_MODEL", "haywoodsloan/ai-image-detector-deploy")
-OCR_LANGS = os.environ.get("OCR_LANGS", "eng+hin")
+OCR_LANGS = os.environ.get("OCR_LANGS", "eng+tam")
 MAX_PIXELS = 40_000_000  # refuse decompression bombs
 
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS

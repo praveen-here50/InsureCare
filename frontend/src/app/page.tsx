@@ -5,12 +5,12 @@ import { IMG } from "@/lib/images";
 import Logo from "@/components/portal/Logo";
 import { buttonClass, Pill } from "@/components/portal/ui";
 
-// Placeholder marketing figures for the demo. Replace with verified numbers before launch.
+// What the product does, stated as facts (no invented business figures).
 const STATS = [
-  { icon: FiActivity, value: "₹1,200 Cr+", label: "Claims settled", note: "Across the network, this year" },
-  { icon: FiMapPin, value: "1,400+", label: "Network hospitals", note: "Cashless in 640+ cities" },
-  { icon: FiCheckCircle, value: "98.4%", label: "Settlement ratio", note: "Cashless + reimbursement" },
-  { icon: FiClock, value: "18 min", label: "Median approval time", note: "For cashless pre-authorisation" },
+  { icon: FiActivity, value: "3 portals", label: "One shared record", note: "Patients, hospitals and insurers" },
+  { icon: FiMapPin, value: "Chennai", label: "Cashless network", note: "Hospitals with directions" },
+  { icon: FiCheckCircle, value: "Every upload", label: "Checked for fraud", note: "Edits, copies and AI images" },
+  { icon: FiClock, value: "Live", label: "Claim updates", note: "Changes appear in seconds" },
 ];
 
 const SERVICES = [
@@ -47,10 +47,10 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-5 pb-14 pt-10 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pb-20 lg:pt-14">
           <div className="max-w-xl animate-fade-up">
-            <h1 className="text-[2.6rem] font-extrabold leading-[1.05] tracking-[-0.045em] sm:text-6xl lg:text-[4.1rem]">
+            <h1 className="text-[2.1rem] font-bold leading-[1.1] tracking-tight sm:text-[2.6rem] lg:text-5xl">
               Your family&apos;s health cover, <span className="text-care-600">finally clear.</span>
             </h1>
-            <p className="mt-6 max-w-lg text-lg leading-8 text-slate-500">
+            <p className="mt-5 max-w-lg text-base leading-7 text-slate-500">
               See every policy, track claims step by step and find cashless hospitals near you. One simple place, built for the moments that matter.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
@@ -72,7 +72,7 @@ export default function Home() {
             {/* Floating cover card */}
             <div className="absolute -bottom-10 -left-4 w-[260px] rounded-2xl border border-white/60 bg-white/95 p-4 shadow-lift backdrop-blur sm:-left-10 sm:w-[290px] sm:p-5">
               <div className="flex items-center justify-between"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Your cover</p><Pill tone="green">Active</Pill></div>
-              <p className="mt-2 text-[1.75rem] font-extrabold tracking-[-0.03em]">₹15,00,000</p>
+              <p className="mt-2 text-2xl font-semibold tracking-tight">₹15,00,000</p>
               <p className="text-sm text-slate-500">Family Health Shield Plus · 4 members</p>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full w-[97%] rounded-full bg-care-500" /></div>
               <p className="mt-1.5 text-xs text-slate-400">97% of cover remaining</p>
@@ -92,7 +92,7 @@ export default function Home() {
           {STATS.map(({ icon: Icon, value, label, note }, i) => (
             <div key={label} className={`px-5 py-9 sm:px-8 lg:py-12 ${i % 2 === 1 ? "border-l border-slate-200/80" : ""} ${i >= 2 ? "border-t border-slate-200/80 lg:border-t-0" : ""} ${i === 2 ? "lg:border-l" : ""}`}>
               <Icon className="size-5 text-care-600" />
-              <p className="mt-4 text-3xl font-extrabold tracking-[-0.04em] sm:text-[2.75rem] sm:leading-none">{value}</p>
+              <p className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl sm:leading-none">{value}</p>
               <p className="mt-3 text-[15px] font-semibold text-slate-800">{label}</p>
               <p className="mt-1 text-sm text-slate-400">{note}</p>
             </div>
@@ -103,7 +103,7 @@ export default function Home() {
       {/* Services */}
       <section id="services" className="scroll-mt-20 bg-[#F5F8FC]">
         <div className="mx-auto max-w-[1240px] px-5 py-16 sm:px-8 lg:py-20">
-          <h2 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-[-0.04em] sm:text-5xl">Three things every family needs. One place to do them.</h2>
+          <h2 className="max-w-3xl text-[1.75rem] font-bold leading-tight tracking-tight sm:text-4xl">Three things every family needs. One place to do them.</h2>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {SERVICES.map((s) => (
               <Link key={s.href} href={s.href} className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
@@ -112,7 +112,7 @@ export default function Home() {
                   <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3.5 py-1.5 text-[13px] font-bold text-care-800 shadow-sm">{s.tag}</span>
                 </div>
                 <div className="flex flex-1 flex-col p-6">
-                  <h3 className="text-xl font-bold tracking-tight">{s.title}</h3>
+                  <h3 className="text-lg font-semibold tracking-tight">{s.title}</h3>
                   <p className="mt-2 flex-1 text-[15px] leading-7 text-slate-500">{s.text}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-care-600">Explore <FiArrowRight className="transition group-hover:translate-x-1" /></span>
                 </div>
@@ -127,7 +127,7 @@ export default function Home() {
         <div className="mx-auto max-w-[1240px] px-5 py-16 sm:px-8 lg:py-20">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div>
-              <h2 className="text-4xl font-extrabold leading-[1.08] tracking-[-0.04em] sm:text-5xl">From check-up to settlement, without the chasing.</h2>
+              <h2 className="text-[1.75rem] font-bold leading-tight tracking-tight sm:text-4xl">From check-up to settlement, without the chasing.</h2>
               <p className="mt-5 max-w-md text-lg leading-8 text-slate-500">No more calling three offices to find out where a claim is. Every step shows up in your dashboard the moment it happens.</p>
             </div>
             <ol className="grid grid-cols-1 gap-4">
@@ -136,7 +136,7 @@ export default function Home() {
                   <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-care-50 text-care-600">
                     <Icon className="size-6" />
                   </span>
-                  <div><h3 className="text-lg font-bold">{title}</h3><p className="mt-1 text-[15px] leading-7 text-slate-500">{text}</p></div>
+                  <div><h3 className="text-base font-semibold">{title}</h3><p className="mt-1 text-[15px] leading-7 text-slate-500">{text}</p></div>
                 </li>
               ))}
             </ol>
@@ -158,7 +158,7 @@ export default function Home() {
             </div>
           </div>
           <div className="order-1 lg:order-2">
-            <h2 className="text-4xl font-extrabold leading-[1.08] tracking-[-0.04em] sm:text-5xl">Questions about your cover? Just ask.</h2>
+            <h2 className="text-[1.75rem] font-bold leading-tight tracking-tight sm:text-4xl">Questions about your cover? Just ask.</h2>
             <p className="mt-5 max-w-lg text-lg leading-8 text-slate-500">Ask InsureCare about benefits, documents or claim status in everyday words, with answers based on your own policy documents.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/patient/assistant" className={buttonClass("primary", "h-[52px] px-6 text-[15px]")}><FiMessageCircle />Ask InsureCare</Link>
@@ -173,7 +173,7 @@ export default function Home() {
         <div className="relative mx-auto max-w-[1240px] overflow-hidden rounded-[32px] bg-care-800 px-6 py-12 text-white sm:px-12 sm:py-14">
           <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
-              <h2 className="text-3xl font-extrabold leading-tight tracking-[-0.03em] sm:text-[2.6rem]">Your family&apos;s cover, always in your pocket.</h2>
+              <h2 className="text-2xl font-bold leading-tight tracking-tight sm:text-3xl">Your family&apos;s cover, always in your pocket.</h2>
               <p className="mt-4 text-lg text-white/80">Log in to see your policies, claims and nearby hospitals in under a minute.</p>
             </div>
             <Link href="/patient" className={buttonClass("white", "h-14 shrink-0 px-7 text-base")}>Open my dashboard <FiArrowRight /></Link>

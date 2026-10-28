@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Keep the dev-only "N" badge away from the sidebar's bottom-left controls.
   devIndicators: { position: "bottom-right" },
+  // Lets a phone or tablet on the same Wi-Fi open the dev server by this PC's address (e.g. http://192.168.1.20:3000).
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*"],
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${BACKEND_URL}/api/:path*` }];
   },

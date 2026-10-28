@@ -29,7 +29,7 @@ export default async function PatientDashboard() {
           <p className="text-xs font-semibold text-care-200">{t("Member ID {id}", { id: member.memberId })}</p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{t("Welcome back, {name}", { name: member.firstName })}</h1>
           <p className="mt-2 max-w-lg text-sm leading-7 text-white/80">
-            {t("Your family is covered up to {amount} across {n} policies.", { amount: inr(totalCoverage), n: POLICIES.length })}
+            {POLICIES.length ? t("Your family is covered up to {amount} across {n} policies.", { amount: inr(totalCoverage), n: POLICIES.length }) : t("Your policies, claims and documents in one place.")}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/patient/claims" className={buttonClass("white")}>{t("Track my claims")} <FiArrowRight /></Link>
@@ -54,9 +54,9 @@ export default async function PatientDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <StatCard icon={FiShield} value={inr(totalCoverage)} label={t("Total cover")} note={t("Across {n} policies", { n: POLICIES.length })} />
-        <StatCard icon={FiPieChart} value={`${Math.round((1 - totalUsed / totalCoverage) * 1000) / 10}%`} label={t("Cover remaining")} note={t("{amount} used this year", { amount: inr(totalUsed) })} />
+        <StatCard icon={FiPieChart} value={totalCoverage ? `${Math.round((1 - totalUsed / totalCoverage) * 1000) / 10}%` : "—"} label={t("Cover remaining")} note={t("{amount} used this year", { amount: inr(totalUsed) })} />
         <StatCard icon={FiActivity} value={openClaims.length} label={t("Open claims")} note={actionNeeded ? t("1 needs your action") : t("All on track")} />
-        <StatCard icon={FiCalendar} value={t("{n} days", { n: daysUntil(nextRenewal.validTill) })} label={t("Next renewal")} note={nextRenewal.name} />
+        <StatCard icon={FiCalendar} value={nextRenewal ? t("{n} days", { n: daysUntil(nextRenewal.validTill) }) : "—"} label={t("Next renewal")} note={nextRenewal?.name ?? t("No policy yet")} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.15fr]">
@@ -83,6 +83,7 @@ export default async function PatientDashboard() {
           <section>
             <SectionHeading title={t("Policies")} href="/patient/policies" t={t} />
             <Surface className="divide-y divide-slate-100">
+              {POLICIES.length === 0 && <p className="px-5 py-6 text-sm text-slate-500">{t("No insurance policies are linked to your account yet. Your insurer adds them when your cover starts.")}</p>}
               {POLICIES.map((p) => (
                 <Link key={p.id} href={`/patient/policies/${p.id}`} className="flex items-center gap-4 px-5 py-4 transition first:rounded-t-2xl last:rounded-b-2xl hover:bg-slate-50/70">
                   <IconBadge icon={FiShield} />

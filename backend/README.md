@@ -48,7 +48,7 @@ Each account sees only its own data, checked on every request (`auth/SecurityCon
 
 Anything else is refused (`401` signed out, `403` wrong account; a file that isn't yours is `404`, so file numbers can't be probed). The live-updates socket needs a signed-in session too. There are no CSRF tokens: the SameSite cookie isn't sent with another site's POST, PATCH or DELETE.
 
-With `SEED_DATA`, the first start creates demo accounts, all with `DEMO_PASSWORD`: every member (e.g. `IC-7842`, Priya Sharma), `anita.rao@riverbend.example` (Riverbend admissions desk) and `rahul.menon@careplus.example` (CarePlus claims officer).
+With `SEED_DATA`, the first start creates demo accounts, all with `DEMO_PASSWORD`: every member (e.g. `IC-7842`, Priya Raman), `rukmini.rajan@adyarcommunity.example` (Adyar Community admissions desk) and `arun.prakash@careplus.example` (CarePlus claims officer).
 
 ## How live updates work
 
@@ -63,7 +63,7 @@ When the hospital uploads a file for a claim document, `checks/CheckRunner` exam
 | Made with AI | IPTC "trained algorithmic media" in content credentials (C2PA) or XMP, AI tool names in metadata, Stable Diffusion settings; for photos and scans, an AI-image classifier (`haywoodsloan/ai-image-detector-deploy`, Apache-2.0) in the verifier |
 | Edited | Design tools (Photoshop, Canva, GIMP...) or PDF editors in the metadata, PDF revisions saved after the original, modified long after it was created, error level analysis on JPEGs |
 | Copied | The identical file (SHA-256), or the same page (256-bit perceptual hash) with nearly the same wording (85%+ word overlap), uploaded for another patient |
-| Content | Text from the PDF or OCR (Tesseract, English + Hindi) compared with the claim: patient name, member or policy number, hospital name, dates against the admission and today, bill total against the estimate |
+| Content | Text from the PDF or OCR (Tesseract, English + Tamil) compared with the claim: patient name, member or policy number, hospital name, dates against the admission and today, bill total against the estimate |
 
 These are warning signs, not proof: the claims officer opens the file and decides. Checks interrupted by a restart resume on startup, and "Check again" re-runs them (for example after the verifier was down).
 

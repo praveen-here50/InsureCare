@@ -76,10 +76,7 @@ export default function SettingsPage() {
         <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label={t("Name")}>{session.name}</Field>
           <Field label={t("Member ID")}><span className="font-mono">{session.memberId}</span></Field>
-          <Field label={t("Email")}>priya.sharma@example.com</Field>
-          <Field label={t("Phone")}>+91 98765 43210</Field>
         </div>
-        <Pill tone="green" className="self-start">{t("KYC verified")}</Pill>
       </Surface>
 
       <Section icon={FiGlobe} title="Language and display" description="Choose how InsureCare looks and reads">
