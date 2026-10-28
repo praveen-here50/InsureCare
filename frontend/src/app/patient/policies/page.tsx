@@ -50,7 +50,6 @@ function PolicyTile({ policy: p, t }: { policy: Policy; t: T }) {
   return (
     <Link href={`/patient/policies/${p.id}`} className="group">
       <Surface className="h-full overflow-hidden transition duration-300 group-hover:-translate-y-1 group-hover:shadow-lift">
-        {/* Card face */}
         <div className={"relative overflow-hidden bg-care-800 p-6 text-white"}>
           <div className="relative flex items-start justify-between">
             <div><p className="text-xs font-semibold text-white/70">{p.provider} · {t(p.kind)}</p><h3 className="mt-1 text-xl font-semibold tracking-tight">{p.name}</h3></div>
@@ -59,7 +58,6 @@ function PolicyTile({ policy: p, t }: { policy: Policy; t: T }) {
           <p className="relative text-2xl font-semibold tracking-tight">{inr(p.coverage)}</p>
           <p className="relative mt-4 font-mono text-sm tracking-wider text-white/80">{p.number}</p>
         </div>
-        {/* Details */}
         <div className="flex flex-col gap-4 p-5">
           <div className="flex items-center justify-between">
             <Pill tone={policyTone(p)}>{t(p.status)}</Pill>

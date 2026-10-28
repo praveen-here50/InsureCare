@@ -10,7 +10,7 @@ const TONES: Record<BadgeTone, string> = {
   gray: "text-slate-500",
 };
 
-/** Status label: plain coloured text, no pill. */
+/** Status label in plain coloured text. */
 export default function Badge({ children, tone = "gray", className }: { children: React.ReactNode; tone?: BadgeTone; className?: string }) {
   return <span className={cn("whitespace-nowrap text-xs font-medium", TONES[tone], className)}>{children}</span>;
 }

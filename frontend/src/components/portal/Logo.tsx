@@ -8,7 +8,6 @@ export default function Logo({ compact = false, tagline, className, inverted = f
       <img src="/brand/insurecare-mark.png" alt="" width={40} height={40} className="size-10 shrink-0 object-contain" />
       {!compact && (
         <span className="flex items-center gap-2.5">
-          {/* Coloured like the logo: "Insure" in navy, "Care" in teal-to-green. */}
           <span className="text-[19px] font-bold tracking-tight">
             <span className={inverted ? "text-white" : "text-[#0B2350]"}>Insure</span>
             <span className={inverted ? "text-white" : "bg-gradient-to-r from-[#0E8FA8] to-[#1FAF7F] bg-clip-text text-transparent"}>Care</span>

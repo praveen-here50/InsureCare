@@ -2,7 +2,7 @@ import { FiFile } from "react-icons/fi";
 import { cn } from "@/lib/cn";
 import type { BedStatus } from "./data";
 
-/** Status label: plain text in the one portal accent, like the insurer portal. The words say which status it is. */
+/** Status label in the portal accent; the words say which status it is. */
 export function Status({ children, className }: { children: React.ReactNode; className?: string }) {
   return <span className={cn("whitespace-nowrap text-xs font-semibold text-care-700", className)}>{children}</span>;
 }
