@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useToast } from "@/components/Toast";
-import { liveUrl } from "@/lib/api";
+import { liveUrl, send } from "@/lib/api";
 
 type LiveMessage = { topic: string; message: string; at: string };
 
@@ -22,8 +22,17 @@ export default function LiveUpdates() {
     let attempts = 0;
     let closed = false;
 
-    const connect = () => {
-      socket = new WebSocket(liveUrl());
+    const reconnect = () => {
+      if (!closed) retry = setTimeout(connect, Math.min(30_000, 1_000 * 2 ** attempts++));
+    };
+
+    // The socket may be on another site than this page, where the sign-in cookie doesn't go, so it opens with a
+    // one-time ticket fetched through this site's /api.
+    const connect = async () => {
+      let ticket: string;
+      try { ticket = (await send<{ ticket: string }>("POST", "/api/live/ticket"))!.ticket; } catch { reconnect(); return; }
+      if (closed) return;
+      socket = new WebSocket(`${liveUrl()}?ticket=${encodeURIComponent(ticket)}`);
       socket.onopen = () => {
         // Anything may have changed while we were disconnected.
         if (attempts > 0) router.refresh();
@@ -34,12 +43,9 @@ export default function LiveUpdates() {
         clearTimeout(refresh);
         refresh = setTimeout(() => router.refresh(), 150); // one refresh for a burst of changes
       };
-      socket.onclose = () => {
-        if (closed) return;
-        retry = setTimeout(connect, Math.min(30_000, 1_000 * 2 ** attempts++));
-      };
+      socket.onclose = reconnect;
     };
-    connect();
+    void connect();
 
     return () => {
       closed = true;

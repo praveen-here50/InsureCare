@@ -7,9 +7,9 @@ export const BACKEND_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_UR
 const BASE = typeof window === "undefined" ? BACKEND_URL : "";
 
 /**
- * WebSocket that pushes a message whenever data changes. It carries the sign-in cookie, so it must be on the same host as
- * the page: by default the backend on port 8080 of whatever address the page was opened with (localhost, or this PC's
- * Wi-Fi address on a phone). Call it in the browser.
+ * WebSocket that pushes a message whenever data changes (opened with a one-time ticket, see LiveUpdates). By default the
+ * backend on port 8080 of whatever address the page was opened with (localhost, or this PC's Wi-Fi address on a phone);
+ * set NEXT_PUBLIC_LIVE_URL when the backend is elsewhere. Call it in the browser.
  */
 export const liveUrl = () => process.env.NEXT_PUBLIC_LIVE_URL
   ?? `${location.protocol === "https:" ? "wss" : "ws"}://${location.hostname}:8080/live`;

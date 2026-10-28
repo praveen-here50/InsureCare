@@ -53,8 +53,9 @@ insurecare:
   zone: Asia/Kolkata
   # The insurer portal is operated by this insurer; it sees claims and policyholders for this name only.
   insurer-name: CarePlus Insurance
-  # Document verifier (verifier/): OCR, error level analysis and the AI-image model. Runs locally; blank turns those checks off.
-  verifier-url: ${VERIFIER_URL:http://localhost:8000}
+  # Document verifier (verifier/): OCR, error level analysis and the AI-image model, e.g. http://localhost:8000.
+  # docker compose sets it; blank (the default) turns those checks off and the other checks still run.
+  verifier-url: ${VERIFIER_URL:}
   # Ask InsureCare, the patient assistant: answers from the member's own records with an OpenAI-compatible chat API
   # (Groq's free tier by default; key from console.groq.com). A blank key turns it off.
   assistant:
