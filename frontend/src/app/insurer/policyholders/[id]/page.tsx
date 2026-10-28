@@ -6,7 +6,8 @@ import Card from "@/components/Card";
 import Reveal from "@/components/Reveal";
 import { Avatar } from "../../../hospital/ui";
 import { inr } from "../../../hospital/data";
-import { getInsurerData, isOpen } from "../../data";
+import { isOpen } from "../../data";
+import { getInsurerData } from "../../server";
 import { ClaimsStatic } from "../../ui";
 
 

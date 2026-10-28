@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { FiChevronRight } from "react-icons/fi";
 import AnimatedNumber from "@/components/AnimatedNumber";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import Kpi from "@/components/Kpi";
 import Reveal from "@/components/Reveal";
+import { ViewLink } from "@/components/portal/ui";
 import StaticTable from "@/components/StaticTable";
 import { cn } from "@/lib/cn";
 import { Avatar } from "../hospital/ui";
 import GlobalSearch, { type SearchEntry } from "./GlobalSearch";
-import { getInsurerData, isOpen, type ClaimStatus } from "./data";
+import { isOpen, type ClaimStatus } from "./data";
+import { getInsurerData } from "./server";
 import { ClaimsStatic, claimTone } from "./ui";
 
 // Shades of the one brand blue, lightest for new claims, darkest for closed ones.
@@ -42,7 +43,7 @@ export default async function InsurerDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Reveal className="lg:col-span-2">
           <Card className="h-full overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Claims to review</h2><Link href="/insurer/claims" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">All claims<FiChevronRight /></Link></div>
+            <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Claims to review</h2><ViewLink href="/insurer/claims" className="border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300 hover:bg-brand-100">View all claims</ViewLink></div>
             <ClaimsStatic claims={queue} />
           </Card>
         </Reveal>
@@ -57,7 +58,7 @@ export default async function InsurerDashboard() {
 
       <Reveal>
         <Card className="overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Policyholders in hospital</h2><Link href="/insurer/policyholders" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">All policyholders<FiChevronRight /></Link></div>
+          <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Policyholders in hospital</h2><ViewLink href="/insurer/policyholders" className="border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300 hover:bg-brand-100">View all policyholders</ViewLink></div>
           <StaticTable rows={admitted} rowKey={(h) => h.id} href={(h) => `/insurer/policyholders/${h.id}`} columns={[
             { label: "Policyholder", render: (h) => <span className="flex items-center gap-3"><Avatar name={h.name} /><span><span className="block font-medium text-slate-900">{h.name}</span><span className="text-xs text-slate-500">{h.memberId}</span></span></span> },
             { label: "Hospital", render: (h) => <><span className="block text-slate-900">{getHospital(h.admission!.hospitalId)?.name}</span><span className="text-xs text-slate-500">{h.admission!.ward}</span></> },
@@ -69,7 +70,7 @@ export default async function InsurerDashboard() {
 
       <Reveal>
         <Card className="overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Hospital network</h2><Link href="/insurer/hospitals" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-slate-950">All hospitals<FiChevronRight /></Link></div>
+          <div className="flex items-center justify-between px-6 py-4"><h2 className="font-semibold text-slate-900">Hospital network</h2><ViewLink href="/insurer/hospitals" className="border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300 hover:bg-brand-100">View all hospitals</ViewLink></div>
           <StaticTable rows={NET_HOSPITALS} rowKey={(h) => h.id} href={(h) => `/insurer/hospitals/${h.id}`} columns={[
             { label: "Hospital", render: (h) => <><span className="block font-medium text-slate-900">{h.name}</span><span className="text-xs text-slate-500">{h.speciality}</span></> },
             { label: "Open claims", render: (h) => <span className="text-slate-700">{claimsAt(h.id).filter(isOpen).length}</span> },

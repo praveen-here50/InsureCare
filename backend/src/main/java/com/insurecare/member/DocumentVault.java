@@ -70,9 +70,11 @@ public class DocumentVault {
         events.publishEvent(new Change("documents", d.getName() + " removed"));
     }
 
+    /** A file from the member's own vault; another member's file is reported as not found. */
     @Transactional(readOnly = true)
-    public MemberDocument file(String id) {
-        MemberDocument d = documents.findById(id).orElseThrow(() -> ApiErrors.notFound("Document"));
+    public MemberDocument file(String memberRef, String id) {
+        MemberDocument d = documents.findById(id).filter(x -> x.getMember().getId().equals(memberRef))
+                .orElseThrow(() -> ApiErrors.notFound("Document"));
         if (d.getContent() == null) throw ApiErrors.notFound("File for this sample document");
         return d;
     }

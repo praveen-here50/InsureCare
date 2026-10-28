@@ -246,7 +246,7 @@ public class HospitalDesk {
     }
 
     private DocView docView(AdmissionDocument d) {
-        return new DocView(d.getId(), d.getName(), d.getStatus(), d.getNote(), d.getFileName(),
+        return new DocView(d.getId(), d.getName(), d.getStatus(), d.getNote(), d.getFileName(), d.getFileSize(),
                 d.hasFile() ? "/api/document-files/" + d.getId() : null, Fmt.stamp(d.getUploadedAt(), props.zone()),
                 d.getCheckStatus() == null ? null : CheckRunner.CHECKING.equals(d.getCheckStatus()) ? "Checking" : "Checked");
     }

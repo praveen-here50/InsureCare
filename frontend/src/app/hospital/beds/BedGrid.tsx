@@ -5,13 +5,15 @@ import { useState } from "react";
 import { useToast } from "@/components/Toast";
 import { send } from "@/lib/api";
 import { cn } from "@/lib/cn";
-import { HOSPITAL_ID, type Bed, type BedStatus } from "../data";
+import { useSession } from "@/components/portal/SessionContext";
+import { type Bed, type BedStatus } from "../data";
 import { BED_LABEL, BED_TILE } from "../ui";
 
 const NEXT: Record<BedStatus, BedStatus> = { available: "reserved", reserved: "occupied", occupied: "available" };
 
 /** A ward's beds. Clicking a bed moves it to the next status: free → reserved → occupied → free. */
 export default function BedGrid({ beds }: { beds: Bed[] }) {
+  const { hospitalId } = useSession();
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export default function BedGrid({ beds }: { beds: Bed[] }) {
   const cycle = async (b: Bed) => {
     setSaving(b.label);
     try {
-      await send("PATCH", `/api/hospitals/${HOSPITAL_ID}/beds/${b.label}`, { status: NEXT[b.status] });
+      await send("PATCH", `/api/hospitals/${hospitalId}/beds/${b.label}`, { status: NEXT[b.status] });
       router.refresh();
     } catch (e) {
       toast(e instanceof Error ? e.message : "Could not update the bed");

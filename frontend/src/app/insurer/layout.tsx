@@ -1,4 +1,5 @@
 import PortalShell, { type ShellNote } from "@/components/portal/PortalShell";
+import { requireSession } from "@/lib/session";
 
 const NOTES: ShellNote[] = [
   { id: "a", text: "CLM-2046 pre-authorisation received from Apex Neuro Centre", time: "20m ago", href: "/insurer/claims/CLM-2046" },
@@ -6,9 +7,10 @@ const NOTES: ShellNote[] = [
   { id: "c", text: "CLM-2038 is a high-value claim awaiting review", time: "Yesterday", href: "/insurer/claims/CLM-2038" },
 ];
 
-export default function InsurerLayout({ children }: { children: React.ReactNode }) {
+export default async function InsurerLayout({ children }: { children: React.ReactNode }) {
+  const session = await requireSession("insurer");
   return (
-    <PortalShell portal="insurer" notes={NOTES} subtitle="Claims Officer, CarePlus" email="rahul.menon@careplus.example" searchHint="Search claims, policyholders…">
+    <PortalShell portal="insurer" session={session} notes={NOTES} subtitle="Claims Officer, CarePlus" searchHint="Search claims, policyholders…">
       {children}
     </PortalShell>
   );

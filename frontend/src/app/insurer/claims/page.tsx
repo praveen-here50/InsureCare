@@ -1,6 +1,6 @@
 import PageHeader from "@/components/PageHeader";
 import ClaimsTable from "../ClaimsTable";
-import { getInsurerData } from "../data";
+import { getInsurerData } from "../server";
 
 export default async function ClaimsPage() {
   const { NET_HOSPITALS, claimViews } = await getInsurerData();

@@ -1,32 +1,35 @@
-// Client for the InsureCare backend (backend/). Server components read with `api`; browser code writes with `send`.
+// Client for the InsureCare backend (backend/). Browser code reads with `api` and writes with `send`; server components
+// read with `serverApi` (server-api.ts), which passes the visitor's sign-in cookie along.
+// The browser calls this site's own /api, which Next.js forwards to the backend (next.config.ts), so the cookie stays first-party.
 
-/** Backend base URL. The server can use a private address (API_URL); the browser needs a public one. */
-export const API_URL = (typeof window === "undefined" ? process.env.API_URL : undefined) ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+/** Backend address for the Next.js server (and its /api forwarding). The browser uses relative /api paths. */
+export const BACKEND_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const BASE = typeof window === "undefined" ? BACKEND_URL : "";
 
-/** WebSocket that pushes a message whenever data changes. */
+/** WebSocket that pushes a message whenever data changes. It carries the sign-in cookie, so it must be on the same host. */
 export const LIVE_URL = process.env.NEXT_PUBLIC_LIVE_URL ?? `${(process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080").replace(/^http/, "ws")}/live`;
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
 
-async function check(res: Response) {
+export async function check(res: Response) {
   if (res.ok) return res;
   let detail = res.statusText;
   try { detail = ((await res.json()) as { detail?: string }).detail ?? detail; } catch {}
   throw new ApiError(res.status, detail);
 }
 
-/** GET JSON. Never cached: every request reads current data. */
+/** GET JSON from the browser. Never cached: every request reads current data. */
 export async function api<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, { cache: "no-store" }).then(check);
+  const res = await fetch(`${BASE}${path}`, { cache: "no-store" }).then(check);
   return res.json() as Promise<T>;
 }
 
 /** POST/PATCH/DELETE from the browser. Objects are sent as JSON, FormData as multipart. */
 export async function send<T = unknown>(method: "POST" | "PATCH" | "DELETE", path: string, body?: object | FormData): Promise<T | undefined> {
   const json = body !== undefined && !(body instanceof FormData);
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(`${BASE}${path}`, {
     method,
     headers: json ? { "Content-Type": "application/json" } : undefined,
     body: json ? JSON.stringify(body) : (body as FormData | undefined),
@@ -34,5 +37,20 @@ export async function send<T = unknown>(method: "POST" | "PATCH" | "DELETE", pat
   return res.status === 204 ? undefined : (res.json() as Promise<T>);
 }
 
-/** Absolute URL for a path returned by the API (e.g. a document file). */
-export const apiUrl = (path: string) => `${API_URL}${path}`;
+/** POST JSON from the browser and read a plain-text answer as it streams in; `onText` gets the whole text so far. */
+export async function stream(path: string, body: object, onText: (text: string) => void): Promise<string> {
+  const res = await fetch(`${BASE}${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(check);
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let text = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    text += decoder.decode(value, { stream: true });
+    onText(text);
+  }
+  return text + decoder.decode();
+}
+
+/** URL the browser opens for a path returned by the API (e.g. a document file): same-origin, so the sign-in cookie goes with it. */
+export const apiUrl = (path: string) => path;

@@ -23,7 +23,9 @@ The API listens on http://localhost:8080. On first start, Flyway creates the sch
 | `DB_URL` | `jdbc:postgresql://localhost:5432/insurecare` | JDBC URL |
 | `DB_USER` / `DB_PASSWORD` | `insurecare` / `insurecare` | Database login |
 | `ALLOWED_ORIGINS` | `http://localhost:3000` | Browser origins allowed to call the API and open the socket (comma-separated) |
-| `SEED_DATA` | `true` | Load `seed.json` into an empty database |
+| `SEED_DATA` | `true` | Load `seed.json` into an empty database, and create the demo sign-in accounts when there are none |
+| `DEMO_PASSWORD` | `insurecare` | Password of every demo account |
+| `SESSION_COOKIE_SECURE` | `false` | Send the session cookie over HTTPS only; set `true` when the portals are served over HTTPS |
 | `PORT` | `8080` | HTTP port |
 | `VERIFIER_URL` | `http://localhost:8000` | Document verifier (`verifier/`): OCR and the AI-image model. Blank turns those checks off; the other checks still run |
 | `GROQ_API_KEY` | (blank) | Turns on Ask InsureCare, the patient assistant (free key from console.groq.com). Blank leaves it off (the endpoint answers 503) |
@@ -31,6 +33,22 @@ The API listens on http://localhost:8080. On first start, Flyway creates the sch
 | `ASSISTANT_URL` | `https://api.groq.com/openai/v1` | Any OpenAI-compatible chat API (Groq, a local Ollama at `http://localhost:11434/v1`, ...) |
 
 To start over with fresh demo data, drop and recreate the `insurecare` database.
+
+## Sign-in
+
+Everyone signs in: patients with their member ID, hospital desk staff and insurer claims officers with their work email. Sessions live on the server (8 hours); the browser only holds the `INSURECARE_SESSION` cookie, which is `HttpOnly` and `SameSite=Lax`. Passwords are stored as BCrypt hashes in the `account` table.
+
+Each account sees only its own data, checked on every request (`auth/SecurityConfig`):
+
+| Account | Can reach |
+|---|---|
+| Patient | `/api/members/{their member}/**` and their own vault files |
+| Hospital staff | `/api/hospitals/{their hospital}/**` and files uploaded for their hospital's admissions |
+| Insurer claims officer | `/api/insurer/**` and hospital files that are part of one of this insurer's claims |
+
+Anything else is refused (`401` signed out, `403` wrong account; a file that isn't yours is `404`, so file numbers can't be probed). The live-updates socket needs a signed-in session too. There are no CSRF tokens: the SameSite cookie isn't sent with another site's POST, PATCH or DELETE.
+
+With `SEED_DATA`, the first start creates demo accounts, all with `DEMO_PASSWORD`: every member (e.g. `IC-7842`, Priya Sharma), `anita.rao@riverbend.example` (Riverbend admissions desk) and `rahul.menon@careplus.example` (CarePlus claims officer).
 
 ## How live updates work
 
@@ -55,6 +73,9 @@ The verifier (`verifier/`, Python) is its own container because OCR and the imag
 
 | Method | Path | Used by |
 |---|---|---|
+| POST | `/api/auth/login` `{username, password}` | Sign in; sets the session cookie and returns who signed in |
+| GET | `/api/auth/me` | Who is signed in: name, portal (`patient`, `hospital`, `insurer`) and their member or hospital; `401` when nobody is |
+| POST | `/api/auth/logout` | Sign out |
 | GET | `/api/hospitals/{id}/workspace` | Hospital portal: wards, beds, services, patients |
 | PATCH | `/api/hospitals/{id}/beds/{label}` `{status}` | Change a bed: `available`, `reserved`, `occupied` |
 | PATCH | `/api/hospitals/{id}/patients/{member}/documents/{position}` `{status}` | Verify a patient document |
@@ -62,7 +83,7 @@ The verifier (`verifier/`, Python) is its own container because OCR and the imag
 | GET | `/api/insurer` | Insurer portal: network hospitals, policyholders, claims |
 | POST | `/api/insurer/claims/{id}/decision` `{action, note?, amount?}` | `approve`, `query`, `reject`, `settle` |
 | GET | `/api/members/{member}/portal` | Patient portal: claims, policies, schemes, hospitals, documents |
-| POST | `/api/members/{member}/assistant` `{messages: [{role, text}]}` | Ask InsureCare: answers the last question from the member's live records (policies, claims, schemes, hospital stays, medical history, document text); returns `{text, source?}` |
+| POST | `/api/members/{member}/assistant` `{messages: [{role, text}]}` | Ask InsureCare: answers the last question from the member's live records (policies, claims, schemes, hospital stays, medical history, document text), streamed as plain text while it is written; the last line may be `Source: <record>`. Errors before the first word come back as problem JSON |
 | POST | `/api/members/{member}/documents` (multipart `file`, `name`, `category`) | Upload to the document vault (PDF/JPG/PNG, 10 MB max) |
 | DELETE | `/api/members/{member}/documents/{docId}` | Remove a document |
 | GET | `/api/documents/{docId}/file` | Download a stored file |
@@ -74,5 +95,5 @@ Errors are returned as RFC 7807 problem details. Two people changing the same cl
 
 ## Not built yet
 
-- **No authentication.** Anyone who can reach the API can read and change data. Add Spring Security with logins for hospital staff, insurer staff and members before any real use.
-- One insurer (`insurecare.insurer-name`), one hospital desk and one member are shown by the portals until sign-in decides who is looking.
+- **Accounts are only created as demo data.** There is no sign-up, password change or reset yet, and no limit on wrong password attempts.
+- One insurer per deployment (`insurecare.insurer-name`).

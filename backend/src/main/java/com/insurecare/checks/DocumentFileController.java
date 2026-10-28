@@ -6,10 +6,13 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.insurecare.auth.SignedIn;
 
 @RestController
 public class DocumentFileController {
@@ -22,8 +25,8 @@ public class DocumentFileController {
 
     /** The file a hospital uploaded for a document, shown inline in the browser. */
     @GetMapping("/api/document-files/{id}")
-    public ResponseEntity<byte[]> file(@PathVariable Long id) {
-        DocumentFiles.Download d = files.download(id);
+    public ResponseEntity<byte[]> file(@PathVariable Long id, @AuthenticationPrincipal SignedIn me) {
+        DocumentFiles.Download d = files.download(id, me);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(d.contentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.inline().filename(d.fileName(), StandardCharsets.UTF_8).build().toString())
@@ -32,8 +35,8 @@ public class DocumentFileController {
     }
 
     @PostMapping("/api/document-files/{id}/recheck")
-    public ResponseEntity<Void> recheck(@PathVariable Long id) {
-        files.recheck(id);
+    public ResponseEntity<Void> recheck(@PathVariable Long id, @AuthenticationPrincipal SignedIn me) {
+        files.recheck(id, me);
         return ResponseEntity.accepted().build();
     }
 }

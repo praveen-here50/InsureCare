@@ -1,22 +1,15 @@
 // Patient-portal design primitives. Server-safe (no hooks), so any page can use them.
-// Colour rule: neutral by default; green = done/good, amber = needs attention, rose = problem,
-// sky = portal accent (follows the theme), blue = fixed informational blue.
+// Colour rule: one portal accent for every status (the words say which status it is), slate for neutral tags.
 import Link from "next/link";
+import { translator, type T } from "@/lib/i18n";
+
+const ENGLISH = translator("en");
 import type { IconType } from "react-icons";
-import { FiCheck } from "react-icons/fi";
+import { FiArrowRight, FiCheck } from "react-icons/fi";
 import { cn } from "@/lib/cn";
 
 export type Tone = "sky" | "blue" | "green" | "amber" | "rose" | "slate";
 
-const PILL: Record<Tone, string> = {
-  sky: "bg-care-50 text-care-700 ring-care-200/70",
-  blue: "bg-sky-50 text-sky-700 ring-sky-200/70",
-  green: "bg-emerald-50 text-emerald-700 ring-emerald-200/70",
-  amber: "bg-amber-50 text-amber-800 ring-amber-200/70",
-  rose: "bg-rose-50 text-rose-700 ring-rose-200/70",
-  slate: "bg-slate-100 text-slate-600 ring-slate-200/70",
-};
-const DOT: Record<Tone, string> = { sky: "bg-care-500", blue: "bg-sky-500", green: "bg-emerald-500", amber: "bg-amber-500", rose: "bg-rose-500", slate: "bg-slate-400" };
 
 // Utility groups where a later class should replace an earlier one (e.g. "px-5" then "px-0").
 const GROUPS = [
@@ -51,7 +44,7 @@ export function Surface({ children, className }: { children: React.ReactNode; cl
 
 /** Small uppercase label that sits above a heading. */
 export function Eyebrow({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <p className={cn("text-[11px] font-bold uppercase tracking-[0.18em] text-care-600", className)}>{children}</p>;
+  return <p className={cn("text-[11px] font-semibold uppercase tracking-[0.18em] text-care-600", className)}>{children}</p>;
 }
 
 /** Top-of-page title block. */
@@ -60,23 +53,33 @@ export function PageIntro({ eyebrow, title, description, actions }: { eyebrow?: 
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div className="max-w-2xl">
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h1 className="mt-2 text-[1.75rem] font-extrabold leading-tight tracking-[-0.03em] text-ink sm:text-4xl">{title}</h1>
-        {description && <p className="mt-2 text-[15px] leading-7 text-slate-500">{description}</p>}
+        <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight text-slate-900">{title}</h1>
+        {description && <p className="mt-2 text-sm leading-7 text-slate-500">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
     </div>
   );
 }
 
-/** Heading for a section inside a page, with an optional "view all" link. */
-export function SectionHeading({ title, description, href, linkLabel = "View all" }: { title: string; description?: string; href?: string; linkLabel?: string }) {
+/** Boxed "view full / view all" link with an arrow: the one style for every link that opens a fuller view. */
+export function ViewLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className="mb-3 flex items-end justify-between gap-4">
+    <Link href={href} className={merge("group inline-flex h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-care-200 bg-care-50 px-3.5 text-sm font-semibold text-care-700 transition hover:border-care-300 hover:bg-care-100", className)}>
+      {children}<FiArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+    </Link>
+  );
+}
+
+/** Heading for a section inside a page, with an optional "view all" link. */
+/** Pass `t` to show the default link label in the page’s language. */
+export function SectionHeading({ title, description, href, linkLabel, t = ENGLISH }: { title: string; description?: string; href?: string; linkLabel?: string; t?: T }) {
+  return (
+    <div className="mb-3 flex items-center justify-between gap-4">
       <div>
-        <h2 className="text-base font-bold tracking-tight text-ink sm:text-lg">{title}</h2>
+        <h2 className="text-base font-semibold tracking-tight text-slate-900">{title}</h2>
         {description && <p className="mt-0.5 text-sm text-slate-500">{description}</p>}
       </div>
-      {href && <Link href={href} className="shrink-0 text-sm font-semibold text-care-600 transition hover:text-care-800">{linkLabel} →</Link>}
+      {href && <ViewLink href={href}>{linkLabel ?? t("View all")}</ViewLink>}
     </div>
   );
 }
@@ -94,29 +97,25 @@ export function StatCard({ icon, value, label, note }: { icon: IconType; value: 
         <p className="text-sm font-medium text-slate-500">{label}</p>
         <IconBadge icon={icon} className="hidden size-8 rounded-lg sm:flex [&_svg]:size-4" />
       </div>
-      <p className="mt-3 text-[1.4rem] font-extrabold leading-none tracking-[-0.03em] text-ink sm:text-[1.75rem]">{value}</p>
+      <p className="mt-3 text-2xl font-semibold leading-none tracking-tight text-slate-900 sm:text-3xl">{value}</p>
       {note && <p className="mt-2 text-xs text-slate-400">{note}</p>}
     </Surface>
   );
 }
 
-export function Pill({ tone = "slate", dot = false, children, className }: { tone?: Tone; dot?: boolean; children: React.ReactNode; className?: string }) {
-  return (
-    <span className={merge(cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset", PILL[tone]), className)}>
-      {dot && <span className={cn("size-1.5 rounded-full", DOT[tone])} />}
-      {children}
-    </span>
-  );
+/** Status or tag label: plain text, no pill. Every status uses the portal accent; neutral tags (tone "slate") are grey. */
+export function Pill({ tone = "slate", children, className }: { tone?: Tone; children: React.ReactNode; className?: string }) {
+  return <span className={merge(cn("inline-flex items-center gap-1.5 whitespace-nowrap text-xs", tone === "slate" ? "font-medium text-slate-500" : "font-semibold text-care-700"), className)}>{children}</span>;
 }
 
 export type Stage = { label: string; completed: boolean; current?: boolean };
 
 /**
  * Step tracker: small dots on a thin line, evenly spaced.
- * Finished steps are blue, the current step is a ring (amber when the member must act),
+ * Finished steps are blue, the current step is a ring,
  * a fully finished process ends with a check mark.
  */
-export function StageTracker({ stages, attention = false, showLabels = false, className }: { stages: Stage[]; attention?: boolean; showLabels?: boolean; className?: string }) {
+export function StageTracker({ stages, attention = false, showLabels = false, className, t = ENGLISH }: { stages: Stage[]; attention?: boolean; showLabels?: boolean; className?: string; t?: T }) {
   const done = stages.filter((s) => s.completed).length;
   const allDone = done === stages.length;
   const currentIndex = stages.findIndex((s) => s.current);
@@ -124,7 +123,7 @@ export function StageTracker({ stages, attention = false, showLabels = false, cl
 
   return (
     <div className={className}>
-      <ol aria-label={`Step ${Math.min(done, stages.length)} of ${stages.length}: ${caption}`} className="flex items-center">
+      <ol aria-label={t("Step {n} of {total}: {caption}", { n: Math.min(done, stages.length), total: stages.length, caption: caption ?? "" })} className="flex items-center">
         {stages.map((s, i) => {
           const last = i === stages.length - 1;
           const isCurrent = i === currentIndex && !(allDone && last);
@@ -134,8 +133,8 @@ export function StageTracker({ stages, attention = false, showLabels = false, cl
               {finalCheck ? (
                 <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-care-600 text-white"><FiCheck className="size-3" strokeWidth={3.5} /></span>
               ) : isCurrent ? (
-                <span className={cn("flex size-4 shrink-0 items-center justify-center rounded-full border-2 bg-white", attention ? "border-amber-500" : "border-care-600")}>
-                  <span className={cn("size-1.5 rounded-full", attention ? "bg-amber-500" : "bg-care-600")} />
+                <span className={cn("flex size-4 shrink-0 items-center justify-center rounded-full border-2 bg-white", "border-care-600")}>
+                  <span className={cn("size-1.5 rounded-full", "bg-care-600")} />
                 </span>
               ) : (
                 <span className={cn("size-2.5 shrink-0 rounded-full", s.completed ? "bg-care-600" : "border-2 border-slate-300 bg-white")} />
@@ -186,9 +185,9 @@ export function PillTabs<T extends string>({ value, options, onChange, counts }:
         const active = o === value;
         return (
           <button key={o} type="button" role="tab" aria-selected={active} onClick={() => onChange(o)}
-            className={cn("inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition", active ? "bg-ink text-white" : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-ink")}>
+            className={cn("inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition", active ? "bg-ink text-white" : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900")}>
             {o}
-            {counts?.[o] !== undefined && <span className={cn("rounded-full px-1.5 text-[11px] font-bold", active ? "bg-white/20" : "bg-slate-100 text-slate-500")}>{counts[o]}</span>}
+            {counts?.[o] !== undefined && <span className={cn("rounded-full px-1.5 text-[11px] font-semibold", active ? "bg-white/20" : "bg-slate-100 text-slate-500")}>{counts[o]}</span>}
           </button>
         );
       })}

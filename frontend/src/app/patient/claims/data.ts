@@ -1,5 +1,6 @@
 // Member claim types and helpers. Claims are loaded with getPortal() from ../portal.
 import type { Tone } from "@/components/portal/ui";
+import type { T } from "@/lib/i18n";
 
 export type ClaimStatus = "Submitted" | "Under Review" | "Additional Documents Required" | "Approved" | "Settled" | "Rejected";
 
@@ -47,8 +48,8 @@ export const statusTone: Record<ClaimStatus, Tone> = {
   Rejected: "rose",
 };
 
-/** Timeline steps as tracker stages. */
-export const claimStages = (claim: Claim) => claim.timeline.map((t) => ({ label: t.label, completed: t.completed, current: t.current }));
+/** Timeline steps as tracker stages, with labels in the page’s language when `t` is given. */
+export const claimStages = (claim: Claim, t: T = (x) => x) => claim.timeline.map((s) => ({ label: t(s.label), completed: s.completed, current: s.current }));
 
 export const needsAction = (claim: Claim) => claim.status === "Additional Documents Required";
 

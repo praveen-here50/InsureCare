@@ -15,7 +15,7 @@ const config: Config = {
     extend: {
       // `teal` is aliased to the brand indigo so every existing page picks up the new palette.
       colors: { brand, teal: brand, care, ink: "#0B1A2E" },
-      fontFamily: { display: ["var(--font-jakarta)", "ui-sans-serif", "system-ui", "sans-serif"] },
+      fontFamily: { display: ["var(--font-jakarta)", "var(--font-tamil)", "ui-sans-serif", "system-ui", "sans-serif"] },
       boxShadow: {
         soft: "0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06)",
         lift: "0 12px 32px -12px rgba(7,43,73,.22)",

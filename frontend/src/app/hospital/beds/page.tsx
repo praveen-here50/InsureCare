@@ -1,8 +1,9 @@
 import { FiCheckCircle, FiClock, FiLayers, FiUser } from "react-icons/fi";
-import { PageIntro, Pill, StatCard, Surface } from "@/components/portal/ui";
+import { PageIntro, StatCard, Surface } from "@/components/portal/ui";
 import { cn } from "@/lib/cn";
-import { getHospitalDesk, wardAvailable } from "../data";
-import { BED_DOT, BED_LABEL, wardTone } from "../ui";
+import { wardAvailable } from "../data";
+import { getHospitalDesk } from "../server";
+import { BED_DOT, BED_LABEL, Status } from "../ui";
 import BedGrid from "./BedGrid";
 
 export default async function BedsPage() {
@@ -15,9 +16,8 @@ export default async function BedsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageIntro
-        eyebrow="Beds"
         title="Bed availability"
-        description="Live view of every ward. Free beds are shown in green. Click a bed to change its status."
+        description="Live view of every ward. Click a bed to change its status."
         actions={
           <div className="flex flex-wrap gap-4 text-xs font-medium text-slate-500">
             {(["available", "reserved", "occupied"] as const).map((k) => <span key={k} className="flex items-center gap-2"><span className={cn("size-3 rounded", BED_DOT[k])} />{BED_LABEL[k]}</span>)}
@@ -37,10 +37,10 @@ export default async function BedsPage() {
           <Surface key={w.id} className="p-5 sm:p-6">
             <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 className="text-base font-bold text-ink">{w.name}</h2>
+                <h2 className="text-base font-semibold text-slate-900">{w.name}</h2>
                 <p className="mt-0.5 text-xs text-slate-400">{w.note}</p>
               </div>
-              <Pill tone={wardTone(w)}>{wardAvailable(w)} free of {w.total}</Pill>
+              <Status>{wardAvailable(w)} free of {w.total}</Status>
             </div>
             <BedGrid beds={w.beds} />
             <p className="mt-4 text-xs text-slate-500">{w.occupied} occupied · {w.reserved} reserved</p>

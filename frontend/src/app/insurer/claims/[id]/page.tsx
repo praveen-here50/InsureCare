@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FiAlertTriangle, FiArrowLeft, FiArrowRight, FiCheck, FiPhone, FiX } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiCheck, FiPhone, FiX } from "react-icons/fi";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import Reveal from "@/components/Reveal";
+import { ViewLink } from "@/components/portal/ui";
 import { cn } from "@/lib/cn";
 import { inr } from "../../../hospital/data";
 import ClaimDecision from "../../ClaimDecision";
 import DocumentChecks from "../../DocumentChecks";
-import { getInsurerData, isOpen } from "../../data";
+import { isOpen } from "../../data";
+import { getInsurerData } from "../../server";
 import { claimTone } from "../../ui";
 
 export default async function ClaimDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -74,9 +76,9 @@ export default async function ClaimDetail({ params }: { params: Promise<{ id: st
           <ClaimDecision claimId={c.id} claimed={c.claimed} status={c.status} open={isOpen(c)} />
           {c.flags.length > 0 && <Card className="p-5"><h2 className="flex items-center gap-2 font-semibold text-slate-900"><FiAlertTriangle className="text-amber-500" />Flags</h2><ul className="mt-3 space-y-2">{c.flags.map((f) => <li key={f} className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">{f}</li>)}</ul></Card>}
           {holder && <Card className="p-5"><p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Policyholder</p><p className="mt-2 font-semibold text-slate-900">{holder.name}</p><p className="text-sm text-slate-500">{holder.memberId} · {holder.policy.name}</p>
-            <Link href={`/insurer/policyholders/${holder.id}`} className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-slate-950">View profile <FiArrowRight /></Link></Card>}
+            <ViewLink href={`/insurer/policyholders/${holder.id}`} className="mt-3 border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300 hover:bg-brand-100">View full profile</ViewLink></Card>}
           {hospital && <Card className="p-5"><p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Hospital</p><p className="mt-2 font-semibold text-slate-900">{hospital.name}</p><p className="flex items-center gap-1.5 text-sm text-slate-500"><FiPhone className="size-3.5" />{hospital.phone}</p>
-            <Link href={`/insurer/hospitals/${hospital.id}`} className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-slate-950">View hospital <FiArrowRight /></Link></Card>}
+            <ViewLink href={`/insurer/hospitals/${hospital.id}`} className="mt-3 border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300 hover:bg-brand-100">View hospital details</ViewLink></Card>}
         </div>
       </div>
     </div>

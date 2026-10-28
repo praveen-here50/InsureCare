@@ -6,7 +6,8 @@ import { FiUploadCloud } from 'react-icons/fi';
 import { useToast } from '@/components/Toast';
 import { buttonClass, PageIntro } from '@/components/portal/ui';
 import { send } from '@/lib/api';
-import { MEMBER_REF } from '../../portal';
+import { useSession } from '@/components/portal/SessionContext';
+import { useT } from '@/components/portal/LanguageContext';
 import type { Document } from '../types';
 import DocumentCategories from './DocumentCategories';
 import DocumentList from './DocumentList';
@@ -14,6 +15,8 @@ import DocumentSummary from './DocumentSummary';
 import UploadSection from './UploadSection';
 
 export default function DocumentsView({ documents }: { documents: Document[] }) {
+  const { memberRef } = useSession();
+  const t = useT();
   const router = useRouter();
   const toast = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -33,20 +36,19 @@ export default function DocumentsView({ documents }: { documents: Document[] }) 
 
   const handleDelete = async (doc: Document) => {
     try {
-      await send('DELETE', `/api/members/${MEMBER_REF}/documents/${doc.id}`);
+      await send('DELETE', `/api/members/${memberRef}/documents/${doc.id}`);
       router.refresh();
     } catch (e) {
-      toast(e instanceof Error ? e.message : 'Could not remove the document');
+      toast(e instanceof Error ? e.message : t('Could not remove the document'));
     }
   };
 
   return (
     <div className="flex flex-col gap-8">
       <PageIntro
-        eyebrow="Documents"
-        title="Your health records, organised"
-        description="Policy papers, medical reports, prescriptions and ID, all in one secure place and ready to share when a claim needs them."
-        actions={<button type="button" onClick={() => setUploadOpen(true)} className={buttonClass('primary')}><FiUploadCloud />Upload document</button>}
+        title={t("Your health records, organised")}
+        description={t("Policy papers, medical reports, prescriptions and ID, all in one secure place and ready to share when a claim needs them.")}
+        actions={<button type="button" onClick={() => setUploadOpen(true)} className={buttonClass('primary')}><FiUploadCloud />{t("Upload document")}</button>}
       />
       <DocumentSummary documents={documents} />
       {uploadOpen && <UploadSection onUploaded={handleUploaded} onClose={() => setUploadOpen(false)} />}

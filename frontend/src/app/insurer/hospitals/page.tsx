@@ -2,7 +2,8 @@ import Card from "@/components/Card";
 import PageHeader from "@/components/PageHeader";
 import StaticTable from "@/components/StaticTable";
 import { inr } from "../../hospital/data";
-import { getInsurerData, isOpen } from "../data";
+import { isOpen } from "../data";
+import { getInsurerData } from "../server";
 
 export default async function HospitalsPage() {
   const { CLAIMS, HOLDERS, NET_HOSPITALS, claimsAt } = await getInsurerData();

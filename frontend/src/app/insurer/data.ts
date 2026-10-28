@@ -1,5 +1,4 @@
-// Insurer portal data, served by the backend (GET /api/insurer).
-import { api } from "@/lib/api";
+// Insurer portal data, served by the backend (GET /api/insurer). The loader is in server.ts.
 
 export type NetHospital = { id: string; name: string; city: string; speciality: string; phone: string; avgTat: number };
 
@@ -54,4 +53,3 @@ export function insurerData(s: Snapshot) {
   };
 }
 
-export const getInsurerData = async () => insurerData(await api<Snapshot>("/api/insurer"));

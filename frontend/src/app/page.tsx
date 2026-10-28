@@ -59,7 +59,7 @@ export default function Home() {
             </div>
             <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-slate-600">
               {["Live claim tracking", "Documents in one place", "24/7 support line"].map((t) => (
-                <li key={t} className="inline-flex items-center gap-2"><span className="flex size-5 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><FiCheck className="size-3" /></span>{t}</li>
+                <li key={t} className="inline-flex items-center gap-2"><span className="flex size-5 items-center justify-center rounded-full bg-care-50 text-care-600"><FiCheck className="size-3" /></span>{t}</li>
               ))}
             </ul>
           </div>
@@ -71,7 +71,7 @@ export default function Home() {
             </div>
             {/* Floating cover card */}
             <div className="absolute -bottom-10 -left-4 w-[260px] rounded-2xl border border-white/60 bg-white/95 p-4 shadow-lift backdrop-blur sm:-left-10 sm:w-[290px] sm:p-5">
-              <div className="flex items-center justify-between"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Your cover</p><Pill tone="green" dot>Active</Pill></div>
+              <div className="flex items-center justify-between"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Your cover</p><Pill tone="green">Active</Pill></div>
               <p className="mt-2 text-[1.75rem] font-extrabold tracking-[-0.03em]">₹15,00,000</p>
               <p className="text-sm text-slate-500">Family Health Shield Plus · 4 members</p>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full w-[97%] rounded-full bg-care-500" /></div>
@@ -79,7 +79,7 @@ export default function Home() {
             </div>
             {/* Floating claim toast */}
             <div className="absolute -bottom-6 -right-2 hidden items-center gap-3 rounded-2xl border border-white/60 bg-white/95 p-3 pr-4 shadow-lift backdrop-blur sm:flex sm:-right-8">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-emerald-500 text-white"><FiCheck className="size-5" /></span>
+              <span className="flex size-10 items-center justify-center rounded-xl bg-care-600 text-white"><FiCheck className="size-5" /></span>
               <span><span className="block text-sm font-bold">Claim approved</span><span className="block text-xs text-slate-500">CLM-1042 · ₹43,200</span></span>
             </div>
           </div>

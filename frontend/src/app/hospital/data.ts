@@ -1,8 +1,4 @@
-// Hospital portal data, served by the backend (GET /api/hospitals/{id}/workspace).
-import { api } from "@/lib/api";
-
-/** The hospital this desk belongs to. */
-export const HOSPITAL_ID = process.env.NEXT_PUBLIC_HOSPITAL_ID ?? "riverbend";
+// Hospital portal data, served by the backend (GET /api/hospitals/{id}/workspace). The loader is in server.ts.
 
 /* ---------------- Beds ---------------- */
 export type BedStatus = "available" | "occupied" | "reserved";
@@ -20,7 +16,7 @@ export type PatientStatus = "Admitted" | "Under observation" | "Ready for discha
 export type DocStatus = "Verified" | "Pending review" | "Needs correction" | "Missing";
 export type Coverage = "Covered" | "Partially covered" | "Not covered";
 /** A document the hospital verifies for the insurer. `check` only says whether the uploaded file has been examined; the findings go to the insurer. */
-export type Doc = { id: number; name: string; status: DocStatus; note?: string; fileName?: string; fileUrl?: string; uploadedAt?: string; check?: "Checking" | "Checked" };
+export type Doc = { id: number; name: string; status: DocStatus; note?: string; fileName?: string; fileSize?: number; fileUrl?: string; uploadedAt?: string; check?: "Checking" | "Checked" };
 /** The insurer's latest position on this patient's claim. */
 export type ClaimLink = { id: string; status: "Received" | "Under review" | "Query raised" | "Approved" | "Settled" | "Rejected"; approved?: number };
 export type Patient = {
@@ -33,21 +29,6 @@ export type Patient = {
 };
 
 export type Workspace = { hospital: { id: string; name: string; location: string }; agent: string; wards: Ward[]; services: Service[]; patients: Patient[] };
-
-/** Loads the desk and returns it with the lookups the pages use. */
-export async function getHospitalDesk() {
-  const w = await api<Workspace>(`/api/hospitals/${HOSPITAL_ID}/workspace`);
-  return {
-    HOSPITAL: w.hospital,
-    AGENT: w.agent,
-    WARDS: w.wards,
-    SERVICES: w.services,
-    PATIENTS: w.patients,
-    admitted: () => w.patients.filter((p) => p.status !== "Not admitted"),
-    getPatient: (id: string) => w.patients.find((p) => p.id === id),
-    serviceByName: (name: string) => w.services.find((s) => s.name === name),
-  };
-}
 
 export const verifiedCount = (p: Patient) => p.documents.filter((d) => d.status === "Verified").length;
 export type ClaimState = "Shared with insurer" | "Ready to share" | "In verification";

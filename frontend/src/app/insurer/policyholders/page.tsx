@@ -1,6 +1,7 @@
 import PageHeader from "@/components/PageHeader";
 import PolicyholderDirectory, { type HolderView } from "../PolicyholderDirectory";
-import { getInsurerData, isOpen } from "../data";
+import { isOpen } from "../data";
+import { getInsurerData } from "../server";
 
 export default async function PolicyholdersPage() {
   const { HOLDERS, claimsOf, getHospital } = await getInsurerData();

@@ -1,5 +1,15 @@
 server:
   port: ${PORT:8080}
+  servlet:
+    # Signed-in sessions live on the server; the browser holds only this cookie.
+    session:
+      timeout: 8h
+      cookie:
+        name: INSURECARE_SESSION
+        http-only: true
+        same-site: lax
+        # Set to true when the portals are served over HTTPS.
+        secure: ${SESSION_COOKIE_SECURE:false}
 
 spring:
   application:
@@ -13,6 +23,9 @@ spring:
   mvc:
     problemdetails:
       enabled: true
+    # Streamed responses (the assistant's answers) may take this long to finish.
+    async:
+      request-timeout: 120s
   jpa:
     open-in-view: false
     hibernate:
@@ -29,8 +42,10 @@ spring:
 insurecare:
   # Comma-separated browser origins allowed to call the API and open the live-updates socket.
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
-  # Load seed.json into an empty database on startup.
+  # Load seed.json into an empty database on startup, and create demo sign-in accounts when there are none.
   seed: ${SEED_DATA:true}
+  # Password of every demo account (members sign in with their member ID, e.g. IC-7842).
+  demo-password: ${DEMO_PASSWORD:insurecare}
   # Dates shown in the portals ("today", "Just now") use this zone.
   zone: Asia/Kolkata
   # The insurer portal is operated by this insurer; it sees claims and policyholders for this name only.
