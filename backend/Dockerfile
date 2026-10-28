@@ -10,4 +10,5 @@ FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=build /src/target/insurecare-backend-*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Leaves room for the JVM's own memory on small hosts (Render's free plan has 512 MB).
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70", "-XX:+UseSerialGC", "-Xss512k", "-jar", "app.jar"]

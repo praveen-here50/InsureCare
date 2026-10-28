@@ -41,7 +41,9 @@ public class SecurityConfig {
                         // Single files: the services check that the file belongs to the person asking.
                         .requestMatchers("/api/documents/*/file").hasRole("PATIENT")
                         .requestMatchers("/api/document-files/**").hasAnyRole("HOSPITAL", "INSURER")
-                        .requestMatchers("/live").authenticated()
+                        .requestMatchers("/api/live/ticket").authenticated()
+                        // The socket checks its one-time ticket itself (LiveUpdatesConfig): the sign-in cookie may not reach it.
+                        .requestMatchers("/live").permitAll()
                         .anyRequest().denyAll())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> problem(res, HttpStatus.UNAUTHORIZED, "Please sign in."))

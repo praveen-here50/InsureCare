@@ -99,9 +99,35 @@ Password for all: `insurecare`
 ### Tests
 
 ```bash
-cd backend && ./mvnw test            # 33 tests: access rules, assistant, document checks, claims
+cd backend && ./mvnw test            # 40 tests: access rules, assistant, document checks, claims
 cd frontend && npx tsc --noEmit && npm run build
 ```
+
+---
+
+## Deploy
+
+A free public demo: frontend on **Vercel**, API on **Render** (Docker), database on **Neon**. The document verifier needs
+more memory than free hosts give, so it stays off there; every other check still runs.
+
+1. **Neon:** create a project (region: Singapore). From its connection details (direct connection, not pooled), note the
+   host, database, user and password.
+2. **Render:** New → Blueprint → this repository. It reads [`render.yaml`](render.yaml) and asks for:
+   - `DB_URL`: `jdbc:postgresql://<host>/<database>?sslmode=require`, and `DB_USER`, `DB_PASSWORD` from Neon
+   - `GROQ_API_KEY`: from console.groq.com
+   - `ALLOWED_ORIGINS`: the Vercel address (step 3), e.g. `https://insurecare.vercel.app,https://insurecare-*.vercel.app`
+
+   The first start creates the tables and the demo data. The demo resets every night at 3 AM (`DEMO_RESET`).
+3. **Vercel:** Add New → Project → this repository, Root Directory `frontend`, with environment variables
+   `API_URL=https://<render-service>.onrender.com` and `NEXT_PUBLIC_LIVE_URL=wss://<render-service>.onrender.com/live`.
+
+**Changes after deploying:** push to `master`. Vercel rebuilds the frontend, and Render rebuilds the backend when
+`backend/` changed, within a few minutes. Settings are changed on each dashboard's Environment page. Database changes go
+in a new migration (`backend/src/main/resources/db/migration/V4__....sql`); never edit one that has already run.
+
+**Free-plan behaviour:** Render puts the API to sleep after 15 minutes without visitors, and the first visit after that
+takes up to a minute. A free uptime monitor (e.g. UptimeRobot) opening `https://<render-service>.onrender.com/api/auth/me`
+every 10 minutes keeps it awake.
 
 ---
 
