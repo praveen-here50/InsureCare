@@ -63,10 +63,8 @@ export default function PortalShell({ children, portal: portalKey, session, ...r
     <ToastProvider>
       <LiveUpdates />
       <div lang={lang} className={cn("flex min-h-screen bg-[#F5F8FC] font-display text-slate-900", theme === "green" && "theme-green")}>
-        {/* Desktop sidebar */}
         <div className="sticky top-0 hidden h-screen lg:block"><Sidebar pathname={pathname} collapsed={collapsed} onToggle={toggleSidebar} /></div>
 
-        {/* Mobile drawer */}
         <div aria-hidden="true" onClick={() => setDrawer(false)} className={cn("fixed inset-0 z-40 bg-ink/40 backdrop-blur-[2px] transition-opacity duration-300 lg:hidden", drawer ? "opacity-100" : "pointer-events-none opacity-0")} />
         <div className={cn("fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-[cubic-bezier(.22,1,.36,1)] lg:hidden", drawer ? "translate-x-0" : "-translate-x-full")}>
           <Sidebar pathname={pathname} collapsed={false} onClose={() => setDrawer(false)} />

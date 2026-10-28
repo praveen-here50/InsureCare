@@ -37,17 +37,14 @@ export const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 /** Short Indian-style amount, e.g. 1500000 -> "₹15 L". */
 export const inrShort = (n: number) => (n >= 100000 ? `₹${+(n / 100000).toFixed(2)} L` : inr(n));
 
-/** White card with a hairline border and a soft shadow. */
 export function Surface({ children, className }: { children: React.ReactNode; className?: string }) {
   return <div className={merge("rounded-2xl border border-slate-200/80 bg-white shadow-soft", className)}>{children}</div>;
 }
 
-/** Small uppercase label that sits above a heading. */
 export function Eyebrow({ children, className }: { children: React.ReactNode; className?: string }) {
   return <p className={cn("text-[11px] font-semibold uppercase tracking-[0.18em] text-care-600", className)}>{children}</p>;
 }
 
-/** Top-of-page title block. */
 export function PageIntro({ eyebrow, title, description, actions }: { eyebrow?: string; title: string; description?: string; actions?: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -70,8 +67,7 @@ export function ViewLink({ href, children, className }: { href: string; children
   );
 }
 
-/** Heading for a section inside a page, with an optional "view all" link. */
-/** Pass `t` to show the default link label in the page’s language. */
+/** Heading for a section inside a page, with an optional "view all" link; pass `t` to translate its label. */
 export function SectionHeading({ title, description, href, linkLabel, t = ENGLISH }: { title: string; description?: string; href?: string; linkLabel?: string; t?: T }) {
   return (
     <div className="mb-3 flex items-center justify-between gap-4">
@@ -84,12 +80,10 @@ export function SectionHeading({ title, description, href, linkLabel, t = ENGLIS
   );
 }
 
-/** Neutral icon tile. */
 export function IconBadge({ icon: Icon, className }: { icon: IconType; className?: string }) {
   return <span className={merge("flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600", className)}><Icon className="size-[18px]" /></span>;
 }
 
-/** Big-number statistic. */
 export function StatCard({ icon, value, label, note }: { icon: IconType; value: React.ReactNode; label: string; note?: string }) {
   return (
     <Surface className="p-5">
@@ -103,7 +97,7 @@ export function StatCard({ icon, value, label, note }: { icon: IconType; value: 
   );
 }
 
-/** Status or tag label: plain text, no pill. Every status uses the portal accent; neutral tags (tone "slate") are grey. */
+/** Status or tag label. Every status uses the portal accent; neutral tags (tone "slate") are grey. */
 export function Pill({ tone = "slate", children, className }: { tone?: Tone; children: React.ReactNode; className?: string }) {
   return <span className={merge(cn("inline-flex items-center gap-1.5 whitespace-nowrap text-xs", tone === "slate" ? "font-medium text-slate-500" : "font-semibold text-care-700"), className)}>{children}</span>;
 }
@@ -195,7 +189,6 @@ export function PillTabs<T extends string>({ value, options, onChange, counts }:
   );
 }
 
-/** Label/value pair used in detail grids. */
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>

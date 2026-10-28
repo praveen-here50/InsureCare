@@ -13,7 +13,6 @@ const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
-      // `teal` is aliased to the brand indigo so every existing page picks up the new palette.
       colors: { brand, teal: brand, care, ink: "#0B1A2E" },
       fontFamily: { display: ["var(--font-jakarta)", "var(--font-tamil)", "ui-sans-serif", "system-ui", "sans-serif"] },
       boxShadow: {

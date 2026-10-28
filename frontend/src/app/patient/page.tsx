@@ -19,7 +19,6 @@ export default async function PatientDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Welcome banner */}
       <section className="relative overflow-hidden rounded-3xl bg-care-800 text-white">
         <div className="absolute inset-y-0 right-0 hidden w-[40%] md:block">
           <Photo src={IMG.family} alt="" position="center 30%" className="absolute inset-0" />
@@ -38,7 +37,6 @@ export default async function PatientDashboard() {
         </div>
       </section>
 
-      {/* Action needed */}
       {actionNeeded && (
         <Link href={`/patient/claims/${actionNeeded.id}`} className="group flex items-center gap-4 rounded-2xl border border-care-200 bg-care-50/60 px-5 py-4 transition hover:border-care-300">
           <FiAlertCircle className="size-5 shrink-0 text-care-700" />
@@ -51,7 +49,6 @@ export default async function PatientDashboard() {
         </Link>
       )}
 
-      {/* Stats */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <StatCard icon={FiShield} value={inr(totalCoverage)} label={t("Total cover")} note={t("Across {n} policies", { n: POLICIES.length })} />
         <StatCard icon={FiPieChart} value={totalCoverage ? `${Math.round((1 - totalUsed / totalCoverage) * 1000) / 10}%` : "—"} label={t("Cover remaining")} note={t("{amount} used this year", { amount: inr(totalUsed) })} />
@@ -60,7 +57,6 @@ export default async function PatientDashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.15fr]">
-        {/* Claims */}
         <section>
           <SectionHeading title={t("Claims")} href="/patient/claims" t={t} />
           <Surface className="divide-y divide-slate-100">
@@ -79,7 +75,6 @@ export default async function PatientDashboard() {
         </section>
 
         <div className="flex flex-col gap-6">
-          {/* Policies */}
           <section>
             <SectionHeading title={t("Policies")} href="/patient/policies" t={t} />
             <Surface className="divide-y divide-slate-100">
@@ -100,7 +95,6 @@ export default async function PatientDashboard() {
             </Surface>
           </section>
 
-          {/* Hospitals */}
           <section>
             <SectionHeading title={t("Cashless hospitals nearby")} href="/patient/hospitals" t={t} />
             <Surface className="divide-y divide-slate-100">
@@ -119,7 +113,6 @@ export default async function PatientDashboard() {
         </div>
       </div>
 
-      {/* Documents */}
       <section>
         <SectionHeading title={t("Recent documents")} href="/patient/documents" t={t} />
         <Surface className="grid grid-cols-1 divide-y divide-slate-100 md:grid-cols-2 md:divide-y-0">

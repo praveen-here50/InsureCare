@@ -25,7 +25,6 @@ export default async function HospitalDashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.1fr]">
-        {/* Bed occupancy */}
         <section>
           <SectionHeading title="Bed occupancy" href="/hospital/beds" linkLabel="View full bed map" />
           <Surface className="divide-y divide-slate-100">
@@ -41,7 +40,6 @@ export default async function HospitalDashboard() {
           </Surface>
         </section>
 
-        {/* Claims queue */}
         <section>
           <SectionHeading title="Insurer claims" href="/hospital/claims" linkLabel="View all claims" />
           <Surface className="divide-y divide-slate-100">

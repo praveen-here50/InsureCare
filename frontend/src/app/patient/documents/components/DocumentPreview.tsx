@@ -31,7 +31,7 @@ export default function DocumentPreview({ doc, onClose }: { doc: Document; onClo
 
         <div className="flex min-h-[320px] flex-1 items-center justify-center overflow-auto bg-slate-50 p-6">
           {doc.url && doc.type !== 'PDF' ? (
-            // eslint-disable-next-line @next/next/no-img-element -- local object URL
+            // eslint-disable-next-line @next/next/no-img-element -- the member's own file, served by the API
             <img src={doc.url} alt={doc.name} className="max-h-[60vh] rounded-xl object-contain shadow-soft" />
           ) : doc.url ? (
             <iframe src={doc.url} title={doc.name} className="h-[60vh] w-full rounded-xl bg-white" />

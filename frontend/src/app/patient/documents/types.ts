@@ -18,6 +18,6 @@ export interface Document {
   status: DocumentStatus;
   /** Size in MB. */
   size: number;
-  /** Object URL for files uploaded in this browser session (no backend yet). */
+  /** Where the file is served; absent for sample records without a file. */
   url?: string;
 }

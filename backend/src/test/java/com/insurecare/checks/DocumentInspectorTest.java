@@ -50,7 +50,6 @@ class DocumentInspectorTest {
     private final VerifierClient verifier = mock(VerifierClient.class);
     private final DocumentInspector inspector = new DocumentInspector(verifier);
 
-    // ---------- kinds and content ----------
 
     @Test
     void recognisesTheHospitalDocumentTypes() {
@@ -85,7 +84,6 @@ class DocumentInspectorTest {
         assertThat(ContentChecks.billTotal("Net payable (2026): ₹1,25,400.00")).isEqualTo(125400L);
     }
 
-    // ---------- PDFs ----------
 
     @Test
     void cleanDigitalPdfPasses() throws IOException {
@@ -143,7 +141,6 @@ class DocumentInspectorTest {
         assertThat(out).extracting(CheckFinding::severity).containsOnly(CheckFinding.PASS);
     }
 
-    // ---------- images and the verifier ----------
 
     @Test
     void scannedImageScoredAsAiGeneratedIsHighRisk() throws Exception {
@@ -188,7 +185,6 @@ class DocumentInspectorTest {
         assertThat(PageHash.distance(PageHash.of(a), PageHash.of(blank))).isGreaterThan(DocumentInspector.SAME_PAGE_BITS);
     }
 
-    // ---------- helpers ----------
 
     private static ContentChecks.Expected expected() {
         return new ContentChecks.Expected("Meena Krishnan", List.of("IC-FH-4471", "IC-4471"), "Adyar Community Hospital", ADMITTED, 62000L, TODAY);

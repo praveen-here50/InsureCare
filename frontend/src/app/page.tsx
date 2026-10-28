@@ -5,7 +5,6 @@ import { IMG } from "@/lib/images";
 import Logo from "@/components/portal/Logo";
 import { buttonClass, Pill } from "@/components/portal/ui";
 
-// What the product does, stated as facts (no invented business figures).
 const STATS = [
   { icon: FiActivity, value: "3 portals", label: "One shared record", note: "Patients, hospitals and insurers" },
   { icon: FiMapPin, value: "Chennai", label: "Cashless network", note: "Hospitals with directions" },
@@ -30,7 +29,6 @@ const NAV = [{ label: "Plans", href: "#services" }, { label: "How it works", hre
 export default function Home() {
   return (
     <div className="min-h-screen bg-white font-display text-ink">
-      {/* Header */}
       <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
         <div className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between gap-6 px-5 sm:px-8">
           <Link href="/" aria-label="InsureCare home"><Logo tagline="Member portal" /></Link>
@@ -43,7 +41,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-5 pb-14 pt-10 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pb-20 lg:pt-14">
           <div className="max-w-xl animate-fade-up">
@@ -65,11 +62,9 @@ export default function Home() {
           </div>
 
           <div className="relative mx-auto w-full max-w-[540px] animate-fade-in lg:mx-0 lg:ml-auto">
-            {/* The two services together: a doctor and an InsureCare advisor */}
             <div className="relative aspect-[16/10] overflow-hidden rounded-[32px] bg-slate-100 shadow-lift">
               <Photo src="/images/hero-doctor-insurer.jpg" alt="A smiling doctor in a white coat beside a smiling InsureCare advisor in a suit, both with arms crossed" position="center 20%" className="absolute inset-0" />
             </div>
-            {/* Floating cover card */}
             <div className="absolute -bottom-10 -left-4 w-[260px] rounded-2xl border border-white/60 bg-white/95 p-4 shadow-lift backdrop-blur sm:-left-10 sm:w-[290px] sm:p-5">
               <div className="flex items-center justify-between"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Your cover</p><Pill tone="green">Active</Pill></div>
               <p className="mt-2 text-2xl font-semibold tracking-tight">₹15,00,000</p>
@@ -77,7 +72,6 @@ export default function Home() {
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full w-[97%] rounded-full bg-care-500" /></div>
               <p className="mt-1.5 text-xs text-slate-400">97% of cover remaining</p>
             </div>
-            {/* Floating claim toast */}
             <div className="absolute -bottom-6 -right-2 hidden items-center gap-3 rounded-2xl border border-white/60 bg-white/95 p-3 pr-4 shadow-lift backdrop-blur sm:flex sm:-right-8">
               <span className="flex size-10 items-center justify-center rounded-xl bg-care-600 text-white"><FiCheck className="size-5" /></span>
               <span><span className="block text-sm font-bold">Claim approved</span><span className="block text-xs text-slate-500">CLM-1042 · ₹43,200</span></span>
@@ -86,7 +80,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats strip */}
       <section aria-label="InsureCare in numbers" className="border-y border-slate-200/80 bg-white">
         <div className="mx-auto grid max-w-[1240px] grid-cols-2 lg:grid-cols-4">
           {STATS.map(({ icon: Icon, value, label, note }, i) => (
@@ -100,7 +93,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services */}
       <section id="services" className="scroll-mt-20 bg-[#F5F8FC]">
         <div className="mx-auto max-w-[1240px] px-5 py-16 sm:px-8 lg:py-20">
           <h2 className="max-w-3xl text-[1.75rem] font-bold leading-tight tracking-tight sm:text-4xl">Three things every family needs. One place to do them.</h2>
@@ -122,7 +114,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works */}
       <section id="how" className="scroll-mt-20">
         <div className="mx-auto max-w-[1240px] px-5 py-16 sm:px-8 lg:py-20">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
@@ -144,7 +135,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Assistant / support */}
       <section id="support" className="scroll-mt-20 bg-[#F5F8FC]">
         <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:py-20">
           <div className="relative order-2 lg:order-1">
@@ -168,7 +158,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA band */}
       <section className="px-5 pb-16 sm:px-8">
         <div className="relative mx-auto max-w-[1240px] overflow-hidden rounded-[32px] bg-care-800 px-6 py-12 text-white sm:px-12 sm:py-14">
           <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
@@ -181,7 +170,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-slate-200/80">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between">
           <div><Logo /><p className="mt-3 text-sm text-slate-400">© 2026 InsureCare. Care that stays with you.</p></div>

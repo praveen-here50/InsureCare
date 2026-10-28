@@ -74,7 +74,6 @@ public class Claim {
         return OPEN.contains(status);
     }
 
-    /** Number of completed steps. */
     public int stepsDone() {
         return (int) timeline.stream().filter(Step::done).count();
     }

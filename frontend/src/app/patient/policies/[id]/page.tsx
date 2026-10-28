@@ -26,7 +26,6 @@ export default async function PolicyDetailsPage({ params }: { params: Promise<{ 
     <div className="flex flex-col gap-6">
       <Link href="/patient/policies" className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-care-700"><FiArrowLeft />{t("My policies")}</Link>
 
-      {/* Hero */}
       <section className={"relative overflow-hidden rounded-3xl bg-care-800 p-6 text-white sm:p-9"}>
         <div className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div>

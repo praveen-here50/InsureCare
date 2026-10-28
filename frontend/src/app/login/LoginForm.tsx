@@ -97,7 +97,6 @@ export default function LoginForm({ next }: { next?: string }) {
         </div>
       </aside>
 
-      {/* Sign-in form */}
       <main className="flex flex-1 flex-col px-5 py-5 sm:px-10">
         <div className="flex items-center justify-between gap-4">
           <div className={cn("flex items-center gap-3", panelOpen && "lg:invisible")}>

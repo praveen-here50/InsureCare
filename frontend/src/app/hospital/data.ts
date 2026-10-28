@@ -1,6 +1,5 @@
 // Hospital portal data, served by the backend (GET /api/hospitals/{id}/workspace). The loader is in server.ts.
 
-/* ---------------- Beds ---------------- */
 export type BedStatus = "available" | "occupied" | "reserved";
 export type Bed = { label: string; status: BedStatus };
 export type Ward = { id: string; name: string; prefix: string; total: number; occupied: number; reserved: number; note: string; beds: Bed[] };
@@ -8,10 +7,8 @@ export type Ward = { id: string; name: string; prefix: string; total: number; oc
 export const wardAvailable = (w: Ward) => w.total - w.occupied - w.reserved;
 export const bedsFor = (w: Ward) => w.beds;
 
-/* ---------------- Services ---------------- */
 export type Service = { name: string; available: boolean; note: string; referTo?: string };
 
-/* ---------------- Patients ---------------- */
 export type PatientStatus = "Admitted" | "Under observation" | "Ready for discharge" | "Not admitted";
 export type DocStatus = "Verified" | "Pending review" | "Needs correction" | "Missing";
 export type Coverage = "Covered" | "Partially covered" | "Not covered";
