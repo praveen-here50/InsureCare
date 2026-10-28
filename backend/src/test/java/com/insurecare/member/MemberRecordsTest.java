@@ -42,7 +42,7 @@ class MemberRecordsTest {
     private final DocumentFileRepository files = mock(DocumentFileRepository.class);
     private final DocumentText documentText = mock(DocumentText.class);
     private final MemberRecords records = new MemberRecords(portal, members, admissions, hospitals, files, documentText,
-            new AppProperties(List.of(), false, ZoneId.of("Asia/Kolkata"), "CarePlus Insurance", "", new AppProperties.Assistant("", "", "")));
+            new AppProperties(List.of(), false, ZoneId.of("Asia/Kolkata"), "CarePlus Insurance", "", new AppProperties.Assistant("", "", "", 0)));
 
     private final Member priya = new Member();
 

@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiCheck, FiExternalLink, FiLoader, FiLock, FiSend, FiUpload } from "react-icons/fi";
+import { FiAlertTriangle, FiCheck, FiExternalLink, FiLoader, FiLock, FiSend, FiUpload } from "react-icons/fi";
 import { useToast } from "@/components/Toast";
 import { buttonClass, Surface } from "@/components/portal/ui";
 import { apiUrl, send } from "@/lib/api";
 import { cn } from "@/lib/cn";
+import { DEMO_SITE } from "@/lib/demo";
 import { useSession } from "@/components/portal/SessionContext";
 import { type Patient, verifiedCount } from "./data";
 import { FileTypeIcon, fileSize, fileType, Status } from "./ui";
@@ -127,6 +128,12 @@ export default function ClaimDocuments({ patient: p, agent }: { patient: Patient
         </table>
       </div>
 
+      {DEMO_SITE && (
+        <p className="flex items-start gap-2 border-t border-amber-100 bg-amber-50 px-6 py-3 text-xs leading-5 text-amber-800">
+          <FiAlertTriangle className="mt-0.5 shrink-0" />
+          This is a demo site that anyone can open. Upload sample documents only, never real patient records.
+        </p>
+      )}
       <p className="flex items-start gap-2 border-t border-slate-100 px-6 py-3.5 text-xs leading-5 text-slate-500">
         <FiLock className="mt-0.5 shrink-0 text-slate-400" />
         The insurer receives the member ID, policy, diagnosis, treatment plan and these verified documents. Medical history and other admissions stay with the hospital. Files are PDF, JPG or PNG up to 10 MB and are checked automatically after upload.

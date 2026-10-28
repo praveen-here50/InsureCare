@@ -17,12 +17,17 @@ public record AppProperties(List<String> allowedOrigins, boolean seed, ZoneId zo
         return LocalDate.now(zone);
     }
 
+    public boolean verifierOn() {
+        return verifierUrl != null && !verifierUrl.isBlank();
+    }
+
     /**
-     * @param url    base URL of an OpenAI-compatible chat API (Groq by default)
-     * @param apiKey key for that API; blank turns the assistant off
-     * @param model  model that answers
+     * @param url              base URL of an OpenAI-compatible chat API (Groq by default)
+     * @param apiKey           key for that API; blank turns the assistant off
+     * @param model            model that answers
+     * @param questionsPerHour most questions one signed-in visitor may ask per hour; 0 for no limit
      */
-    public record Assistant(String url, String apiKey, String model) {
+    public record Assistant(String url, String apiKey, String model, int questionsPerHour) {
 
         public boolean enabled() {
             return apiKey != null && !apiKey.isBlank();

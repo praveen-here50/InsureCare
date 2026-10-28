@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiAlertCircle, FiAlertTriangle, FiCheck, FiChevronDown, FiLoader, FiMinus, FiPaperclip, FiRefreshCw, FiShield, FiUserCheck } from "react-icons/fi";
+import { FiAlertCircle, FiAlertTriangle, FiCheck, FiChevronDown, FiInfo, FiLoader, FiMinus, FiPaperclip, FiRefreshCw, FiShield, FiUserCheck } from "react-icons/fi";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import { useToast } from "@/components/Toast";
@@ -31,7 +31,7 @@ const FINDING_ICON: Record<Finding["severity"], { icon: typeof FiCheck; classNam
  * editing tools and edit history, copies of other patients' documents, AI-generation signs, and whether
  * names, dates and amounts match the claim. Risky documents open with their findings showing.
  */
-export default function DocumentChecks({ docs }: { docs: ClaimDoc[] }) {
+export default function DocumentChecks({ docs, imageChecks }: { docs: ClaimDoc[]; imageChecks: boolean }) {
   const router = useRouter();
   const toast = useToast();
   // Only what the officer toggled; otherwise risky documents start open.
@@ -62,6 +62,7 @@ export default function DocumentChecks({ docs }: { docs: ClaimDoc[] }) {
       </div>
       <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500"><FiUserCheck className="shrink-0 text-brand-600" />Checked by the claims verification agent before sharing</p>
       <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500"><FiShield className="shrink-0 text-brand-600" />Uploaded files are checked automatically for editing, copying and AI generation</p>
+      {!imageChecks && <p className="mt-0.5 flex items-start gap-1.5 text-xs text-slate-500"><FiInfo className="mt-0.5 shrink-0 text-brand-600" />OCR and the AI-image model run on the local document verifier, which is not set up on this server. Every other check runs.</p>}
 
       <ul className="mt-3 divide-y divide-slate-100">
         {docs.map((d) => {

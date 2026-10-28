@@ -25,17 +25,21 @@ import com.insurecare.member.MemberAssistant.Turn;
 import com.insurecare.member.MemberViews.DocumentView;
 import com.insurecare.member.MemberViews.Portal;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 public class MemberController {
 
     private final MemberPortal portal;
     private final DocumentVault vault;
     private final MemberAssistant assistant;
+    private final AssistantLimit limit;
 
-    public MemberController(MemberPortal portal, DocumentVault vault, MemberAssistant assistant) {
+    public MemberController(MemberPortal portal, DocumentVault vault, MemberAssistant assistant, AssistantLimit limit) {
         this.portal = portal;
         this.vault = vault;
         this.assistant = assistant;
+        this.limit = limit;
     }
 
     /** Everything the patient portal shows for one member. */
@@ -46,7 +50,8 @@ public class MemberController {
 
     /** Ask InsureCare: answers the member's latest question from their own records, streamed as plain text while it is written. */
     @PostMapping("/api/members/{memberRef}/assistant")
-    public ResponseEntity<StreamingResponseBody> ask(@PathVariable String memberRef, @RequestBody Conversation body) {
+    public ResponseEntity<StreamingResponseBody> ask(@PathVariable String memberRef, @RequestBody Conversation body, HttpSession session) {
+        limit.take(session);
         StreamingResponseBody answer = assistant.ask(memberRef, body.messages());
         return ResponseEntity.ok().contentType(new MediaType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8)).body(answer);
     }

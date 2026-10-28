@@ -44,6 +44,9 @@ insurecare:
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
   # Load seed.json into an empty database on startup, and create demo sign-in accounts when there are none.
   seed: ${SEED_DATA:true}
+  # Put the demo data back as it started on this schedule (cron, in the zone below), e.g. "0 0 3 * * *" for 3 AM daily.
+  # Undoes visitors' changes and deletes their uploads on a public demo. Blank means never; needs SEED_DATA.
+  demo-reset: ${DEMO_RESET:}
   # Password of every demo account (members sign in with their member ID, e.g. IC-7842).
   demo-password: ${DEMO_PASSWORD:insurecare}
   # Dates shown in the portals ("today", "Just now") use this zone.
@@ -58,3 +61,5 @@ insurecare:
     url: ${ASSISTANT_URL:https://api.groq.com/openai/v1}
     api-key: ${GROQ_API_KEY:}
     model: ${ASSISTANT_MODEL:openai/gpt-oss-120b}
+    # Questions one signed-in visitor may ask per hour, so one person can't use up the free tier for everyone; 0 for no limit.
+    questions-per-hour: ${ASSISTANT_QUESTIONS_PER_HOUR:10}

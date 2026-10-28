@@ -15,7 +15,7 @@ import { claimTone } from "../../ui";
 
 export default async function ClaimDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { getClaim, getHolder, getHospital } = await getInsurerData();
+  const { INSURER, getClaim, getHolder, getHospital } = await getInsurerData();
   const c = getClaim(id);
   if (!c) notFound();
   const holder = getHolder(c.memberId.toLowerCase());
@@ -64,7 +64,7 @@ export default async function ClaimDetail({ params }: { params: Promise<{ id: st
               <li key={k.label} className="flex items-center gap-3 py-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-full", k.ok ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-500")}>{k.ok ? <FiCheck /> : <FiX />}</span>
                 <span className="min-w-0 flex-1"><span className="block text-sm font-medium text-slate-900">{k.label}</span><span className="block text-xs text-slate-500">{k.detail}</span></span></li>
             ))}</ul></Card></Reveal>
-          <Reveal><DocumentChecks docs={c.docs} /></Reveal>
+          <Reveal><DocumentChecks docs={c.docs} imageChecks={INSURER.imageChecks} /></Reveal>
           <Reveal><Card className="p-5 sm:p-6"><h2 className="font-semibold text-slate-900">Claim progress</h2>
             <ol className="mt-4 space-y-4 border-l-2 border-brand-100 pl-5">{c.timeline.map((t) => (
               <li key={t.label} className="relative"><span className={cn("absolute -left-[27px] top-0.5 size-3.5 rounded-full border-2 border-white ring-2", t.done ? "bg-brand-600 ring-brand-100" : t.current ? "bg-white ring-brand-500" : "bg-slate-200 ring-slate-100")} />

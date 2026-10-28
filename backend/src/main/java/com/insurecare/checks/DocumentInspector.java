@@ -118,7 +118,9 @@ public class DocumentInspector {
                 model = a.model();
             }
         } catch (VerifierClient.Unavailable e) {
-            out.add(review("Image analysis did not run", "OCR and the AI-image check could not run: " + e.getMessage() + " Use “Check again” once the verifier is up."));
+            out.add(review("Image analysis did not run", verifier.enabled()
+                    ? "OCR and the AI-image check could not run: " + e.getMessage() + " Use “Check again” once the verifier is up."
+                    : "OCR and the AI-image check run on the document verifier, which is not set up on this server. The other checks ran."));
             return facts.text;
         }
 

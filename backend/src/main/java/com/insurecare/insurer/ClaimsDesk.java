@@ -73,7 +73,7 @@ public class ClaimsDesk {
                 .toList();
 
         List<ClaimView> claimViews = claims.findByInsurerOrderBySubmittedOnDescIdDesc(insurer).stream().map(c -> view(c, props.zone())).toList();
-        return new Snapshot(new Info(insurer, "Claims operations"), network, holders, claimViews);
+        return new Snapshot(new Info(insurer, "Claims operations", props.verifierOn()), network, holders, claimViews);
     }
 
     public ClaimView decide(String claimId, Decision decision) {
