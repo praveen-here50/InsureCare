@@ -22,7 +22,7 @@ The API listens on http://localhost:8080. On first start, Flyway creates the sch
 |---|---|---|
 | `DB_URL` | `jdbc:postgresql://localhost:5432/insurecare` | JDBC URL |
 | `DB_USER` / `DB_PASSWORD` | `insurecare` / `insurecare` | Database login |
-| `ALLOWED_ORIGINS` | `http://localhost:3000` | Browser origins allowed to call the API and open the socket (comma-separated) |
+| `ALLOWED_ORIGINS` | `http://localhost:3000` | Browser origins allowed to call the API and open the socket (comma-separated; `*` matches any part, e.g. `http://192.168.*:3000`) |
 | `SEED_DATA` | `true` | Load `seed.json` into an empty database, and create the demo sign-in accounts when there are none |
 | `DEMO_PASSWORD` | `insurecare` | Password of every demo account |
 | `SESSION_COOKIE_SECURE` | `false` | Send the session cookie over HTTPS only; set `true` when the portals are served over HTTPS |
